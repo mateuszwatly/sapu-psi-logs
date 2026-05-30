@@ -1,0 +1,1 @@
+/home/robot/anaconda3/bin/python train_pipeline.py --encoder linear_patch --decoder lif_count --cosine-cycles 1.0 --prune-cycles 1.0 --checkpoint-out sweep_mnist_20ep/linear_patch__lif_count/latest.pt --data-dir data --warmup-epochs 5 --cosine-epochs 15 --prune-epochs 0

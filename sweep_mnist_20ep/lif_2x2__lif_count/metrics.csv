@@ -1,0 +1,2 @@
+timestamp,global_epoch,phase,phase_epoch,phase_total_epochs,completed_train_epochs,completed_prune_epochs,lr,train_loss,train_acc,val_loss,val_acc,best_val_acc,best_epoch,sparsity,target_sparsity,neuron_sparsity,l2_lambda
+2026-05-30T12:44:07Z,1,warmup,1,20,1,0,0.0002,1.7780905135472616,0.45468333333333333,1.1107662956237794,0.661,0.661,1,,,,

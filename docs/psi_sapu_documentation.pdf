@@ -1,0 +1,2351 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R 8 0 R 10 0 R 12 0 R 14 0 R 16 0 R 18 0 R 20 0 R 22 0 R 24 0 R 26 0 R 28 0 R 30 0 R] /Count 13 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Length 3715 >>
+stream
+BT
+/F2 18 Tf
+1 0 0 1 54 738 Tm
+(PSI-SAPU Project Documentation) Tj
+/F1 9 Tf
+1 0 0 1 54 717 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 705 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 693 Tm
+(Generated for the current workspace state.) Tj
+/F1 9 Tf
+1 0 0 1 54 681 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 669 Tm
+(This document explains how the project is organized, what each file does, how) Tj
+/F1 9 Tf
+1 0 0 1 54 657 Tm
+(the encoder -> TPSAPU backbone -> decoder pipeline works, and what the main) Tj
+/F1 9 Tf
+1 0 0 1 54 645 Tm
+(numeric defaults mean.) Tj
+/F1 9 Tf
+1 0 0 1 54 633 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 621 Tm
+() Tj
+/F2 14 Tf
+1 0 0 1 54 609 Tm
+(High-Level Architecture) Tj
+/F1 9 Tf
+1 0 0 1 54 592 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 580 Tm
+(The project trains MNIST classifiers using a modular pipeline:) Tj
+/F1 9 Tf
+1 0 0 1 54 568 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 556 Tm
+(1. Encoder: converts an MNIST image shaped `\(batch, 1, 28, 28\)` into token) Tj
+/F1 9 Tf
+1 0 0 1 54 544 Tm
+(   features shaped `\(batch, steps, embed_dim\)`.) Tj
+/F1 9 Tf
+1 0 0 1 54 532 Tm
+(2. TPSAPU backbone: processes the token sequence through parallel LIF) Tj
+/F1 9 Tf
+1 0 0 1 54 520 Tm
+(   reservoirs with shared topology and different membrane time constants.) Tj
+/F1 9 Tf
+1 0 0 1 54 508 Tm
+(3. Decoder: reads membrane features, spike features, both, or full dynamics and) Tj
+/F1 9 Tf
+1 0 0 1 54 496 Tm
+(   produces 10 class logits.) Tj
+/F1 9 Tf
+1 0 0 1 54 484 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 472 Tm
+(The backbone is intentionally import-safe. Importing `tpsapu.py` defines model) Tj
+/F1 9 Tf
+1 0 0 1 54 460 Tm
+(classes only; it does not download data or start training.) Tj
+/F1 9 Tf
+1 0 0 1 54 448 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 436 Tm
+() Tj
+/F2 14 Tf
+1 0 0 1 54 424 Tm
+(Repository Files) Tj
+/F1 9 Tf
+1 0 0 1 54 407 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 395 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 383 Tm
+(`tpsapu.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 369 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 357 Tm
+(Defines the reusable TPSAPU backbone.) Tj
+/F1 9 Tf
+1 0 0 1 54 345 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 333 Tm
+(Important classes and functions:) Tj
+/F1 9 Tf
+1 0 0 1 54 321 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 309 Tm
+(  * `TPSAPUBackboneConfig`: frozen dataclass with backbone defaults.) Tj
+/F1 9 Tf
+1 0 0 1 54 297 Tm
+(  * `SharedReservoir`: one LIF reservoir that owns neuron state but receives the) Tj
+/F1 9 Tf
+1 0 0 1 54 285 Tm
+(  shared input and recurrent weights from `TPSAPUBackbone`.) Tj
+/F1 9 Tf
+1 0 0 1 54 273 Tm
+(  * `TPSAPUBackbone`: the reusable backbone module.) Tj
+/F1 9 Tf
+1 0 0 1 54 261 Tm
+(  * `build_tpsapu_backbone`: convenience factory.) Tj
+/F1 9 Tf
+1 0 0 1 54 249 Tm
+(  * `TPSAPU`: alias for `TPSAPUBackbone`.) Tj
+/F1 9 Tf
+1 0 0 1 54 237 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 225 Tm
+(How it works:) Tj
+/F1 9 Tf
+1 0 0 1 54 213 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 201 Tm
+(  * Input tensor is normalized to `\(batch, steps, input_dim\)`.) Tj
+/F1 9 Tf
+1 0 0 1 54 189 Tm
+(  * `nl_proj` maps encoder tokens into reservoir space.) Tj
+/F1 9 Tf
+1 0 0 1 54 177 Tm
+(  * Each timestep is sent to all reservoirs in parallel.) Tj
+/F1 9 Tf
+1 0 0 1 54 165 Tm
+(  * All reservoirs share:) Tj
+/F1 9 Tf
+1 0 0 1 54 153 Tm
+(  - `shared_input_proj`) Tj
+/F1 9 Tf
+1 0 0 1 54 141 Tm
+(  - `shared_recurrent`) Tj
+/F1 9 Tf
+1 0 0 1 54 129 Tm
+(  * Each reservoir has its own LIF node and tau.) Tj
+/F1 9 Tf
+1 0 0 1 54 117 Tm
+(  * The backbone records:) Tj
+/F1 9 Tf
+1 0 0 1 54 105 Tm
+(  - `membrane`: normalized membrane readout across all reservoirs.) Tj
+/F1 9 Tf
+1 0 0 1 54 93 Tm
+(  - `spike`: spike output across all reservoirs.) Tj
+/F1 9 Tf
+1 0 0 1 54 81 Tm
+(  - `dynamics`: first membrane value then membrane deltas.) Tj
+/F1 9 Tf
+1 0 0 1 54 69 Tm
+(  - `spike_history`: cumulative spike count per feature over time.) Tj
+/F1 8 Tf
+1 0 0 1 522 30 Tm
+(Page 1) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Length 3753 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 726 Tm
+(Magic numbers and defaults:) Tj
+/F1 9 Tf
+1 0 0 1 54 714 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 702 Tm
+(  * `reservoir_dim=64`: default neurons per reservoir.) Tj
+/F1 9 Tf
+1 0 0 1 54 690 Tm
+(  * `taus=\(1.1, 8.0, 64.0\)`: fast, medium, and slow LIF memory timescales.) Tj
+/F1 9 Tf
+1 0 0 1 54 678 Tm
+(  * `recurrent_drop_p=0.0`: no recurrent dropout unless requested.) Tj
+/F1 9 Tf
+1 0 0 1 54 666 Tm
+(  * `input_hidden_dim=None`: defaults to `reservoir_dim * 2`.) Tj
+/F1 9 Tf
+1 0 0 1 54 654 Tm
+(  * `v_threshold=1.0`: LIF fires when membrane voltage reaches 1.) Tj
+/F1 9 Tf
+1 0 0 1 54 642 Tm
+(  * `v_reset=0.0`: LIF membrane resets to zero after spike.) Tj
+/F1 9 Tf
+1 0 0 1 54 630 Tm
+(  * `detach_reset=True`: reset path is detached for more stable surrogate) Tj
+/F1 9 Tf
+1 0 0 1 54 618 Tm
+(  gradient training.) Tj
+/F1 9 Tf
+1 0 0 1 54 606 Tm
+(  * `surrogate.ATan\(\)`: differentiable surrogate for spike gradients.) Tj
+/F1 9 Tf
+1 0 0 1 54 594 Tm
+(  * recurrent weight init `uniform\(-0.001, 0.001\)`: small initial recurrent) Tj
+/F1 9 Tf
+1 0 0 1 54 582 Tm
+(  influence so the model starts stable.) Tj
+/F1 9 Tf
+1 0 0 1 54 570 Tm
+(  * `output_norm=True`: applies `LayerNorm` to membrane concatenation.) Tj
+/F1 9 Tf
+1 0 0 1 54 558 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 546 Tm
+(Output states:) Tj
+/F1 9 Tf
+1 0 0 1 54 534 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 522 Tm
+(  * `state="membrane"` returns membrane features.) Tj
+/F1 9 Tf
+1 0 0 1 54 510 Tm
+(  * `state="spike"` returns spike features.) Tj
+/F1 9 Tf
+1 0 0 1 54 498 Tm
+(  * `state="both"` returns membrane and spike concatenation.) Tj
+/F1 9 Tf
+1 0 0 1 54 486 Tm
+(  * `state="all"` returns membrane, spike, dynamics, and spike history.) Tj
+/F1 9 Tf
+1 0 0 1 54 474 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 462 Tm
+(Pooling:) Tj
+/F1 9 Tf
+1 0 0 1 54 450 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 438 Tm
+(  * `last`: use the final timestep.) Tj
+/F1 9 Tf
+1 0 0 1 54 426 Tm
+(  * `mean`: average all timesteps.) Tj
+/F1 9 Tf
+1 0 0 1 54 414 Tm
+(  * `none` or `sequence`: return all timesteps.) Tj
+/F1 9 Tf
+1 0 0 1 54 402 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 390 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 378 Tm
+(`train_pipeline.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 364 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 352 Tm
+(Main training entry point.) Tj
+/F1 9 Tf
+1 0 0 1 54 340 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 328 Tm
+(Primary responsibilities:) Tj
+/F1 9 Tf
+1 0 0 1 54 316 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 304 Tm
+(  * Parses CLI configuration.) Tj
+/F1 9 Tf
+1 0 0 1 54 292 Tm
+(  * Builds MNIST dataloaders.) Tj
+/F1 9 Tf
+1 0 0 1 54 280 Tm
+(  * Builds encoder, TPSAPU backbone, and decoder.) Tj
+/F1 9 Tf
+1 0 0 1 54 268 Tm
+(  * Prints trainable, frozen, and total parameter counts before any training or) Tj
+/F1 9 Tf
+1 0 0 1 54 256 Tm
+(  resumed training starts.) Tj
+/F1 9 Tf
+1 0 0 1 54 244 Tm
+(  * Trains with warmup, cosine schedule, and L2 pruning.) Tj
+/F1 9 Tf
+1 0 0 1 54 232 Tm
+(  * Saves full checkpoints that can resume training.) Tj
+/F1 9 Tf
+1 0 0 1 54 220 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 208 Tm
+(Pipeline wrapper:) Tj
+/F1 9 Tf
+1 0 0 1 54 196 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 184 Tm
+(  * `EncoderBackboneDecoder` calls:) Tj
+/F1 9 Tf
+1 0 0 1 54 172 Tm
+(  - `encoder\(images\)`) Tj
+/F1 9 Tf
+1 0 0 1 54 160 Tm
+(  - `backbone\(tokens, state=decoder.input_state, pooling=...\)`) Tj
+/F1 9 Tf
+1 0 0 1 54 148 Tm
+(  - `decoder\(features\)`) Tj
+/F1 9 Tf
+1 0 0 1 54 136 Tm
+(  * If the decoder needs sequence input, pooling is forced to `none`.) Tj
+/F1 9 Tf
+1 0 0 1 54 124 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 112 Tm
+(Training schedule defaults:) Tj
+/F1 9 Tf
+1 0 0 1 54 100 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 88 Tm
+(  * `warmup_epochs=5`: linear LR warmup.) Tj
+/F1 9 Tf
+1 0 0 1 54 76 Tm
+(  * `cosine_epochs=35`: main cosine annealing stage.) Tj
+/F1 8 Tf
+1 0 0 1 522 30 Tm
+(Page 2) Tj
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 7 0 R >>
+endobj
+9 0 obj
+<< /Length 4029 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(  * `cosine_cycles=1.0`: one cosine cycle by default.) Tj
+/F1 9 Tf
+1 0 0 1 54 726 Tm
+(  * `prune_epochs=20`: L2 pruning stage.) Tj
+/F1 9 Tf
+1 0 0 1 54 714 Tm
+(  * `prune_cycles=1.0`: one cosine cycle during pruning.) Tj
+/F1 9 Tf
+1 0 0 1 54 702 Tm
+(  * `min_lr_ratio=0.05`: cosine LR bottom is 5 percent of base LR.) Tj
+/F1 9 Tf
+1 0 0 1 54 690 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 678 Tm
+(Pruning defaults:) Tj
+/F1 9 Tf
+1 0 0 1 54 666 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 654 Tm
+(  * `l2_prune_start_lambda=1e-7`: first pruning L2 weight.) Tj
+/F1 9 Tf
+1 0 0 1 54 642 Tm
+(  * `l2_prune_growth_epochs=4`: multiply lambda by 10 every 4 pruning epochs.) Tj
+/F1 9 Tf
+1 0 0 1 54 630 Tm
+(  * `prune_threshold=0.0`: no fixed threshold by default; target sparsity drives) Tj
+/F1 9 Tf
+1 0 0 1 54 618 Tm
+(  the mask.) Tj
+/F1 9 Tf
+1 0 0 1 54 606 Tm
+(  * `target_sparsity=0.95`: keep only the largest-magnitude 5 percent of shared) Tj
+/F1 9 Tf
+1 0 0 1 54 594 Tm
+(  recurrent weights by the end of pruning.) Tj
+/F1 9 Tf
+1 0 0 1 54 582 Tm
+(  * `prune_start_sparsity=0.0`: ramp starts from dense recurrent topology.) Tj
+/F1 9 Tf
+1 0 0 1 54 570 Tm
+(  * `prune_epochs=30`: longer pruning phase for high sparsity.) Tj
+/F1 9 Tf
+1 0 0 1 54 558 Tm
+(  * `prune_ramp_epochs=0`: infer ramp length from prune epochs minus stabilization) Tj
+/F1 9 Tf
+1 0 0 1 54 546 Tm
+(  epochs.) Tj
+/F1 9 Tf
+1 0 0 1 54 534 Tm
+(  * `prune_stabilize_epochs=6`: final epochs train with the target mask fixed at) Tj
+/F1 9 Tf
+1 0 0 1 54 522 Tm
+(  95 percent sparsity.) Tj
+/F1 9 Tf
+1 0 0 1 54 510 Tm
+(  * `prune_lr_scale=0.2`: pruning LR starts at 20 percent of base LR.) Tj
+/F1 9 Tf
+1 0 0 1 54 498 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 486 Tm
+(For the default 30 pruning epochs, L2 lambda is:) Tj
+/F1 9 Tf
+1 0 0 1 54 474 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 462 Tm
+(  * epochs 1-4: `1e-7`) Tj
+/F1 9 Tf
+1 0 0 1 54 450 Tm
+(  * epochs 5-8: `1e-6`) Tj
+/F1 9 Tf
+1 0 0 1 54 438 Tm
+(  * epochs 9-12: `1e-5`) Tj
+/F1 9 Tf
+1 0 0 1 54 426 Tm
+(  * epochs 13-16: `1e-4`) Tj
+/F1 9 Tf
+1 0 0 1 54 414 Tm
+(  * epochs 17-20: `1e-3`) Tj
+/F1 9 Tf
+1 0 0 1 54 402 Tm
+(  * epochs 21-24: `1e-2`) Tj
+/F1 9 Tf
+1 0 0 1 54 390 Tm
+(  * epochs 25-28: `1e-1`) Tj
+/F1 9 Tf
+1 0 0 1 54 378 Tm
+(  * epochs 29-30: `1e0`) Tj
+/F1 9 Tf
+1 0 0 1 54 366 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 354 Tm
+(The pruning mask uses a smooth target-sparsity ramp. With defaults, the first) Tj
+/F1 9 Tf
+1 0 0 1 54 342 Tm
+(24 pruning epochs gradually increase target sparsity toward 95 percent, then) Tj
+/F1 9 Tf
+1 0 0 1 54 330 Tm
+(the final 6 epochs stabilize at 95 percent.) Tj
+/F1 9 Tf
+1 0 0 1 54 318 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 306 Tm
+(Optimization defaults:) Tj
+/F1 9 Tf
+1 0 0 1 54 294 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 282 Tm
+(  * `batch_size=128`: default MNIST batch size.) Tj
+/F1 9 Tf
+1 0 0 1 54 270 Tm
+(  * `lr=1e-3`: AdamW base learning rate.) Tj
+/F1 9 Tf
+1 0 0 1 54 258 Tm
+(  * `weight_decay=1e-4`: AdamW weight decay.) Tj
+/F1 9 Tf
+1 0 0 1 54 246 Tm
+(  * `grad_clip=1.0`: maximum global gradient norm.) Tj
+/F1 9 Tf
+1 0 0 1 54 234 Tm
+(  * `seed=42`: reproducibility seed.) Tj
+/F1 9 Tf
+1 0 0 1 54 222 Tm
+(  * `num_workers=2`: dataloader workers.) Tj
+/F1 9 Tf
+1 0 0 1 54 210 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 198 Tm
+(Dataset constants:) Tj
+/F1 9 Tf
+1 0 0 1 54 186 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 174 Tm
+(  * MNIST images are normalized with mean `0.1307` and std `0.3081`.) Tj
+/F1 9 Tf
+1 0 0 1 54 162 Tm
+(  * `num_classes=10` is hard-coded in decoder construction because MNIST has 10) Tj
+/F1 9 Tf
+1 0 0 1 54 150 Tm
+(  digits.) Tj
+/F1 9 Tf
+1 0 0 1 54 138 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 126 Tm
+(Checkpoint behavior:) Tj
+/F1 9 Tf
+1 0 0 1 54 114 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 102 Tm
+(  * `--checkpoint-out` writes a full latest checkpoint.) Tj
+/F1 9 Tf
+1 0 0 1 54 90 Tm
+(  * A sibling `best.pt` is saved whenever validation accuracy improves.) Tj
+/F1 9 Tf
+1 0 0 1 54 78 Tm
+(  * `--resume` loads a latest checkpoint and continues from stored progress.) Tj
+/F1 9 Tf
+1 0 0 1 54 66 Tm
+(  * Checkpoints include:) Tj
+/F1 8 Tf
+1 0 0 1 522 30 Tm
+(Page 3) Tj
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Length 3659 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(  - model state) Tj
+/F1 9 Tf
+1 0 0 1 54 726 Tm
+(  - optimizer state) Tj
+/F1 9 Tf
+1 0 0 1 54 714 Tm
+(  - args) Tj
+/F1 9 Tf
+1 0 0 1 54 702 Tm
+(  - completed train/prune epoch counters) Tj
+/F1 9 Tf
+1 0 0 1 54 690 Tm
+(  - validation metrics) Tj
+/F1 9 Tf
+1 0 0 1 54 678 Tm
+(  - best metric and best epoch) Tj
+/F1 9 Tf
+1 0 0 1 54 666 Tm
+(  - pruning mask) Tj
+/F1 9 Tf
+1 0 0 1 54 654 Tm
+(  - Python, NumPy, Torch, and CUDA RNG states) Tj
+/F1 9 Tf
+1 0 0 1 54 642 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 630 Tm
+(Log behavior:) Tj
+/F1 9 Tf
+1 0 0 1 54 618 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 606 Tm
+(  * Logs default to the directory containing `--checkpoint-out`.) Tj
+/F1 9 Tf
+1 0 0 1 54 594 Tm
+(  * Override with `--log-dir`.) Tj
+/F1 9 Tf
+1 0 0 1 54 582 Tm
+(  * `train.log` mirrors console output.) Tj
+/F1 9 Tf
+1 0 0 1 54 570 Tm
+(  * `metrics.jsonl` stores one JSON object per epoch.) Tj
+/F1 9 Tf
+1 0 0 1 54 558 Tm
+(  * `metrics.csv` stores the same metrics in spreadsheet-friendly form.) Tj
+/F1 9 Tf
+1 0 0 1 54 546 Tm
+(  * `args.json` stores the run configuration used for the current run.) Tj
+/F1 9 Tf
+1 0 0 1 54 534 Tm
+(  * On resume, logs append instead of replacing earlier history.) Tj
+/F1 9 Tf
+1 0 0 1 54 522 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 510 Tm
+(Startup printout:) Tj
+/F1 9 Tf
+1 0 0 1 54 498 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 486 Tm
+(  * The script prints a parameter summary before the first training epoch.) Tj
+/F1 9 Tf
+1 0 0 1 54 474 Tm
+(  * The summary includes total trainable/frozen parameters and per-module counts) Tj
+/F1 9 Tf
+1 0 0 1 54 462 Tm
+(  for encoder, backbone, and decoder.) Tj
+/F1 9 Tf
+1 0 0 1 54 450 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 438 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 426 Tm
+(`inference.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 412 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 400 Tm
+(Inference and visualization script.) Tj
+/F1 9 Tf
+1 0 0 1 54 388 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 376 Tm
+(Primary responsibilities:) Tj
+/F1 9 Tf
+1 0 0 1 54 364 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 352 Tm
+(  * Loads checkpoint architecture arguments.) Tj
+/F1 9 Tf
+1 0 0 1 54 340 Tm
+(  * Allows optional architecture overrides from CLI.) Tj
+/F1 9 Tf
+1 0 0 1 54 328 Tm
+(  * Builds the model and loads `model_state`.) Tj
+/F1 9 Tf
+1 0 0 1 54 316 Tm
+(  * Runs a single MNIST image through the model.) Tj
+/F1 9 Tf
+1 0 0 1 54 304 Tm
+(  * Produces temporal visualizations.) Tj
+/F1 9 Tf
+1 0 0 1 54 292 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 280 Tm
+(Outputs:) Tj
+/F1 9 Tf
+1 0 0 1 54 268 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 256 Tm
+(  * `*_timeline.png`: image regions revealed over encoder timesteps with) Tj
+/F1 9 Tf
+1 0 0 1 54 244 Tm
+(  prediction and confidence per step.) Tj
+/F1 9 Tf
+1 0 0 1 54 232 Tm
+(  * `*_confidence.png`: top-class confidence over time.) Tj
+/F1 9 Tf
+1 0 0 1 54 220 Tm
+(  * `*_activity.png`: membrane and spike activity per tau over time.) Tj
+/F1 9 Tf
+1 0 0 1 54 208 Tm
+(  * `*_timeline.gif`: optional animation with `--gif`.) Tj
+/F1 9 Tf
+1 0 0 1 54 196 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 184 Tm
+(Magic numbers:) Tj
+/F1 9 Tf
+1 0 0 1 54 172 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 160 Tm
+(  * `28`: MNIST image size.) Tj
+/F1 9 Tf
+1 0 0 1 54 148 Tm
+(  * `14 x 14`: token grid for 2x2 LIF encoder.) Tj
+/F1 9 Tf
+1 0 0 1 54 136 Tm
+(  * `7 x 7`: token grid for CNN encoders and default 7x7 patch encoder.) Tj
+/F1 9 Tf
+1 0 0 1 54 124 Tm
+(  * `cell_size=2`: reveal mask for 2x2 LIF encoder.) Tj
+/F1 9 Tf
+1 0 0 1 54 112 Tm
+(  * `cell_size=4`: reveal mask approximation for CNN token grids.) Tj
+/F1 9 Tf
+1 0 0 1 54 100 Tm
+(  * `fps=2`, `interval=450`: GIF playback speed and frame interval.) Tj
+/F1 9 Tf
+1 0 0 1 54 88 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 76 Tm
+(Temporal inference logic:) Tj
+/F1 8 Tf
+1 0 0 1 522 30 Tm
+(Page 4) Tj
+ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 11 0 R >>
+endobj
+13 0 obj
+<< /Length 3179 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 726 Tm
+(  * The script calls `backbone.forward_states\(tokens\)` once.) Tj
+/F1 9 Tf
+1 0 0 1 54 714 Tm
+(  * It constructs the feature sequence required by the decoder:) Tj
+/F1 9 Tf
+1 0 0 1 54 702 Tm
+(  - membrane) Tj
+/F1 9 Tf
+1 0 0 1 54 690 Tm
+(  - spike) Tj
+/F1 9 Tf
+1 0 0 1 54 678 Tm
+(  - membrane+spike) Tj
+/F1 9 Tf
+1 0 0 1 54 666 Tm
+(  - all-state) Tj
+/F1 9 Tf
+1 0 0 1 54 654 Tm
+(  * For sequence decoders such as `lif_count`, it reruns the decoder on) Tj
+/F1 9 Tf
+1 0 0 1 54 642 Tm
+(  prefixes: first token, first two tokens, and so on.) Tj
+/F1 9 Tf
+1 0 0 1 54 630 Tm
+(  * For mean pooling, it uses cumulative means so each plotted step represents) Tj
+/F1 9 Tf
+1 0 0 1 54 618 Tm
+(  the information available up to that step.) Tj
+/F1 9 Tf
+1 0 0 1 54 606 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 594 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 582 Tm
+(`run_all_combinations.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 568 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 556 Tm
+(Sweep runner for encoder/decoder combinations.) Tj
+/F1 9 Tf
+1 0 0 1 54 544 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 532 Tm
+(It runs every configured encoder with every configured decoder.) Tj
+/F1 9 Tf
+1 0 0 1 54 520 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 508 Tm
+(Default encoders:) Tj
+/F1 9 Tf
+1 0 0 1 54 496 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 484 Tm
+(  * `linear_patch`) Tj
+/F1 9 Tf
+1 0 0 1 54 472 Tm
+(  * `mlp_patch`) Tj
+/F1 9 Tf
+1 0 0 1 54 460 Tm
+(  * `lif_2x2`) Tj
+/F1 9 Tf
+1 0 0 1 54 448 Tm
+(  * `cnn2`) Tj
+/F1 9 Tf
+1 0 0 1 54 436 Tm
+(  * `cnn3`) Tj
+/F1 9 Tf
+1 0 0 1 54 424 Tm
+(  * `res_cnn`) Tj
+/F1 9 Tf
+1 0 0 1 54 412 Tm
+(  * `rows`) Tj
+/F1 9 Tf
+1 0 0 1 54 400 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 388 Tm
+(Default decoders:) Tj
+/F1 9 Tf
+1 0 0 1 54 376 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 364 Tm
+(  * `linear`) Tj
+/F1 9 Tf
+1 0 0 1 54 352 Tm
+(  * `membrane_mlp`) Tj
+/F1 9 Tf
+1 0 0 1 54 340 Tm
+(  * `spike_mlp`) Tj
+/F1 9 Tf
+1 0 0 1 54 328 Tm
+(  * `both_mlp`) Tj
+/F1 9 Tf
+1 0 0 1 54 316 Tm
+(  * `all_state_mlp`) Tj
+/F1 9 Tf
+1 0 0 1 54 304 Tm
+(  * `lif_count`) Tj
+/F1 9 Tf
+1 0 0 1 54 292 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 280 Tm
+(Default cycles:) Tj
+/F1 9 Tf
+1 0 0 1 54 268 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 256 Tm
+(  * `cycles=3.0`) Tj
+/F1 9 Tf
+1 0 0 1 54 244 Tm
+(  * Passed to both `--cosine-cycles` and `--prune-cycles`.) Tj
+/F1 9 Tf
+1 0 0 1 54 232 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 220 Tm
+(Output layout:) Tj
+/F1 9 Tf
+1 0 0 1 54 208 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 196 Tm
+(  * `sweep_runs/<encoder>__<decoder>/latest.pt`) Tj
+/F1 9 Tf
+1 0 0 1 54 184 Tm
+(  * `sweep_runs/<encoder>__<decoder>/best.pt`) Tj
+/F1 9 Tf
+1 0 0 1 54 172 Tm
+(  * `sweep_runs/<encoder>__<decoder>/command.txt`) Tj
+/F1 9 Tf
+1 0 0 1 54 160 Tm
+(  * `sweep_runs/<encoder>__<decoder>/train.log`) Tj
+/F1 9 Tf
+1 0 0 1 54 148 Tm
+(  * `sweep_runs/<encoder>__<decoder>/metrics.jsonl`) Tj
+/F1 9 Tf
+1 0 0 1 54 136 Tm
+(  * `sweep_runs/<encoder>__<decoder>/metrics.csv`) Tj
+/F1 9 Tf
+1 0 0 1 54 124 Tm
+(  * `sweep_runs/<encoder>__<decoder>/args.json`) Tj
+/F1 9 Tf
+1 0 0 1 54 112 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 100 Tm
+(Resume behavior:) Tj
+/F1 9 Tf
+1 0 0 1 54 88 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 76 Tm
+(  * If `latest.pt` exists, the script resumes it by default.) Tj
+/F1 8 Tf
+1 0 0 1 522 30 Tm
+(Page 5) Tj
+ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 13 0 R >>
+endobj
+15 0 obj
+<< /Length 3092 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(  * Use `--no-resume-existing` to force a fresh command.) Tj
+/F1 9 Tf
+1 0 0 1 54 726 Tm
+(  * Use `--skip-existing` to skip folders that already have `latest.pt`.) Tj
+/F1 9 Tf
+1 0 0 1 54 714 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 702 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 690 Tm
+(`requirements.txt`) Tj
+/F1 9 Tf
+1 0 0 1 54 676 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 664 Tm
+(Lists runtime dependencies:) Tj
+/F1 9 Tf
+1 0 0 1 54 652 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 640 Tm
+(  * `torch`: PyTorch model and training.) Tj
+/F1 9 Tf
+1 0 0 1 54 628 Tm
+(  * `torchvision`: MNIST dataset and transforms.) Tj
+/F1 9 Tf
+1 0 0 1 54 616 Tm
+(  * `spikingjelly`: LIF neurons and surrogate gradients.) Tj
+/F1 9 Tf
+1 0 0 1 54 604 Tm
+(  * `numpy`: seeding and plotting arrays.) Tj
+/F1 9 Tf
+1 0 0 1 54 592 Tm
+(  * `matplotlib`: inference plots and GIF generation.) Tj
+/F1 9 Tf
+1 0 0 1 54 580 Tm
+(  * `pillow`: GIF writer backend.) Tj
+/F1 9 Tf
+1 0 0 1 54 568 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 556 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 544 Tm
+(`.gitignore`) Tj
+/F1 9 Tf
+1 0 0 1 54 530 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 518 Tm
+(Ignores generated or local-only artifacts:) Tj
+/F1 9 Tf
+1 0 0 1 54 506 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 494 Tm
+(  * Python caches.) Tj
+/F1 9 Tf
+1 0 0 1 54 482 Tm
+(  * Pytest cache.) Tj
+/F1 9 Tf
+1 0 0 1 54 470 Tm
+(  * MNIST data.) Tj
+/F1 9 Tf
+1 0 0 1 54 458 Tm
+(  * checkpoints.) Tj
+/F1 9 Tf
+1 0 0 1 54 446 Tm
+(  * inference outputs.) Tj
+/F1 9 Tf
+1 0 0 1 54 434 Tm
+(  * sweep outputs.) Tj
+/F1 9 Tf
+1 0 0 1 54 422 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 410 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 398 Tm
+(`sapu-psi.zip`) Tj
+/F1 9 Tf
+1 0 0 1 54 384 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 372 Tm
+(Archive artifact present in the workspace. It is not used by the current Python) Tj
+/F1 9 Tf
+1 0 0 1 54 360 Tm
+(pipeline and is not imported by any source file.) Tj
+/F1 9 Tf
+1 0 0 1 54 348 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 336 Tm
+() Tj
+/F2 14 Tf
+1 0 0 1 54 324 Tm
+(Encoder Files) Tj
+/F1 9 Tf
+1 0 0 1 54 307 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 295 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 283 Tm
+(`encoders/__init__.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 269 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 257 Tm
+(Exports all encoder classes for convenient imports. It also keeps) Tj
+/F1 9 Tf
+1 0 0 1 54 245 Tm
+(`MNISTPatchEncoder` as an alias for `LinearPatchEncoder`.) Tj
+/F1 9 Tf
+1 0 0 1 54 233 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 221 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 209 Tm
+(`encoders/common.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 195 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 183 Tm
+(Shared encoder helpers:) Tj
+/F1 9 Tf
+1 0 0 1 54 171 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 159 Tm
+(  * `validate_mnist_images`: validates `\(batch, channels, height, width\)`.) Tj
+/F1 9 Tf
+1 0 0 1 54 147 Tm
+(  * `init_pos_embed`: trainable positional embedding initialized with truncated) Tj
+/F1 9 Tf
+1 0 0 1 54 135 Tm
+(  normal std `0.02`.) Tj
+/F1 9 Tf
+1 0 0 1 54 123 Tm
+(  * `flatten_feature_map`: converts CNN feature maps from `\(B, C, H, W\)` to) Tj
+/F1 9 Tf
+1 0 0 1 54 111 Tm
+(  `\(B, H*W, C\)`.) Tj
+/F1 9 Tf
+1 0 0 1 54 99 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 87 Tm
+(Magic numbers:) Tj
+/F1 9 Tf
+1 0 0 1 54 75 Tm
+() Tj
+/F1 8 Tf
+1 0 0 1 522 30 Tm
+(Page 6) Tj
+ET
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 15 0 R >>
+endobj
+17 0 obj
+<< /Length 3280 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(  * std `0.02`: common small positional embedding initialization.) Tj
+/F1 9 Tf
+1 0 0 1 54 726 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 714 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 702 Tm
+(`encoders/spiking.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 688 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 676 Tm
+(Lazy SpikingJelly import helper for encoder modules. It lets files import) Tj
+/F1 9 Tf
+1 0 0 1 54 664 Tm
+(cleanly, then raises a clear error only when a spiking encoder is constructed) Tj
+/F1 9 Tf
+1 0 0 1 54 652 Tm
+(without SpikingJelly installed.) Tj
+/F1 9 Tf
+1 0 0 1 54 640 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 628 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 616 Tm
+(`encoders/linear_patch.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 602 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 590 Tm
+(Linear patch projection encoder.) Tj
+/F1 9 Tf
+1 0 0 1 54 578 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 566 Tm
+(How it works:) Tj
+/F1 9 Tf
+1 0 0 1 54 554 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 542 Tm
+(  * Splits image into non-overlapping patches with `F.unfold`.) Tj
+/F1 9 Tf
+1 0 0 1 54 530 Tm
+(  * Applies `LayerNorm`, one `Linear`, and dropout.) Tj
+/F1 9 Tf
+1 0 0 1 54 518 Tm
+(  * Adds trainable positional embedding.) Tj
+/F1 9 Tf
+1 0 0 1 54 506 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 494 Tm
+(Defaults and magic numbers:) Tj
+/F1 9 Tf
+1 0 0 1 54 482 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 470 Tm
+(  * `image_size=28`: MNIST.) Tj
+/F1 9 Tf
+1 0 0 1 54 458 Tm
+(  * `patch_size=7`: produces `4 x 4 = 16` tokens.) Tj
+/F1 9 Tf
+1 0 0 1 54 446 Tm
+(  * `in_channels=1`: grayscale.) Tj
+/F1 9 Tf
+1 0 0 1 54 434 Tm
+(  * `embed_dim=128`: token size for TPSAPU.) Tj
+/F1 9 Tf
+1 0 0 1 54 422 Tm
+(  * `dropout=0.0`: no encoder dropout unless requested.) Tj
+/F1 9 Tf
+1 0 0 1 54 410 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 398 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 386 Tm
+(`encoders/mlp_patch.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 372 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 360 Tm
+(MLP patch projection encoder.) Tj
+/F1 9 Tf
+1 0 0 1 54 348 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 336 Tm
+(How it works:) Tj
+/F1 9 Tf
+1 0 0 1 54 324 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 312 Tm
+(  * Same patch extraction as `linear_patch`.) Tj
+/F1 9 Tf
+1 0 0 1 54 300 Tm
+(  * Uses `LayerNorm -> Linear -> GELU -> Dropout -> Linear -> Dropout`.) Tj
+/F1 9 Tf
+1 0 0 1 54 288 Tm
+(  * Adds positional embedding.) Tj
+/F1 9 Tf
+1 0 0 1 54 276 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 264 Tm
+(Defaults and magic numbers:) Tj
+/F1 9 Tf
+1 0 0 1 54 252 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 240 Tm
+(  * `patch_size=7`: 16 tokens.) Tj
+/F1 9 Tf
+1 0 0 1 54 228 Tm
+(  * `hidden_dim=None`: becomes `max\(embed_dim, patch_dim * 2\)`.) Tj
+/F1 9 Tf
+1 0 0 1 54 216 Tm
+(  * For default 7x7 grayscale patches, `patch_dim=49`, so hidden default is) Tj
+/F1 9 Tf
+1 0 0 1 54 204 Tm
+(  `max\(128, 98\) = 128`.) Tj
+/F1 9 Tf
+1 0 0 1 54 192 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 180 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 168 Tm
+(`encoders/row.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 154 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 142 Tm
+(Row encoder.) Tj
+/F1 9 Tf
+1 0 0 1 54 130 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 118 Tm
+(How it works:) Tj
+/F1 9 Tf
+1 0 0 1 54 106 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 94 Tm
+(  * Squeezes channel dimension from `\(B, 1, 28, 28\)` to `\(B, 28, 28\)`.) Tj
+/F1 9 Tf
+1 0 0 1 54 82 Tm
+(  * Treats each image row as one token.) Tj
+/F1 9 Tf
+1 0 0 1 54 70 Tm
+(  * Applies `LayerNorm\(28\) -> Linear\(28, embed_dim\) -> GELU -> Dropout`.) Tj
+/F1 8 Tf
+1 0 0 1 522 30 Tm
+(Page 7) Tj
+ET
+endstream
+endobj
+18 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 17 0 R >>
+endobj
+19 0 obj
+<< /Length 3387 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(  * Adds one positional embedding per row.) Tj
+/F1 9 Tf
+1 0 0 1 54 726 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 714 Tm
+(Defaults and magic numbers:) Tj
+/F1 9 Tf
+1 0 0 1 54 702 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 690 Tm
+(  * `image_size=28`: 28 sequence steps.) Tj
+/F1 9 Tf
+1 0 0 1 54 678 Tm
+(  * `in_channels=1`: grayscale MNIST.) Tj
+/F1 9 Tf
+1 0 0 1 54 666 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 654 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 642 Tm
+(`encoders/lif_2x2.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 628 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 616 Tm
+(Intensity-driven 2x2 LIF encoder.) Tj
+/F1 9 Tf
+1 0 0 1 54 604 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 592 Tm
+(How it works:) Tj
+/F1 9 Tf
+1 0 0 1 54 580 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 568 Tm
+(  * Denormalizes MNIST pixels back to `[0, 1]`.) Tj
+/F1 9 Tf
+1 0 0 1 54 556 Tm
+(  * Splits image into `2 x 2` patches, producing `14 x 14 = 196` tokens.) Tj
+/F1 9 Tf
+1 0 0 1 54 544 Tm
+(  * Computes mean patch intensity.) Tj
+/F1 9 Tf
+1 0 0 1 54 532 Tm
+(  * Gives bright patches an immediate current boost.) Tj
+/F1 9 Tf
+1 0 0 1 54 520 Tm
+(  * Runs one LIF step per patch token.) Tj
+/F1 9 Tf
+1 0 0 1 54 508 Tm
+(  * Adds positional embedding.) Tj
+/F1 9 Tf
+1 0 0 1 54 496 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 484 Tm
+(Defaults and magic numbers:) Tj
+/F1 9 Tf
+1 0 0 1 54 472 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 460 Tm
+(  * `patch_size=2`: local 2x2 pixel area.) Tj
+/F1 9 Tf
+1 0 0 1 54 448 Tm
+(  * `white_threshold=0.6`: patch is considered mostly white above this mean.) Tj
+/F1 9 Tf
+1 0 0 1 54 436 Tm
+(  * `intensity_gain=1.2`: scales continuous intensity drive.) Tj
+/F1 9 Tf
+1 0 0 1 54 424 Tm
+(  * `immediate_boost=1.0`: pushes white patches over the LIF threshold.) Tj
+/F1 9 Tf
+1 0 0 1 54 412 Tm
+(  * `tau=2.0`: encoder LIF membrane time constant.) Tj
+/F1 9 Tf
+1 0 0 1 54 400 Tm
+(  * `v_threshold=1.0`: spike threshold.) Tj
+/F1 9 Tf
+1 0 0 1 54 388 Tm
+(  * learned detail scale `0.1`: keeps learned patch detail secondary to intensity) Tj
+/F1 9 Tf
+1 0 0 1 54 376 Tm
+(  drive.) Tj
+/F1 9 Tf
+1 0 0 1 54 364 Tm
+(  * MNIST denormalization uses mean `0.1307` and std `0.3081`.) Tj
+/F1 9 Tf
+1 0 0 1 54 352 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 340 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 328 Tm
+(`encoders/tiny_cnn2.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 314 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 302 Tm
+(Two-layer tiny CNN encoder.) Tj
+/F1 9 Tf
+1 0 0 1 54 290 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 278 Tm
+(How it works:) Tj
+/F1 9 Tf
+1 0 0 1 54 266 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 254 Tm
+(  * Conv layer 1 downsamples from `28 x 28` to `14 x 14`.) Tj
+/F1 9 Tf
+1 0 0 1 54 242 Tm
+(  * Conv layer 2 downsamples from `14 x 14` to `7 x 7`.) Tj
+/F1 9 Tf
+1 0 0 1 54 230 Tm
+(  * Flattens the `7 x 7` feature map to 49 tokens.) Tj
+/F1 9 Tf
+1 0 0 1 54 218 Tm
+(  * Adds positional embedding.) Tj
+/F1 9 Tf
+1 0 0 1 54 206 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 194 Tm
+(Defaults and magic numbers:) Tj
+/F1 9 Tf
+1 0 0 1 54 182 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 170 Tm
+(  * `kernel_size=3`, `stride=2`, `padding=1`: standard downsampling conv.) Tj
+/F1 9 Tf
+1 0 0 1 54 158 Tm
+(  * `hidden_channels=64`: intermediate CNN width.) Tj
+/F1 9 Tf
+1 0 0 1 54 146 Tm
+(  * `num_patches=49`: 7x7 output grid.) Tj
+/F1 9 Tf
+1 0 0 1 54 134 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 122 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 110 Tm
+(`encoders/tiny_cnn3.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 96 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 84 Tm
+(Three-layer tiny CNN encoder.) Tj
+/F1 9 Tf
+1 0 0 1 54 72 Tm
+() Tj
+/F1 8 Tf
+1 0 0 1 522 30 Tm
+(Page 8) Tj
+ET
+endstream
+endobj
+20 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 19 0 R >>
+endobj
+21 0 obj
+<< /Length 2958 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(How it works:) Tj
+/F1 9 Tf
+1 0 0 1 54 726 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 714 Tm
+(  * First two convs downsample to `7 x 7`.) Tj
+/F1 9 Tf
+1 0 0 1 54 702 Tm
+(  * Third conv refines at `7 x 7` with stride 1.) Tj
+/F1 9 Tf
+1 0 0 1 54 690 Tm
+(  * Outputs 49 tokens.) Tj
+/F1 9 Tf
+1 0 0 1 54 678 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 666 Tm
+(Defaults and magic numbers:) Tj
+/F1 9 Tf
+1 0 0 1 54 654 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 642 Tm
+(  * Third conv uses `stride=1` to preserve `7 x 7`.) Tj
+/F1 9 Tf
+1 0 0 1 54 630 Tm
+(  * `num_patches=49`.) Tj
+/F1 9 Tf
+1 0 0 1 54 618 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 606 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 594 Tm
+(`encoders/residual_cnn.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 580 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 568 Tm
+(Residual tiny CNN encoder.) Tj
+/F1 9 Tf
+1 0 0 1 54 556 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 544 Tm
+(How it works:) Tj
+/F1 9 Tf
+1 0 0 1 54 532 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 520 Tm
+(  * Conv1 and conv2 produce second-layer `7 x 7` features.) Tj
+/F1 9 Tf
+1 0 0 1 54 508 Tm
+(  * Conv3 refines those features.) Tj
+/F1 9 Tf
+1 0 0 1 54 496 Tm
+(  * Residual output is `layer2 + conv3\(layer2\)`.) Tj
+/F1 9 Tf
+1 0 0 1 54 484 Tm
+(  * The sequence concatenates both second-layer tokens and residual third-layer) Tj
+/F1 9 Tf
+1 0 0 1 54 472 Tm
+(  tokens.) Tj
+/F1 9 Tf
+1 0 0 1 54 460 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 448 Tm
+(Defaults and magic numbers:) Tj
+/F1 9 Tf
+1 0 0 1 54 436 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 424 Tm
+(  * `num_patches=98`: two `7 x 7` token grids.) Tj
+/F1 9 Tf
+1 0 0 1 54 412 Tm
+(  * Residual addition preserves feature scale and lets decoder/backbone see both) Tj
+/F1 9 Tf
+1 0 0 1 54 400 Tm
+(  intermediate and refined representations.) Tj
+/F1 9 Tf
+1 0 0 1 54 388 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 376 Tm
+() Tj
+/F2 14 Tf
+1 0 0 1 54 364 Tm
+(Decoder Files) Tj
+/F1 9 Tf
+1 0 0 1 54 347 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 335 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 323 Tm
+(`decoders/__init__.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 309 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 297 Tm
+(Exports all decoder classes and keeps `MLPDecoder` as an alias for) Tj
+/F1 9 Tf
+1 0 0 1 54 285 Tm
+(`MembraneMLPDecoder`.) Tj
+/F1 9 Tf
+1 0 0 1 54 273 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 261 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 249 Tm
+(`decoders/common.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 235 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 223 Tm
+(Shared helper:) Tj
+/F1 9 Tf
+1 0 0 1 54 211 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 199 Tm
+(  * `mlp_layers`: builds `LayerNorm`, repeated `Linear -> GELU -> Dropout`, and a) Tj
+/F1 9 Tf
+1 0 0 1 54 187 Tm
+(  final output `Linear`.) Tj
+/F1 9 Tf
+1 0 0 1 54 175 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 163 Tm
+(Magic numbers:) Tj
+/F1 9 Tf
+1 0 0 1 54 151 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 139 Tm
+(  * minimum MLP `depth=2`: at least one hidden projection and one output) Tj
+/F1 9 Tf
+1 0 0 1 54 127 Tm
+(  projection.) Tj
+/F1 9 Tf
+1 0 0 1 54 115 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 103 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 91 Tm
+(`decoders/spiking.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 77 Tm
+() Tj
+/F1 8 Tf
+1 0 0 1 522 30 Tm
+(Page 9) Tj
+ET
+endstream
+endobj
+22 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 21 0 R >>
+endobj
+23 0 obj
+<< /Length 2735 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(Lazy SpikingJelly import helper for decoder modules. Used by `lif_count.py`.) Tj
+/F1 9 Tf
+1 0 0 1 54 726 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 714 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 702 Tm
+(`decoders/linear.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 688 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 676 Tm
+(Single linear classifier over pooled membrane features.) Tj
+/F1 9 Tf
+1 0 0 1 54 664 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 652 Tm
+(Metadata:) Tj
+/F1 9 Tf
+1 0 0 1 54 640 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 628 Tm
+(  * `input_state="membrane"`) Tj
+/F1 9 Tf
+1 0 0 1 54 616 Tm
+(  * `input_multiplier=1`) Tj
+/F1 9 Tf
+1 0 0 1 54 604 Tm
+(  * `needs_sequence=False`) Tj
+/F1 9 Tf
+1 0 0 1 54 592 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 580 Tm
+(Magic numbers:) Tj
+/F1 9 Tf
+1 0 0 1 54 568 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 556 Tm
+(  * `num_classes=10`: MNIST digits.) Tj
+/F1 9 Tf
+1 0 0 1 54 544 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 532 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 520 Tm
+(`decoders/membrane_mlp.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 506 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 494 Tm
+(Two-layer MLP over pooled membrane features.) Tj
+/F1 9 Tf
+1 0 0 1 54 482 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 470 Tm
+(Metadata:) Tj
+/F1 9 Tf
+1 0 0 1 54 458 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 446 Tm
+(  * `input_state="membrane"`) Tj
+/F1 9 Tf
+1 0 0 1 54 434 Tm
+(  * `input_multiplier=1`) Tj
+/F1 9 Tf
+1 0 0 1 54 422 Tm
+(  * `needs_sequence=False`) Tj
+/F1 9 Tf
+1 0 0 1 54 410 Tm
+(  * `MLPDecoder` aliases this class.) Tj
+/F1 9 Tf
+1 0 0 1 54 398 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 386 Tm
+(Defaults:) Tj
+/F1 9 Tf
+1 0 0 1 54 374 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 362 Tm
+(  * `hidden_dim=128`) Tj
+/F1 9 Tf
+1 0 0 1 54 350 Tm
+(  * `dropout=0.1`) Tj
+/F1 9 Tf
+1 0 0 1 54 338 Tm
+(  * `depth=2`) Tj
+/F1 9 Tf
+1 0 0 1 54 326 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 314 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 302 Tm
+(`decoders/spike_mlp.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 288 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 276 Tm
+(Two-layer MLP over pooled spike features.) Tj
+/F1 9 Tf
+1 0 0 1 54 264 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 252 Tm
+(Metadata:) Tj
+/F1 9 Tf
+1 0 0 1 54 240 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 228 Tm
+(  * `input_state="spike"`) Tj
+/F1 9 Tf
+1 0 0 1 54 216 Tm
+(  * `input_multiplier=1`) Tj
+/F1 9 Tf
+1 0 0 1 54 204 Tm
+(  * `needs_sequence=False`) Tj
+/F1 9 Tf
+1 0 0 1 54 192 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 180 Tm
+(Defaults:) Tj
+/F1 9 Tf
+1 0 0 1 54 168 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 156 Tm
+(  * `hidden_dim=128`) Tj
+/F1 9 Tf
+1 0 0 1 54 144 Tm
+(  * `dropout=0.1`) Tj
+/F1 9 Tf
+1 0 0 1 54 132 Tm
+(  * `depth=2`) Tj
+/F1 9 Tf
+1 0 0 1 54 120 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 108 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 96 Tm
+(`decoders/membrane_spike_mlp.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 82 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 70 Tm
+(Three-layer MLP over concatenated membrane and spike features.) Tj
+/F1 8 Tf
+1 0 0 1 522 30 Tm
+(Page 10) Tj
+ET
+endstream
+endobj
+24 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 23 0 R >>
+endobj
+25 0 obj
+<< /Length 2854 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 726 Tm
+(Metadata:) Tj
+/F1 9 Tf
+1 0 0 1 54 714 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 702 Tm
+(  * `input_state="both"`) Tj
+/F1 9 Tf
+1 0 0 1 54 690 Tm
+(  * `input_multiplier=2`) Tj
+/F1 9 Tf
+1 0 0 1 54 678 Tm
+(  * `needs_sequence=False`) Tj
+/F1 9 Tf
+1 0 0 1 54 666 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 654 Tm
+(Defaults:) Tj
+/F1 9 Tf
+1 0 0 1 54 642 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 630 Tm
+(  * input dimension is `backbone.out_features * 2`.) Tj
+/F1 9 Tf
+1 0 0 1 54 618 Tm
+(  * `depth=3`, because it combines two feature types.) Tj
+/F1 9 Tf
+1 0 0 1 54 606 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 594 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 582 Tm
+(`decoders/all_state_mlp.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 568 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 556 Tm
+(Four-layer MLP over all available backbone state.) Tj
+/F1 9 Tf
+1 0 0 1 54 544 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 532 Tm
+(Input concatenates:) Tj
+/F1 9 Tf
+1 0 0 1 54 520 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 508 Tm
+(  * membrane readout) Tj
+/F1 9 Tf
+1 0 0 1 54 496 Tm
+(  * current spikes) Tj
+/F1 9 Tf
+1 0 0 1 54 484 Tm
+(  * membrane dynamics) Tj
+/F1 9 Tf
+1 0 0 1 54 472 Tm
+(  * cumulative spike history) Tj
+/F1 9 Tf
+1 0 0 1 54 460 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 448 Tm
+(Metadata:) Tj
+/F1 9 Tf
+1 0 0 1 54 436 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 424 Tm
+(  * `input_state="all"`) Tj
+/F1 9 Tf
+1 0 0 1 54 412 Tm
+(  * `input_multiplier=4`) Tj
+/F1 9 Tf
+1 0 0 1 54 400 Tm
+(  * `needs_sequence=False`) Tj
+/F1 9 Tf
+1 0 0 1 54 388 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 376 Tm
+(Defaults:) Tj
+/F1 9 Tf
+1 0 0 1 54 364 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 352 Tm
+(  * input dimension is `backbone.out_features * 4`.) Tj
+/F1 9 Tf
+1 0 0 1 54 340 Tm
+(  * `depth=4`, because it combines four feature groups.) Tj
+/F1 9 Tf
+1 0 0 1 54 328 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 316 Tm
+() Tj
+/F2 11 Tf
+1 0 0 1 54 304 Tm
+(`decoders/lif_count.py`) Tj
+/F1 9 Tf
+1 0 0 1 54 290 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 278 Tm
+(Ten class LIF neurons with spike-count output.) Tj
+/F1 9 Tf
+1 0 0 1 54 266 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 254 Tm
+(How it works:) Tj
+/F1 9 Tf
+1 0 0 1 54 242 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 230 Tm
+(  * Expects full sequence input.) Tj
+/F1 9 Tf
+1 0 0 1 54 218 Tm
+(  * Projects each timestep to 10 class currents.) Tj
+/F1 9 Tf
+1 0 0 1 54 206 Tm
+(  * Runs a class-level LIF node over time.) Tj
+/F1 9 Tf
+1 0 0 1 54 194 Tm
+(  * Sums class spikes over the sequence.) Tj
+/F1 9 Tf
+1 0 0 1 54 182 Tm
+(  * The spike counts are used as class logits.) Tj
+/F1 9 Tf
+1 0 0 1 54 170 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 158 Tm
+(Metadata:) Tj
+/F1 9 Tf
+1 0 0 1 54 146 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 134 Tm
+(  * `input_state="both"`) Tj
+/F1 9 Tf
+1 0 0 1 54 122 Tm
+(  * `input_multiplier=2`) Tj
+/F1 9 Tf
+1 0 0 1 54 110 Tm
+(  * `needs_sequence=True`) Tj
+/F1 9 Tf
+1 0 0 1 54 98 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 86 Tm
+(Magic numbers:) Tj
+/F1 9 Tf
+1 0 0 1 54 74 Tm
+() Tj
+/F1 8 Tf
+1 0 0 1 522 30 Tm
+(Page 11) Tj
+ET
+endstream
+endobj
+26 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 25 0 R >>
+endobj
+27 0 obj
+<< /Length 3220 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(  * `num_classes=10`: one LIF neuron per MNIST digit.) Tj
+/F1 9 Tf
+1 0 0 1 54 726 Tm
+(  * `tau=2.0`: class LIF memory time constant.) Tj
+/F1 9 Tf
+1 0 0 1 54 714 Tm
+(  * `v_threshold=1.0`: spike threshold.) Tj
+/F1 9 Tf
+1 0 0 1 54 702 Tm
+(  * `v_reset=0.0`: reset value.) Tj
+/F1 9 Tf
+1 0 0 1 54 690 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 678 Tm
+() Tj
+/F2 14 Tf
+1 0 0 1 54 666 Tm
+(End-to-End Flow) Tj
+/F1 9 Tf
+1 0 0 1 54 649 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 637 Tm
+(Training command example:) Tj
+/F1 9 Tf
+1 0 0 1 54 625 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 613 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 601 Tm
+(python train_pipeline.py --encoder linear_patch --decoder membrane_mlp) Tj
+/F1 9 Tf
+1 0 0 1 54 589 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 577 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 565 Tm
+(Flow:) Tj
+/F1 9 Tf
+1 0 0 1 54 553 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 541 Tm
+(1. CLI args are parsed.) Tj
+/F1 9 Tf
+1 0 0 1 54 529 Tm
+(2. Seed is set.) Tj
+/F1 9 Tf
+1 0 0 1 54 517 Tm
+(3. MNIST loaders are built.) Tj
+/F1 9 Tf
+1 0 0 1 54 505 Tm
+(4. Encoder is selected from the encoder registry.) Tj
+/F1 9 Tf
+1 0 0 1 54 493 Tm
+(5. TPSAPU backbone is constructed.) Tj
+/F1 9 Tf
+1 0 0 1 54 481 Tm
+(6. Decoder is selected from the decoder registry.) Tj
+/F1 9 Tf
+1 0 0 1 54 469 Tm
+(7. The model trains through warmup and cosine phases.) Tj
+/F1 9 Tf
+1 0 0 1 54 457 Tm
+(8. Pruning phase applies L2 pressure and persistent magnitude masking.) Tj
+/F1 9 Tf
+1 0 0 1 54 445 Tm
+(9. `latest.pt` is written after every epoch.) Tj
+/F1 9 Tf
+1 0 0 1 54 433 Tm
+(  10. `best.pt` is written whenever validation accuracy improves.) Tj
+/F1 9 Tf
+1 0 0 1 54 421 Tm
+(  11. Logs and metrics are written beside the checkpoints.) Tj
+/F1 9 Tf
+1 0 0 1 54 409 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 397 Tm
+(Sweep command example:) Tj
+/F1 9 Tf
+1 0 0 1 54 385 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 373 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 361 Tm
+(python run_all_combinations.py) Tj
+/F1 9 Tf
+1 0 0 1 54 349 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 337 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 325 Tm
+(This runs 42 combinations: 7 encoders times 6 decoders.) Tj
+/F1 9 Tf
+1 0 0 1 54 313 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 301 Tm
+(Inference command example:) Tj
+/F1 9 Tf
+1 0 0 1 54 289 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 277 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 265 Tm
+(python inference.py --checkpoint sweep_runs/linear_patch__linear/latest.pt --index 0 --gif) Tj
+/F1 9 Tf
+1 0 0 1 54 253 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 241 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 229 Tm
+() Tj
+/F2 14 Tf
+1 0 0 1 54 217 Tm
+(Important Shape Conventions) Tj
+/F1 9 Tf
+1 0 0 1 54 200 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 188 Tm
+(  * Raw MNIST: `\(batch, 1, 28, 28\)`.) Tj
+/F1 9 Tf
+1 0 0 1 54 176 Tm
+(  * Encoder output: `\(batch, steps, embed_dim\)`.) Tj
+/F1 9 Tf
+1 0 0 1 54 164 Tm
+(  * Backbone membrane/spike output: `\(batch, steps, reservoir_dim * num_taus\)`.) Tj
+/F1 9 Tf
+1 0 0 1 54 152 Tm
+(  * `both` decoder input: feature dimension doubled.) Tj
+/F1 9 Tf
+1 0 0 1 54 140 Tm
+(  * `all_state_mlp` input: feature dimension quadrupled.) Tj
+/F1 9 Tf
+1 0 0 1 54 128 Tm
+(  * Classification logits: `\(batch, 10\)`.) Tj
+/F1 9 Tf
+1 0 0 1 54 116 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 104 Tm
+() Tj
+/F2 14 Tf
+1 0 0 1 54 92 Tm
+(Main CLI Defaults) Tj
+/F1 9 Tf
+1 0 0 1 54 75 Tm
+() Tj
+/F1 8 Tf
+1 0 0 1 522 30 Tm
+(Page 12) Tj
+ET
+endstream
+endobj
+28 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 27 0 R >>
+endobj
+29 0 obj
+<< /Length 2495 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(Architecture:) Tj
+/F1 9 Tf
+1 0 0 1 54 726 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 714 Tm
+(  * `--encoder linear_patch`) Tj
+/F1 9 Tf
+1 0 0 1 54 702 Tm
+(  * `--decoder membrane_mlp`) Tj
+/F1 9 Tf
+1 0 0 1 54 690 Tm
+(  * `--pooling last`) Tj
+/F1 9 Tf
+1 0 0 1 54 678 Tm
+(  * `--embed-dim 128`) Tj
+/F1 9 Tf
+1 0 0 1 54 666 Tm
+(  * `--reservoir-dim 64`) Tj
+/F1 9 Tf
+1 0 0 1 54 654 Tm
+(  * `--taus 1.1,8.0,64.0`) Tj
+/F1 9 Tf
+1 0 0 1 54 642 Tm
+(  * `--patch-size 7`) Tj
+/F1 9 Tf
+1 0 0 1 54 630 Tm
+(  * `--cnn-channels 64`) Tj
+/F1 9 Tf
+1 0 0 1 54 618 Tm
+(  * `--lif-white-threshold 0.6`) Tj
+/F1 9 Tf
+1 0 0 1 54 606 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 594 Tm
+(Training:) Tj
+/F1 9 Tf
+1 0 0 1 54 582 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 570 Tm
+(  * `--warmup-epochs 5`) Tj
+/F1 9 Tf
+1 0 0 1 54 558 Tm
+(  * `--cosine-epochs 35`) Tj
+/F1 9 Tf
+1 0 0 1 54 546 Tm
+(  * `--cosine-cycles 1.0`) Tj
+/F1 9 Tf
+1 0 0 1 54 534 Tm
+(  * `--prune-epochs 30`) Tj
+/F1 9 Tf
+1 0 0 1 54 522 Tm
+(  * `--prune-cycles 1.0`) Tj
+/F1 9 Tf
+1 0 0 1 54 510 Tm
+(  * `--target-sparsity 0.95`) Tj
+/F1 9 Tf
+1 0 0 1 54 498 Tm
+(  * `--prune-stabilize-epochs 6`) Tj
+/F1 9 Tf
+1 0 0 1 54 486 Tm
+(  * `--batch-size 128`) Tj
+/F1 9 Tf
+1 0 0 1 54 474 Tm
+(  * `--lr 1e-3`) Tj
+/F1 9 Tf
+1 0 0 1 54 462 Tm
+(  * `--weight-decay 1e-4`) Tj
+/F1 9 Tf
+1 0 0 1 54 450 Tm
+(  * `--grad-clip 1.0`) Tj
+/F1 9 Tf
+1 0 0 1 54 438 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 426 Tm
+(Sweep:) Tj
+/F1 9 Tf
+1 0 0 1 54 414 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 402 Tm
+(  * `--cycles 3.0`, applied to both cosine and pruning phases.) Tj
+/F1 9 Tf
+1 0 0 1 54 390 Tm
+(  * `--resume-existing` enabled by default.) Tj
+/F1 9 Tf
+1 0 0 1 54 378 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 366 Tm
+() Tj
+/F2 14 Tf
+1 0 0 1 54 354 Tm
+(Notes and Caveats) Tj
+/F1 9 Tf
+1 0 0 1 54 337 Tm
+() Tj
+/F1 9 Tf
+1 0 0 1 54 325 Tm
+(  * Spiking modules require SpikingJelly at construction time.) Tj
+/F1 9 Tf
+1 0 0 1 54 313 Tm
+(  * Importing modules without SpikingJelly is allowed where possible; errors are) Tj
+/F1 9 Tf
+1 0 0 1 54 301 Tm
+(  delayed until a spiking class is instantiated.) Tj
+/F1 9 Tf
+1 0 0 1 54 289 Tm
+(  * The inference reveal masks approximate CNN receptive fields as 7x7 cells.) Tj
+/F1 9 Tf
+1 0 0 1 54 277 Tm
+(  * `sapu-psi.zip` is an archive artifact and not part of the active runtime.) Tj
+/F1 9 Tf
+1 0 0 1 54 265 Tm
+(  * `data/`, `checkpoints/`, `sweep_runs/`, and `inference_outputs/` are ignored) Tj
+/F1 9 Tf
+1 0 0 1 54 253 Tm
+(  because they are generated artifacts.) Tj
+/F1 8 Tf
+1 0 0 1 522 30 Tm
+(Page 13) Tj
+ET
+endstream
+endobj
+30 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 29 0 R >>
+endobj
+xref
+0 31
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000205 00000 n 
+0000000275 00000 n 
+0000000350 00000 n 
+0000004116 00000 n 
+0000004252 00000 n 
+0000008056 00000 n 
+0000008192 00000 n 
+0000012272 00000 n 
+0000012409 00000 n 
+0000016120 00000 n 
+0000016258 00000 n 
+0000019489 00000 n 
+0000019627 00000 n 
+0000022771 00000 n 
+0000022909 00000 n 
+0000026241 00000 n 
+0000026379 00000 n 
+0000029818 00000 n 
+0000029956 00000 n 
+0000032966 00000 n 
+0000033104 00000 n 
+0000035891 00000 n 
+0000036029 00000 n 
+0000038935 00000 n 
+0000039073 00000 n 
+0000042345 00000 n 
+0000042483 00000 n 
+0000045030 00000 n 
+trailer
+<< /Size 31 /Root 1 0 R >>
+startxref
+45168
+%%EOF
