@@ -1,0 +1,1 @@
+.venv/bin/python train_pipeline.py --encoder linear_patch --decoder spike_transformer --cosine-cycles 1.0 --prune-cycles 1.0 --checkpoint-out sweep_runs_20ep_mnist_transformers/linear_patch__spike_transformer/latest.pt --data-dir data --data-dir data --cosine-epochs 15 --prune-epochs 0

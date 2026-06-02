@@ -1,0 +1,1 @@
+.venv/bin/python train_no_backbone.py --encoder lif_2x2 --decoder linear --cosine-cycles 1.0 --prune-cycles 1.0 --checkpoint-out sweep_runs_20ep_mnist_no_backbone/lif_2x2__linear/latest.pt --data-dir data --data-dir data --cosine-epochs 15 --prune-epochs 0 --pooling mean

@@ -31,11 +31,15 @@ from torchvision import datasets, transforms
 
 from decoders import (
     AllStateMLPDecoder,
+    AllStateTransformerDecoder,
     ClassLIFSpikeCountDecoder,
     LinearDecoder,
     MembraneMLPDecoder,
     MembraneSpikeMLPDecoder,
+    MembraneSpikeTransformerDecoder,
+    MembraneTransformerDecoder,
     SpikeMLPDecoder,
+    SpikeTransformerDecoder,
 )
 from encoders import (
     LIF2x2Encoder,
@@ -236,7 +240,7 @@ class NeuronActivityPruner:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dataset", choices=["mnist"], default="mnist")
+    parser.add_argument("--dataset", choices=["mnist", "cifar10", "imagenet"], default="mnist")
     parser.add_argument("--data-dir", default="data")
     parser.add_argument(
         "--encoder",
@@ -260,6 +264,10 @@ def parse_args() -> argparse.Namespace:
             "spike_mlp",
             "both_mlp",
             "all_state_mlp",
+            "membrane_transformer",
+            "spike_transformer",
+            "both_transformer",
+            "all_state_transformer",
             "lif_count",
             "mlp",
         ],
@@ -267,6 +275,9 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--pooling", choices=["last", "mean"], default="last")
 
+    parser.add_argument("--image-size", type=int, default=28)
+    parser.add_argument("--in-channels", type=int, default=1)
+    parser.add_argument("--num-classes", type=int, default=10)
     parser.add_argument("--embed-dim", type=int, default=128)
     parser.add_argument("--reservoir-dim", type=int, default=64)
     parser.add_argument("--taus", default="1.1,8.0,64.0")
@@ -278,6 +289,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--encoder-dropout", type=float, default=0.05)
     parser.add_argument("--decoder-hidden-dim", type=int, default=128)
     parser.add_argument("--decoder-dropout", type=float, default=0.1)
+    parser.add_argument("--decoder-transformer-layers", type=int, default=2)
+    parser.add_argument("--decoder-transformer-heads", type=int, default=4)
+    parser.add_argument("--decoder-transformer-ff-mult", type=float, default=4.0)
+    parser.add_argument("--decoder-max-steps", type=int, default=256)
     parser.add_argument("--recurrent-drop", type=float, default=0.1)
 
     parser.add_argument("--warmup-epochs", type=int, default=5)
@@ -473,6 +488,12 @@ def training_log_dir(args: argparse.Namespace) -> Path:
     return Path("logs")
 
 
+def subset_dataset(dataset, sample_count: int):
+    if sample_count <= 0:
+        return dataset
+    return Subset(dataset, range(min(sample_count, len(dataset))))
+
+
 def build_mnist_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoader]:
     transform = transforms.Compose(
         [
@@ -493,10 +514,8 @@ def build_mnist_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoade
         transform=transform,
     )
 
-    if args.train_samples > 0:
-        train_ds = Subset(train_ds, range(min(args.train_samples, len(train_ds))))
-    if args.test_samples > 0:
-        test_ds = Subset(test_ds, range(min(args.test_samples, len(test_ds))))
+    train_ds = subset_dataset(train_ds, args.train_samples)
+    test_ds = subset_dataset(test_ds, args.test_samples)
 
     common = {
         "batch_size": args.batch_size,
@@ -509,44 +528,170 @@ def build_mnist_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoade
     )
 
 
+def build_cifar10_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoader]:
+    train_transform = transforms.Compose(
+        [
+            transforms.RandomCrop(args.image_size, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                (0.4914, 0.4822, 0.4465),
+                (0.2470, 0.2435, 0.2616),
+            ),
+        ]
+    )
+    test_transform = transforms.Compose(
+        [
+            transforms.ToTensor(),
+            transforms.Normalize(
+                (0.4914, 0.4822, 0.4465),
+                (0.2470, 0.2435, 0.2616),
+            ),
+        ]
+    )
+    train_ds = datasets.CIFAR10(
+        args.data_dir,
+        train=True,
+        download=not args.no_download,
+        transform=train_transform,
+    )
+    test_ds = datasets.CIFAR10(
+        args.data_dir,
+        train=False,
+        download=not args.no_download,
+        transform=test_transform,
+    )
+
+    train_ds = subset_dataset(train_ds, args.train_samples)
+    test_ds = subset_dataset(test_ds, args.test_samples)
+
+    common = {
+        "batch_size": args.batch_size,
+        "num_workers": args.num_workers,
+        "pin_memory": torch.cuda.is_available(),
+    }
+    return (
+        DataLoader(train_ds, shuffle=True, **common),
+        DataLoader(test_ds, shuffle=False, **common),
+    )
+
+
+def build_imagenet_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoader]:
+    data_root = Path(args.data_dir)
+    train_root = data_root / "train"
+    val_root = data_root / "val"
+    if not train_root.is_dir() or not val_root.is_dir():
+        raise FileNotFoundError(
+            "ImageNet expects an ImageFolder layout with "
+            f"{train_root} and {val_root} directories."
+        )
+
+    train_transform = transforms.Compose(
+        [
+            transforms.RandomResizedCrop(args.image_size),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                (0.485, 0.456, 0.406),
+                (0.229, 0.224, 0.225),
+            ),
+        ]
+    )
+    val_resize = max(args.image_size, int(round(args.image_size * 256 / 224)))
+    val_transform = transforms.Compose(
+        [
+            transforms.Resize(val_resize),
+            transforms.CenterCrop(args.image_size),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                (0.485, 0.456, 0.406),
+                (0.229, 0.224, 0.225),
+            ),
+        ]
+    )
+    train_ds = datasets.ImageFolder(train_root, transform=train_transform)
+    val_ds = datasets.ImageFolder(val_root, transform=val_transform)
+    if args.num_classes <= 0:
+        args.num_classes = len(train_ds.classes)
+
+    train_ds = subset_dataset(train_ds, args.train_samples)
+    val_ds = subset_dataset(val_ds, args.test_samples)
+
+    common = {
+        "batch_size": args.batch_size,
+        "num_workers": args.num_workers,
+        "pin_memory": torch.cuda.is_available(),
+    }
+    return (
+        DataLoader(train_ds, shuffle=True, **common),
+        DataLoader(val_ds, shuffle=False, **common),
+    )
+
+
+def build_classification_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoader]:
+    if args.dataset == "mnist":
+        return build_mnist_loaders(args)
+    if args.dataset == "cifar10":
+        return build_cifar10_loaders(args)
+    if args.dataset == "imagenet":
+        return build_imagenet_loaders(args)
+    raise ValueError(f"Unsupported dataset: {args.dataset}")
+
+
 def build_encoder(args: argparse.Namespace) -> nn.Module:
     builders: dict[str, Callable[[argparse.Namespace], nn.Module]] = {
         "linear_patch": lambda cfg: LinearPatchEncoder(
+            image_size=cfg.image_size,
             patch_size=cfg.patch_size,
+            in_channels=cfg.in_channels,
             embed_dim=cfg.embed_dim,
             dropout=cfg.encoder_dropout,
         ),
         "patch": lambda cfg: LinearPatchEncoder(
+            image_size=cfg.image_size,
             patch_size=cfg.patch_size,
+            in_channels=cfg.in_channels,
             embed_dim=cfg.embed_dim,
             dropout=cfg.encoder_dropout,
         ),
         "mlp_patch": lambda cfg: MLPPatchEncoder(
+            image_size=cfg.image_size,
             patch_size=cfg.patch_size,
+            in_channels=cfg.in_channels,
             embed_dim=cfg.embed_dim,
             hidden_dim=cfg.encoder_hidden_dim or None,
             dropout=cfg.encoder_dropout,
         ),
         "lif_2x2": lambda cfg: LIF2x2Encoder(
+            image_size=cfg.image_size,
+            in_channels=cfg.in_channels,
             embed_dim=cfg.embed_dim,
             white_threshold=cfg.lif_white_threshold,
         ),
         "cnn2": lambda cfg: TinyCNN2Encoder(
+            image_size=cfg.image_size,
+            in_channels=cfg.in_channels,
             embed_dim=cfg.embed_dim,
             hidden_channels=cfg.cnn_channels,
             dropout=cfg.encoder_dropout,
         ),
         "cnn3": lambda cfg: TinyCNN3Encoder(
+            image_size=cfg.image_size,
+            in_channels=cfg.in_channels,
             embed_dim=cfg.embed_dim,
             hidden_channels=cfg.cnn_channels,
             dropout=cfg.encoder_dropout,
         ),
         "res_cnn": lambda cfg: ResidualTinyCNNEncoder(
+            image_size=cfg.image_size,
+            in_channels=cfg.in_channels,
             embed_dim=cfg.embed_dim,
             hidden_channels=cfg.cnn_channels,
             dropout=cfg.encoder_dropout,
         ),
         "rows": lambda cfg: MNISTRowEncoder(
+            image_size=cfg.image_size,
+            in_channels=cfg.in_channels,
             embed_dim=cfg.embed_dim,
             dropout=cfg.encoder_dropout,
         ),
@@ -555,41 +700,71 @@ def build_encoder(args: argparse.Namespace) -> nn.Module:
 
 
 def build_decoder(args: argparse.Namespace, input_dim: int) -> nn.Module:
+    def transformer_kwargs(cfg: argparse.Namespace) -> dict[str, object]:
+        return {
+            "model_dim": cfg.decoder_hidden_dim,
+            "num_heads": cfg.decoder_transformer_heads,
+            "num_layers": cfg.decoder_transformer_layers,
+            "ff_multiplier": cfg.decoder_transformer_ff_mult,
+            "dropout": cfg.decoder_dropout,
+            "max_steps": cfg.decoder_max_steps,
+        }
+
     builders: dict[str, Callable[[argparse.Namespace, int], nn.Module]] = {
-        "linear": lambda _cfg, dim: LinearDecoder(input_dim=dim, num_classes=10),
+        "linear": lambda cfg, dim: LinearDecoder(input_dim=dim, num_classes=cfg.num_classes),
         "membrane_mlp": lambda cfg, dim: MembraneMLPDecoder(
             input_dim=dim,
-            num_classes=10,
+            num_classes=cfg.num_classes,
             hidden_dim=cfg.decoder_hidden_dim,
             dropout=cfg.decoder_dropout,
         ),
         "mlp": lambda cfg, dim: MembraneMLPDecoder(
             input_dim=dim,
-            num_classes=10,
+            num_classes=cfg.num_classes,
             hidden_dim=cfg.decoder_hidden_dim,
             dropout=cfg.decoder_dropout,
         ),
         "spike_mlp": lambda cfg, dim: SpikeMLPDecoder(
             input_dim=dim,
-            num_classes=10,
+            num_classes=cfg.num_classes,
             hidden_dim=cfg.decoder_hidden_dim,
             dropout=cfg.decoder_dropout,
         ),
         "both_mlp": lambda cfg, dim: MembraneSpikeMLPDecoder(
             input_dim=dim * 2,
-            num_classes=10,
+            num_classes=cfg.num_classes,
             hidden_dim=cfg.decoder_hidden_dim,
             dropout=cfg.decoder_dropout,
         ),
         "all_state_mlp": lambda cfg, dim: AllStateMLPDecoder(
             input_dim=dim * 4,
-            num_classes=10,
+            num_classes=cfg.num_classes,
             hidden_dim=cfg.decoder_hidden_dim,
             dropout=cfg.decoder_dropout,
         ),
-        "lif_count": lambda _cfg, dim: ClassLIFSpikeCountDecoder(
+        "membrane_transformer": lambda cfg, dim: MembraneTransformerDecoder(
+            input_dim=dim,
+            num_classes=cfg.num_classes,
+            **transformer_kwargs(cfg),
+        ),
+        "spike_transformer": lambda cfg, dim: SpikeTransformerDecoder(
+            input_dim=dim,
+            num_classes=cfg.num_classes,
+            **transformer_kwargs(cfg),
+        ),
+        "both_transformer": lambda cfg, dim: MembraneSpikeTransformerDecoder(
             input_dim=dim * 2,
-            num_classes=10,
+            num_classes=cfg.num_classes,
+            **transformer_kwargs(cfg),
+        ),
+        "all_state_transformer": lambda cfg, dim: AllStateTransformerDecoder(
+            input_dim=dim * 4,
+            num_classes=cfg.num_classes,
+            **transformer_kwargs(cfg),
+        ),
+        "lif_count": lambda cfg, dim: ClassLIFSpikeCountDecoder(
+            input_dim=dim * 2,
+            num_classes=cfg.num_classes,
         ),
     }
     return builders[args.decoder](args, input_dim)
@@ -903,10 +1078,7 @@ def main() -> None:
     logger = TrainingLogger(args, append=bool(args.resume))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    if args.dataset != "mnist":
-        raise ValueError("Only MNIST is currently wired into this pipeline.")
-
-    train_loader, val_loader = build_mnist_loaders(args)
+    train_loader, val_loader = build_classification_loaders(args)
     model = build_model(args).to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.AdamW(

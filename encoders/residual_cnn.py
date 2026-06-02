@@ -27,7 +27,8 @@ class ResidualTinyCNNEncoder(nn.Module):
         self.image_size = image_size
         self.in_channels = in_channels
         self.embed_dim = embed_dim
-        self.num_patches = 98
+        token_grid = ((image_size + 1) // 2 + 1) // 2
+        self.num_patches = 2 * token_grid * token_grid
         self.conv1 = nn.Sequential(
             nn.Conv2d(in_channels, hidden_channels, kernel_size=3, stride=2, padding=1),
             nn.GELU(),

@@ -1,0 +1,1 @@
+/home/mateusz/sapu-psi-logs/.venv/bin/python train_pipeline.py --encoder cnn3 --decoder lif_count --cosine-cycles 1.0 --prune-cycles 1.0 --checkpoint-out sweep_runs/cnn3__lif_count/latest.pt --data-dir data --cosine-epochs 15 --prune-epochs 0

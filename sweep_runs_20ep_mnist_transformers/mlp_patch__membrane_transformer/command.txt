@@ -1,0 +1,1 @@
+.venv/bin/python train_pipeline.py --encoder mlp_patch --decoder membrane_transformer --cosine-cycles 1.0 --prune-cycles 1.0 --checkpoint-out sweep_runs_20ep_mnist_transformers/mlp_patch__membrane_transformer/latest.pt --data-dir data --data-dir data --cosine-epochs 15 --prune-epochs 0

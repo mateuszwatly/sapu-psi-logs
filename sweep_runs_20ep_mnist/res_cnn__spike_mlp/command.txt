@@ -1,0 +1,1 @@
+/home/mateusz/sapu-psi-logs/.venv/bin/python train_pipeline.py --encoder res_cnn --decoder spike_mlp --cosine-cycles 1.0 --prune-cycles 1.0 --checkpoint-out sweep_runs/res_cnn__spike_mlp/latest.pt --data-dir data --cosine-epochs 15 --prune-epochs 0

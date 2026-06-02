@@ -1,0 +1,38 @@
+Logging to: sweep_runs/cnn2__linear
+Parameter summary:
+  trainable : 116,362
+  frozen    : 0
+  total     : 116,362
+  by module:
+    encoder  trainable       80,768 | total       80,768
+    backbone trainable       33,280 | total       33,280
+    decoder  trainable        2,314 | total        2,314
+Device: cuda
+Pipeline: dataset=mnist, encoder=cnn2, backbone=tpsapu, decoder=linear, pooling=last
+Schedule: warmup=5, cosine=15, cosine_cycles=1.0, prune=0, prune_cycles=1.0, l2_prune_start=1.0e-07, l2_prune_growth_epochs=4, target_sparsity=95.0%, prune_ramp_epochs=1, prune_stabilize_epochs=-1
+warmup 001/020 | lr 2.000e-04 | train loss 1.0412 acc 65.04% | val loss 0.6097 acc 79.97%
+warmup 002/020 | lr 4.000e-04 | train loss 0.4159 acc 87.36% | val loss 0.1845 acc 94.68%
+warmup 003/020 | lr 6.000e-04 | train loss 0.1785 acc 94.67% | val loss 0.1288 acc 95.67%
+warmup 004/020 | lr 8.000e-04 | train loss 0.1087 acc 96.60% | val loss 0.0675 acc 97.85%
+warmup 005/020 | lr 1.000e-03 | train loss 0.0785 acc 97.52% | val loss 0.0472 acc 98.47%
+cosine 006/020 | lr 1.000e-03 | train loss 0.0547 acc 98.32% | val loss 0.0589 acc 98.18%
+cosine 007/020 | lr 9.530e-04 | train loss 0.0412 acc 98.65% | val loss 0.0488 acc 98.47%
+cosine 008/020 | lr 8.212e-04 | train loss 0.0309 acc 99.01% | val loss 0.0377 acc 98.79%
+cosine 009/020 | lr 6.307e-04 | train loss 0.0203 acc 99.38% | val loss 0.0370 acc 98.89%
+cosine 010/020 | lr 4.193e-04 | train loss 0.0125 acc 99.61% | val loss 0.0336 acc 98.89%
+cosine 011/020 | lr 2.288e-04 | train loss 0.0076 acc 99.81% | val loss 0.0314 acc 99.05%
+cosine 012/020 | lr 9.704e-05 | train loss 0.0052 acc 99.91% | val loss 0.0298 acc 99.03%
+cosine 013/020 | lr 5.000e-05 | train loss 0.0043 acc 99.92% | val loss 0.0296 acc 99.02%
+cosine 014/020 | lr 9.704e-05 | train loss 0.0045 acc 99.93% | val loss 0.0316 acc 98.92%
+cosine 015/020 | lr 2.288e-04 | train loss 0.0059 acc 99.87% | val loss 0.0329 acc 98.97%
+cosine 016/020 | lr 4.193e-04 | train loss 0.0152 acc 99.51% | val loss 0.0392 acc 98.73%
+cosine 017/020 | lr 6.307e-04 | train loss 0.0179 acc 99.39% | val loss 0.0441 acc 98.63%
+cosine 018/020 | lr 8.212e-04 | train loss 0.0207 acc 99.30% | val loss 0.0605 acc 98.21%
+cosine 019/020 | lr 9.530e-04 | train loss 0.0213 acc 99.22% | val loss 0.0489 acc 98.71%
+cosine 020/020 | lr 1.000e-03 | train loss 0.0170 acc 99.42% | val loss 0.0467 acc 98.70%
+Latest checkpoint: sweep_runs/cnn2__linear/latest.pt
+Best checkpoint: sweep_runs/cnn2__linear/best.pt (epoch 11, val acc 99.05%)
+Training log: sweep_runs/cnn2__linear/train.log
+Metrics JSONL: sweep_runs/cnn2__linear/metrics.jsonl
+Metrics CSV: sweep_runs/cnn2__linear/metrics.csv
+Run args: sweep_runs/cnn2__linear/args.json

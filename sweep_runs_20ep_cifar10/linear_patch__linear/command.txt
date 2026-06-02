@@ -1,0 +1,1 @@
+.venv/bin/python train_cifar10.py --encoder linear_patch --decoder linear --cosine-cycles 1.0 --prune-cycles 1.0 --checkpoint-out sweep_runs_20ep_cifar10/linear_patch__linear/latest.pt --data-dir data --cosine-epochs 15 --prune-epochs 0

@@ -22,7 +22,6 @@ from pathlib import Path
 ENCODERS = [
     "linear_patch",
     "mlp_patch",
-    "lif_2x2",
     "cnn2",
     "cnn3",
     "res_cnn",
@@ -35,6 +34,10 @@ DECODERS = [
     "spike_mlp",
     "both_mlp",
     "all_state_mlp",
+    "membrane_transformer",
+    "spike_transformer",
+    "both_transformer",
+    "all_state_transformer",
     "lif_count",
 ]
 

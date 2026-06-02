@@ -23,7 +23,8 @@ class TinyCNN3Encoder(nn.Module):
         self.image_size = image_size
         self.in_channels = in_channels
         self.embed_dim = embed_dim
-        self.num_patches = 49
+        token_grid = ((image_size + 1) // 2 + 1) // 2
+        self.num_patches = token_grid * token_grid
         self.net = nn.Sequential(
             nn.Conv2d(in_channels, hidden_channels, kernel_size=3, stride=2, padding=1),
             nn.GELU(),

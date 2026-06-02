@@ -1,0 +1,38 @@
+Logging to: sweep_runs_20ep_mnist_transformers/linear_patch__spike_transformer
+Parameter summary:
+  trainable : 498,028
+  frozen    : 0
+  total     : 498,028
+  by module:
+    encoder  trainable        8,546 | total        8,546
+    backbone trainable       33,280 | total       33,280
+    decoder  trainable      456,202 | total      456,202
+Device: cuda
+Pipeline: dataset=mnist, encoder=linear_patch, backbone=tpsapu, decoder=spike_transformer, pooling=last
+Schedule: warmup=5, cosine=15, cosine_cycles=1.0, prune=0, prune_cycles=1.0, l2_prune_start=1.0e-07, l2_prune_growth_epochs=4, target_sparsity=95.0%, prune_ramp_epochs=1, prune_stabilize_epochs=-1
+warmup 001/020 | lr 2.000e-04 | train loss 1.3247 acc 54.13% | val loss 0.9920 acc 66.28%
+warmup 002/020 | lr 4.000e-04 | train loss 0.8524 acc 71.11% | val loss 0.5811 acc 80.70%
+warmup 003/020 | lr 6.000e-04 | train loss 0.3983 acc 87.09% | val loss 0.1990 acc 93.81%
+warmup 004/020 | lr 8.000e-04 | train loss 0.2242 acc 92.85% | val loss 0.1533 acc 95.17%
+warmup 005/020 | lr 1.000e-03 | train loss 0.1830 acc 94.20% | val loss 0.1127 acc 96.12%
+cosine 006/020 | lr 1.000e-03 | train loss 0.1487 acc 95.36% | val loss 0.1017 acc 96.88%
+cosine 007/020 | lr 9.530e-04 | train loss 0.1204 acc 96.16% | val loss 0.0883 acc 97.28%
+cosine 008/020 | lr 8.212e-04 | train loss 0.1014 acc 96.82% | val loss 0.0826 acc 97.54%
+cosine 009/020 | lr 6.307e-04 | train loss 0.0777 acc 97.56% | val loss 0.0768 acc 97.73%
+cosine 010/020 | lr 4.193e-04 | train loss 0.0581 acc 98.19% | val loss 0.0576 acc 98.15%
+cosine 011/020 | lr 2.288e-04 | train loss 0.0414 acc 98.67% | val loss 0.0452 acc 98.55%
+cosine 012/020 | lr 9.704e-05 | train loss 0.0312 acc 98.98% | val loss 0.0427 acc 98.74%
+cosine 013/020 | lr 5.000e-05 | train loss 0.0276 acc 99.13% | val loss 0.0416 acc 98.68%
+cosine 014/020 | lr 9.704e-05 | train loss 0.0271 acc 99.14% | val loss 0.0473 acc 98.54%
+cosine 015/020 | lr 2.288e-04 | train loss 0.0331 acc 98.93% | val loss 0.0518 acc 98.48%
+cosine 016/020 | lr 4.193e-04 | train loss 0.0459 acc 98.51% | val loss 0.0536 acc 98.33%
+cosine 017/020 | lr 6.307e-04 | train loss 0.0623 acc 98.00% | val loss 0.0581 acc 98.19%
+cosine 018/020 | lr 8.212e-04 | train loss 0.0740 acc 97.62% | val loss 0.0799 acc 97.80%
+cosine 019/020 | lr 9.530e-04 | train loss 0.0806 acc 97.41% | val loss 0.0667 acc 98.00%
+cosine 020/020 | lr 1.000e-03 | train loss 0.0818 acc 97.40% | val loss 0.0788 acc 97.56%
+Latest checkpoint: sweep_runs_20ep_mnist_transformers/linear_patch__spike_transformer/latest.pt
+Best checkpoint: sweep_runs_20ep_mnist_transformers/linear_patch__spike_transformer/best.pt (epoch 12, val acc 98.74%)
+Training log: sweep_runs_20ep_mnist_transformers/linear_patch__spike_transformer/train.log
+Metrics JSONL: sweep_runs_20ep_mnist_transformers/linear_patch__spike_transformer/metrics.jsonl
+Metrics CSV: sweep_runs_20ep_mnist_transformers/linear_patch__spike_transformer/metrics.csv
+Run args: sweep_runs_20ep_mnist_transformers/linear_patch__spike_transformer/args.json

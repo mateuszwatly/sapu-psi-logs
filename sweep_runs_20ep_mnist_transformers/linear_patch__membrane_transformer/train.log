@@ -1,0 +1,38 @@
+Logging to: sweep_runs_20ep_mnist_transformers/linear_patch__membrane_transformer
+Parameter summary:
+  trainable : 498,028
+  frozen    : 0
+  total     : 498,028
+  by module:
+    encoder  trainable        8,546 | total        8,546
+    backbone trainable       33,280 | total       33,280
+    decoder  trainable      456,202 | total      456,202
+Device: cuda
+Pipeline: dataset=mnist, encoder=linear_patch, backbone=tpsapu, decoder=membrane_transformer, pooling=last
+Schedule: warmup=5, cosine=15, cosine_cycles=1.0, prune=0, prune_cycles=1.0, l2_prune_start=1.0e-07, l2_prune_growth_epochs=4, target_sparsity=95.0%, prune_ramp_epochs=1, prune_stabilize_epochs=-1
+warmup 001/020 | lr 2.000e-04 | train loss 0.8536 acc 72.09% | val loss 0.4076 acc 87.48%
+warmup 002/020 | lr 4.000e-04 | train loss 0.3291 acc 89.75% | val loss 0.1870 acc 94.26%
+warmup 003/020 | lr 6.000e-04 | train loss 0.1934 acc 93.92% | val loss 0.1454 acc 95.29%
+warmup 004/020 | lr 8.000e-04 | train loss 0.1543 acc 95.26% | val loss 0.1413 acc 95.71%
+warmup 005/020 | lr 1.000e-03 | train loss 0.1422 acc 95.46% | val loss 0.0973 acc 96.66%
+cosine 006/020 | lr 1.000e-03 | train loss 0.1182 acc 96.34% | val loss 0.0946 acc 97.11%
+cosine 007/020 | lr 9.530e-04 | train loss 0.1009 acc 96.84% | val loss 0.0940 acc 97.22%
+cosine 008/020 | lr 8.212e-04 | train loss 0.0809 acc 97.42% | val loss 0.0693 acc 97.86%
+cosine 009/020 | lr 6.307e-04 | train loss 0.0589 acc 98.07% | val loss 0.0667 acc 97.92%
+cosine 010/020 | lr 4.193e-04 | train loss 0.0420 acc 98.63% | val loss 0.0551 acc 98.24%
+cosine 011/020 | lr 2.288e-04 | train loss 0.0272 acc 99.11% | val loss 0.0398 acc 98.85%
+cosine 012/020 | lr 9.704e-05 | train loss 0.0181 acc 99.44% | val loss 0.0393 acc 98.82%
+cosine 013/020 | lr 5.000e-05 | train loss 0.0145 acc 99.58% | val loss 0.0403 acc 98.94%
+cosine 014/020 | lr 9.704e-05 | train loss 0.0149 acc 99.54% | val loss 0.0390 acc 98.83%
+cosine 015/020 | lr 2.288e-04 | train loss 0.0209 acc 99.30% | val loss 0.0488 acc 98.69%
+cosine 016/020 | lr 4.193e-04 | train loss 0.0362 acc 98.79% | val loss 0.0555 acc 98.31%
+cosine 017/020 | lr 6.307e-04 | train loss 0.0503 acc 98.33% | val loss 0.0661 acc 98.23%
+cosine 018/020 | lr 8.212e-04 | train loss 0.0625 acc 97.97% | val loss 0.0754 acc 97.84%
+cosine 019/020 | lr 9.530e-04 | train loss 0.0678 acc 97.82% | val loss 0.0607 acc 98.08%
+cosine 020/020 | lr 1.000e-03 | train loss 0.0680 acc 97.87% | val loss 0.0656 acc 98.02%
+Latest checkpoint: sweep_runs_20ep_mnist_transformers/linear_patch__membrane_transformer/latest.pt
+Best checkpoint: sweep_runs_20ep_mnist_transformers/linear_patch__membrane_transformer/best.pt (epoch 13, val acc 98.94%)
+Training log: sweep_runs_20ep_mnist_transformers/linear_patch__membrane_transformer/train.log
+Metrics JSONL: sweep_runs_20ep_mnist_transformers/linear_patch__membrane_transformer/metrics.jsonl
+Metrics CSV: sweep_runs_20ep_mnist_transformers/linear_patch__membrane_transformer/metrics.csv
+Run args: sweep_runs_20ep_mnist_transformers/linear_patch__membrane_transformer/args.json

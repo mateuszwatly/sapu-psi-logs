@@ -1,0 +1,75 @@
+Logging to: sweep_runs_20ep_mnist_no_backbone/lif_2x2__membrane_mlp
+Parameter summary:
+  trainable : 43,914
+  frozen    : 0
+  total     : 43,914
+  by module:
+    encoder  trainable       25,856 | total       25,856
+    decoder  trainable       18,058 | total       18,058
+Device: cuda
+Pipeline: dataset=mnist, encoder=lif_2x2, backbone=none, decoder=membrane_mlp, pooling=mean
+Schedule: warmup=5, cosine=15, cosine_cycles=1.0, finetune=0, finetune_cycles=1.0, finetune_lr_scale=0.2
+Traceback (most recent call last):
+  File "/home/mateusz/sapu-psi-logs/train_no_backbone.py", line 1035, in <module>
+    main()
+    ~~~~^^
+  File "/home/mateusz/sapu-psi-logs/train_no_backbone.py", line 865, in main
+    train_loss, train_acc = run_epoch(
+                            ~~~~~~~~~^
+        model,
+        ^^^^^^
+    ...<4 lines>...
+        grad_clip=args.grad_clip,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/mateusz/sapu-psi-logs/train_no_backbone.py", line 646, in run_epoch
+    logits = model(images)
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/mateusz/sapu-psi-logs/train_no_backbone.py", line 70, in forward
+    tokens = self.encoder(x)
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/mateusz/sapu-psi-logs/encoders/lif_2x2.py", line 74, in forward
+    spikes.append(self.lif(currents[:, step, :]))
+                  ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/spikingjelly/activation_based/base.py", line 268, in forward
+    return self.single_step_forward(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/spikingjelly/activation_based/neuron.py", line 907, in single_step_forward
+    return super().single_step_forward(x)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/spikingjelly/activation_based/neuron.py", line 240, in single_step_forward
+    spike = self.neuronal_fire()
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/spikingjelly/activation_based/neuron.py", line 177, in neuronal_fire
+    return self.surrogate_function(self.v - self.v_threshold)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/spikingjelly/activation_based/surrogate.py", line 149, in forward
+    return self.spiking_function(x, self.alpha)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/spikingjelly/activation_based/surrogate.py", line 720, in spiking_function
+    return atan.apply(x, alpha)
+           ~~~~~~~~~~^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/autograd/function.py", line 596, in apply
+    return super().apply(*args, **kwargs)  # type: ignore[misc]
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/spikingjelly/activation_based/surrogate.py", line 674, in forward
+    return heaviside(x)
+KeyboardInterrupt
