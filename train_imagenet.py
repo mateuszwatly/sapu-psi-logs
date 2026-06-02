@@ -2,8 +2,8 @@
 
 The data directory must use torchvision ImageFolder layout:
 
-    data/imagenet/train/<class_name>/*.jpg
-    data/imagenet/val/<class_name>/*.jpg
+    imagenet/Data/CLS-LOC/train/<class_name>/*.jpg
+    imagenet/Data/CLS-LOC/val/<class_name>/*.jpg
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ DEFAULT_ARGS = [
     "--dataset",
     "imagenet",
     "--data-dir",
-    "data/imagenet",
+    "imagenet/Data/CLS-LOC",
     "--image-size",
     "224",
     "--in-channels",
