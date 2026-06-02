@@ -77,6 +77,7 @@ class EncoderBackboneDecoder(nn.Module):
             tokens,
             pooling="none" if self.decoder.needs_sequence else self.pooling,
             state=self.decoder.input_state,
+            reset_state=True,
         )
         return self.decoder(features)
 
@@ -329,8 +330,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--log-batches",
         type=int,
-        default=100,
-        help="Print running loss/accuracy every N batches; set 0 to disable.",
+        default=0,
+        help="Print running loss/accuracy every N batches; disabled by default.",
     )
     parser.add_argument("--train-samples", type=int, default=0)
     parser.add_argument("--test-samples", type=int, default=0)
@@ -1118,6 +1119,7 @@ def run_epoch(
             images = images.to(device, non_blocking=True)
             targets = targets.to(device, non_blocking=True)
 
+            model.backbone.reset_state()
             logits = model(images)
             if neuron_pruner is not None:
                 neuron_pruner.record(model.backbone.last_states)
@@ -1135,6 +1137,7 @@ def run_epoch(
                     pruner.apply()
                 if neuron_pruner is not None:
                     neuron_pruner.apply()
+            model.backbone.reset_state()
 
             batch_size = targets.size(0)
             batch_loss = task_loss.item()
