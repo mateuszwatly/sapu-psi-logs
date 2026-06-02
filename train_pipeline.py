@@ -26,8 +26,9 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, Subset
+from torch.utils.data import DataLoader, Dataset, Subset
 from torchvision import datasets, transforms
+from torchvision.datasets.folder import default_loader
 
 from decoders import (
     AllStateMLPDecoder,
@@ -576,13 +577,73 @@ def build_cifar10_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoa
     )
 
 
+class ImageNetLOCValDataset(Dataset):
+    """Validation dataset for flat ILSVRC LOC image directories."""
+
+    def __init__(
+        self,
+        val_root: Path,
+        solution_csv: Path,
+        class_to_idx: dict[str, int],
+        transform: Callable | None = None,
+    ) -> None:
+        self.val_root = val_root
+        self.transform = transform
+        self.samples: list[tuple[Path, int]] = []
+        with solution_csv.open(newline="", encoding="utf-8") as handle:
+            reader = csv.DictReader(handle)
+            for row in reader:
+                image_id = row["ImageId"]
+                synset = row["PredictionString"].split()[0]
+                if synset not in class_to_idx:
+                    raise ValueError(
+                        f"Validation class {synset} from {solution_csv} "
+                        "does not exist in the training class folders."
+                    )
+                self.samples.append((val_root / f"{image_id}.JPEG", class_to_idx[synset]))
+        if not self.samples:
+            raise ValueError(f"No validation samples found in {solution_csv}.")
+
+    def __len__(self) -> int:
+        return len(self.samples)
+
+    def __getitem__(self, index: int) -> tuple[torch.Tensor, int]:
+        path, target = self.samples[index]
+        image = default_loader(path)
+        if self.transform is not None:
+            image = self.transform(image)
+        return image, target
+
+
+def build_imagenet_val_dataset(
+    val_root: Path,
+    transform: Callable,
+    class_to_idx: dict[str, int],
+) -> Dataset:
+    class_dirs = [path for path in val_root.iterdir() if path.is_dir()]
+    if class_dirs:
+        return datasets.ImageFolder(val_root, transform=transform)
+    solution_csv = Path("LOC_val_solution.csv")
+    if not solution_csv.is_file():
+        raise FileNotFoundError(
+            "ImageNet validation is a flat LOC directory, so LOC_val_solution.csv "
+            f"is required next to the training script. Missing: {solution_csv}"
+        )
+    return ImageNetLOCValDataset(
+        val_root=val_root,
+        solution_csv=solution_csv,
+        class_to_idx=class_to_idx,
+        transform=transform,
+    )
+
+
 def build_imagenet_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoader]:
     data_root = Path(args.data_dir)
     train_root = data_root / "train"
     val_root = data_root / "val"
     if not train_root.is_dir() or not val_root.is_dir():
         raise FileNotFoundError(
-            "ImageNet expects an ImageFolder layout with "
+            "ImageNet expects train and val directories under "
             f"{train_root} and {val_root} directories."
         )
 
@@ -610,7 +671,11 @@ def build_imagenet_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLo
         ]
     )
     train_ds = datasets.ImageFolder(train_root, transform=train_transform)
-    val_ds = datasets.ImageFolder(val_root, transform=val_transform)
+    val_ds = build_imagenet_val_dataset(
+        val_root,
+        val_transform,
+        train_ds.class_to_idx,
+    )
     if args.num_classes <= 0:
         args.num_classes = len(train_ds.classes)
 
