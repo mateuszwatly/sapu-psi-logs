@@ -322,6 +322,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--grad-clip", type=float, default=1.0)
     parser.add_argument("--num-workers", type=int, default=2)
+    parser.add_argument(
+        "--log-batches",
+        type=int,
+        default=100,
+        help="Print running loss/accuracy every N batches; set 0 to disable.",
+    )
     parser.add_argument("--train-samples", type=int, default=0)
     parser.add_argument("--test-samples", type=int, default=0)
     parser.add_argument("--seed", type=int, default=42)
@@ -395,6 +401,7 @@ def merge_resume_args(
         "checkpoint_out",
         "data_dir",
         "log_dir",
+        "log_batches",
         "no_download",
         "num_workers",
         "resume",
@@ -984,6 +991,11 @@ def run_epoch(
     l2_prune_lambda: float = 0.0,
     pruner: RecurrentMagnitudePruner | None = None,
     neuron_pruner: NeuronActivityPruner | None = None,
+    phase: str = "",
+    epoch: int = 0,
+    total_epochs: int = 0,
+    lr: float | None = None,
+    log_batches: int = 0,
 ) -> tuple[float, float]:
     train = optimizer is not None
     model.train(train)
@@ -992,8 +1004,11 @@ def run_epoch(
     total = 0
     context = torch.enable_grad() if train else torch.no_grad()
 
+    total_batches = len(loader)
+    mode = "train" if train else "val"
+
     with context:
-        for images, targets in loader:
+        for batch_index, (images, targets) in enumerate(loader, start=1):
             images = images.to(device, non_blocking=True)
             targets = targets.to(device, non_blocking=True)
 
@@ -1016,9 +1031,37 @@ def run_epoch(
                     neuron_pruner.apply()
 
             batch_size = targets.size(0)
-            total_loss += task_loss.item() * batch_size
-            correct += (logits.argmax(dim=1) == targets).sum().item()
+            batch_loss = task_loss.item()
+            batch_correct = (logits.argmax(dim=1) == targets).sum().item()
+            total_loss += batch_loss * batch_size
+            correct += batch_correct
             total += batch_size
+            if log_batches > 0 and (
+                batch_index % log_batches == 0 or batch_index == total_batches
+            ):
+                batch_acc = batch_correct / batch_size
+                running_loss = total_loss / total
+                running_acc = correct / total
+                batch_width = len(str(total_batches))
+                prefix = phase or mode
+                epoch_part = (
+                    f" {epoch:03d}/{total_epochs:03d}"
+                    if epoch > 0 and total_epochs > 0
+                    else ""
+                )
+                lr_part = "" if lr is None else f" | lr {lr:.3e}"
+                l2_part = (
+                    ""
+                    if l2_prune_lambda <= 0 or not train
+                    else f" | l2 lambda {l2_prune_lambda:.1e}"
+                )
+                print(
+                    f"{prefix}{epoch_part} {mode} batch "
+                    f"{batch_index:0{batch_width}d}/{total_batches} | "
+                    f"batch loss {batch_loss:.4f} acc {batch_acc:.2%} | "
+                    f"running loss {running_loss:.4f} acc {running_acc:.2%}"
+                    f"{lr_part}{l2_part}"
+                )
 
     return total_loss / total, correct / total
 
@@ -1169,6 +1212,8 @@ def main() -> None:
     args = parse_args()
     if args.neuron_prune_min_keep <= 0:
         raise ValueError("--neuron-prune-min-keep must be positive.")
+    if args.log_batches < 0:
+        raise ValueError("--log-batches must be non-negative.")
     resume_checkpoint = load_training_checkpoint(args.resume) if args.resume else None
     args = merge_resume_args(args, resume_checkpoint)
     set_seed(args.seed)
@@ -1255,8 +1300,23 @@ def main() -> None:
             device,
             optimizer=optimizer,
             grad_clip=args.grad_clip,
+            phase=phase,
+            epoch=epoch_index + 1,
+            total_epochs=train_epochs,
+            lr=lr,
+            log_batches=args.log_batches,
         )
-        val_loss, val_acc = run_epoch(model, val_loader, criterion, device)
+        val_loss, val_acc = run_epoch(
+            model,
+            val_loader,
+            criterion,
+            device,
+            phase=phase,
+            epoch=epoch_index + 1,
+            total_epochs=train_epochs,
+            lr=lr,
+            log_batches=args.log_batches,
+        )
         if val_acc > best_val_acc:
             best_val_acc = val_acc
             best_epoch = epoch_index + 1
@@ -1418,11 +1478,26 @@ def main() -> None:
             l2_prune_lambda=l2_lambda,
             pruner=pruner,
             neuron_pruner=neuron_pruner,
+            phase="l2-prune",
+            epoch=epoch_index + 1,
+            total_epochs=args.prune_epochs,
+            lr=lr,
+            log_batches=args.log_batches,
         )
         pruner.update(current_target_sparsity)
         if neuron_pruner is not None:
             neuron_pruner.update()
-        val_loss, val_acc = run_epoch(model, val_loader, criterion, device)
+        val_loss, val_acc = run_epoch(
+            model,
+            val_loader,
+            criterion,
+            device,
+            phase="l2-prune",
+            epoch=epoch_index + 1,
+            total_epochs=args.prune_epochs,
+            lr=lr,
+            log_batches=args.log_batches,
+        )
         if val_acc > best_val_acc:
             best_val_acc = val_acc
             best_epoch = train_epochs + epoch_index + 1
