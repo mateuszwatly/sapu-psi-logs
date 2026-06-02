@@ -26,6 +26,8 @@ DEFAULT_ARGS = [
     "3",
     "--num-classes",
     "1000",
+    "--taus",
+    "1.1,2.0,4.0,8.0,16.0,32.0,64.0,128.0",
     "--patch-size",
     "16",
     "--batch-size",
