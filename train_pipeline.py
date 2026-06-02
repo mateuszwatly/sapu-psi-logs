@@ -241,7 +241,11 @@ class NeuronActivityPruner:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dataset", choices=["mnist", "cifar10", "imagenet"], default="mnist")
+    parser.add_argument(
+        "--dataset",
+        choices=["mnist", "cifar10", "imagenet", "tiny_imagenet"],
+        default="mnist",
+    )
     parser.add_argument("--data-dir", default="data")
     parser.add_argument(
         "--encoder",
@@ -584,6 +588,106 @@ def build_cifar10_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoa
     )
 
 
+class HuggingFaceImageDataset(Dataset):
+    """Thin Torch dataset wrapper for Hugging Face image-classification splits."""
+
+    def __init__(self, hf_dataset, transform: Callable | None = None) -> None:
+        self.hf_dataset = hf_dataset
+        self.transform = transform
+
+    def __len__(self) -> int:
+        return len(self.hf_dataset)
+
+    def __getitem__(self, index: int) -> tuple[torch.Tensor, int]:
+        item = self.hf_dataset[index]
+        image = item["image"]
+        if image.mode != "RGB":
+            image = image.convert("RGB")
+        if self.transform is not None:
+            image = self.transform(image)
+        return image, int(item["label"])
+
+
+def load_hf_split(
+    dataset_name: str,
+    *,
+    split: str,
+    cache_dir: str,
+    no_download: bool,
+):
+    try:
+        from datasets import load_dataset
+    except ImportError as exc:
+        raise ImportError(
+            "Tiny ImageNet training requires the Hugging Face datasets package. "
+            "Install it with `pip install datasets`."
+        ) from exc
+
+    kwargs = {
+        "cache_dir": cache_dir,
+        "split": split,
+    }
+    if no_download:
+        kwargs["download_mode"] = "reuse_dataset_if_exists"
+    return load_dataset(dataset_name, **kwargs)
+
+
+def build_tiny_imagenet_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoader]:
+    dataset_name = "slegroux/tiny-imagenet-200-clean"
+    train_transform = transforms.Compose(
+        [
+            transforms.RandomResizedCrop(args.image_size, scale=(0.8, 1.0)),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                (0.485, 0.456, 0.406),
+                (0.229, 0.224, 0.225),
+            ),
+        ]
+    )
+    val_resize = max(args.image_size, int(round(args.image_size * 256 / 224)))
+    val_transform = transforms.Compose(
+        [
+            transforms.Resize(val_resize),
+            transforms.CenterCrop(args.image_size),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                (0.485, 0.456, 0.406),
+                (0.229, 0.224, 0.225),
+            ),
+        ]
+    )
+    train_hf = load_hf_split(
+        dataset_name,
+        split="train",
+        cache_dir=args.data_dir,
+        no_download=args.no_download,
+    )
+    val_hf = load_hf_split(
+        dataset_name,
+        split="validation",
+        cache_dir=args.data_dir,
+        no_download=args.no_download,
+    )
+    if args.num_classes <= 0:
+        args.num_classes = 200
+
+    train_ds = HuggingFaceImageDataset(train_hf, transform=train_transform)
+    val_ds = HuggingFaceImageDataset(val_hf, transform=val_transform)
+    train_ds = subset_dataset(train_ds, args.train_samples)
+    val_ds = subset_dataset(val_ds, args.test_samples)
+
+    common = {
+        "batch_size": args.batch_size,
+        "num_workers": args.num_workers,
+        "pin_memory": torch.cuda.is_available(),
+    }
+    return (
+        DataLoader(train_ds, shuffle=True, **common),
+        DataLoader(val_ds, shuffle=False, **common),
+    )
+
+
 class ImageNetLOCValDataset(Dataset):
     """Validation dataset for flat ILSVRC LOC image directories."""
 
@@ -737,6 +841,8 @@ def build_classification_loaders(args: argparse.Namespace) -> tuple[DataLoader, 
         return build_mnist_loaders(args)
     if args.dataset == "cifar10":
         return build_cifar10_loaders(args)
+    if args.dataset == "tiny_imagenet":
+        return build_tiny_imagenet_loaders(args)
     if args.dataset == "imagenet":
         return build_imagenet_loaders(args)
     raise ValueError(f"Unsupported dataset: {args.dataset}")

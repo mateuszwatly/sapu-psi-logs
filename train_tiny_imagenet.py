@@ -1,0 +1,51 @@
+"""Tiny ImageNet-200 entry point for the SAPU training pipeline.
+
+Uses the Hugging Face dataset:
+
+    slegroux/tiny-imagenet-200-clean
+
+The dataset is cached under data/tiny-imagenet-200-clean by default.
+"""
+
+from __future__ import annotations
+
+import sys
+
+import train_pipeline
+
+
+DEFAULT_ARGS = [
+    "--dataset",
+    "tiny_imagenet",
+    "--data-dir",
+    "data/tiny-imagenet-200-clean",
+    "--encoder",
+    "cnn3",
+    "--decoder",
+    "membrane_transformer",
+    "--image-size",
+    "64",
+    "--in-channels",
+    "3",
+    "--num-classes",
+    "200",
+    "--taus",
+    "1.1,2.0,4.0,8.0,16.0,32.0,64.0,128.0",
+    "--patch-size",
+    "8",
+    "--decoder-max-steps",
+    "256",
+    "--batch-size",
+    "64",
+    "--checkpoint-out",
+    "checkpoints/tpsapu_tiny_imagenet.pt",
+]
+
+
+def main() -> None:
+    sys.argv = [sys.argv[0], *DEFAULT_ARGS, *sys.argv[1:]]
+    train_pipeline.main()
+
+
+if __name__ == "__main__":
+    main()
