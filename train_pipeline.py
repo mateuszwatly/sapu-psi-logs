@@ -598,7 +598,7 @@ class ImageNetLOCValDataset(Dataset):
                 if synset not in class_to_idx:
                     raise ValueError(
                         f"Validation class {synset} from {solution_csv} "
-                        "does not exist in the training class folders."
+                        "does not exist in the ImageNet class mapping."
                     )
                 self.samples.append((val_root / f"{image_id}.JPEG", class_to_idx[synset]))
         if not self.samples:
@@ -613,6 +613,35 @@ class ImageNetLOCValDataset(Dataset):
         if self.transform is not None:
             image = self.transform(image)
         return image, target
+
+
+def load_imagenet_class_to_idx(mapping_path: Path = Path("LOC_synset_mapping.txt")) -> dict[str, int]:
+    if not mapping_path.is_file():
+        return {}
+    class_to_idx: dict[str, int] = {}
+    with mapping_path.open(encoding="utf-8") as handle:
+        for index, line in enumerate(handle):
+            stripped = line.strip()
+            if not stripped:
+                continue
+            synset = stripped.split(maxsplit=1)[0]
+            class_to_idx[synset] = index
+    return class_to_idx
+
+
+def remap_imagenet_train_targets(
+    train_ds: datasets.ImageFolder,
+    class_to_idx: dict[str, int],
+) -> None:
+    local_to_global: dict[int, int] = {}
+    for class_name, local_index in train_ds.class_to_idx.items():
+        if class_name not in class_to_idx:
+            raise ValueError(
+                f"Training class folder {class_name} does not exist in "
+                "LOC_synset_mapping.txt."
+            )
+        local_to_global[local_index] = class_to_idx[class_name]
+    train_ds.target_transform = local_to_global.__getitem__
 
 
 def build_imagenet_val_dataset(
@@ -671,13 +700,16 @@ def build_imagenet_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLo
         ]
     )
     train_ds = datasets.ImageFolder(train_root, transform=train_transform)
+    class_to_idx = load_imagenet_class_to_idx() or train_ds.class_to_idx
+    if class_to_idx is not train_ds.class_to_idx:
+        remap_imagenet_train_targets(train_ds, class_to_idx)
     val_ds = build_imagenet_val_dataset(
         val_root,
         val_transform,
-        train_ds.class_to_idx,
+        class_to_idx,
     )
     if args.num_classes <= 0:
-        args.num_classes = len(train_ds.classes)
+        args.num_classes = len(class_to_idx)
 
     train_ds = subset_dataset(train_ds, args.train_samples)
     val_ds = subset_dataset(val_ds, args.test_samples)
