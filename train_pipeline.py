@@ -390,7 +390,18 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--no-download", action="store_true")
+    parser.add_argument(
+        "--no-download",
+        action="store_true",
+        help="Use only already-cached datasets; fail fast instead of contacting remote hosts.",
+    )
+    parser.add_argument(
+        "--download",
+        action="store_false",
+        dest="no_download",
+        default=False,
+        help="Allow dataset downloads when an entry point defaults to --no-download.",
+    )
     parser.add_argument("--checkpoint-out", default="checkpoints/tpsapu_mnist.pt")
     parser.add_argument("--log-dir", default="")
     parser.add_argument("--resume", default="")
@@ -711,20 +722,32 @@ def load_hf_split(
     no_download: bool,
 ):
     try:
-        from datasets import load_dataset
+        from datasets import DownloadConfig, load_dataset
     except ImportError as exc:
         raise ImportError(
             "Tiny ImageNet training requires the Hugging Face datasets package. "
             "Install it with `pip install datasets`."
         ) from exc
 
+    mode = "local cache only" if no_download else "download allowed"
+    print(f"Loading Hugging Face dataset split: {dataset_name}/{split} ({mode})")
     kwargs = {
         "cache_dir": cache_dir,
         "split": split,
     }
     if no_download:
+        kwargs["download_config"] = DownloadConfig(local_files_only=True)
         kwargs["download_mode"] = "reuse_dataset_if_exists"
-    return load_dataset(dataset_name, **kwargs)
+    try:
+        return load_dataset(dataset_name, **kwargs)
+    except Exception as exc:
+        if not no_download:
+            raise
+        raise RuntimeError(
+            "Tiny ImageNet is not available in the local Hugging Face cache. "
+            "Run once with `--download` to populate the cache, or set HF_TOKEN "
+            "if the Hugging Face Hub is rate-limiting unauthenticated requests."
+        ) from exc
 
 
 def build_tiny_imagenet_loaders(

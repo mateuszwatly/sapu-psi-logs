@@ -39,6 +39,7 @@ DEFAULT_ARGS = [
     "64",
     "--num-workers",
     "0",
+    "--no-download",
     "--validation-source",
     "train_split",
     "--checkpoint-out",
