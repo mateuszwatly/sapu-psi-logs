@@ -221,6 +221,7 @@ class TPSAPUBackbone(nn.Module):
         nn.init.uniform_(self.shared_recurrent.weight, -0.001, 0.001)
 
     def reset_state(self) -> None:
+        self.last_states = None
         for reservoir in self.reservoirs:
             reservoir.reset_state()
 

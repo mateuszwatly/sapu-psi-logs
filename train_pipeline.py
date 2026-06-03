@@ -303,9 +303,19 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("--warmup-epochs", type=int, default=5)
     parser.add_argument("--cosine-epochs", type=int, default=35)
-    parser.add_argument("--cosine-cycles", type=float, default=1.0)
+    parser.add_argument(
+        "--cosine-cycles",
+        type=float,
+        default=1.0,
+        help="Number of cosine annealing descents; 1.0 decays once from base LR to min LR.",
+    )
     parser.add_argument("--prune-epochs", type=int, default=30)
-    parser.add_argument("--prune-cycles", type=float, default=1.0)
+    parser.add_argument(
+        "--prune-cycles",
+        type=float,
+        default=1.0,
+        help="Number of pruning-phase cosine annealing descents.",
+    )
     parser.add_argument("--min-lr-ratio", type=float, default=0.05)
     parser.add_argument("--prune-lr-scale", type=float, default=0.2)
     parser.add_argument("--l2-prune-start-lambda", type=float, default=1e-7)
@@ -501,10 +511,13 @@ def training_log_dir(args: argparse.Namespace) -> Path:
     return Path("logs")
 
 
-def subset_dataset(dataset, sample_count: int):
+def subset_dataset(dataset, sample_count: int, *, seed: int):
     if sample_count <= 0:
         return dataset
-    return Subset(dataset, range(min(sample_count, len(dataset))))
+    count = min(sample_count, len(dataset))
+    generator = torch.Generator().manual_seed(seed)
+    indices = torch.randperm(len(dataset), generator=generator)[:count].tolist()
+    return Subset(dataset, indices)
 
 
 def build_mnist_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoader]:
@@ -527,8 +540,8 @@ def build_mnist_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoade
         transform=transform,
     )
 
-    train_ds = subset_dataset(train_ds, args.train_samples)
-    test_ds = subset_dataset(test_ds, args.test_samples)
+    train_ds = subset_dataset(train_ds, args.train_samples, seed=args.seed)
+    test_ds = subset_dataset(test_ds, args.test_samples, seed=args.seed + 1)
 
     common = {
         "batch_size": args.batch_size,
@@ -575,8 +588,8 @@ def build_cifar10_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoa
         transform=test_transform,
     )
 
-    train_ds = subset_dataset(train_ds, args.train_samples)
-    test_ds = subset_dataset(test_ds, args.test_samples)
+    train_ds = subset_dataset(train_ds, args.train_samples, seed=args.seed)
+    test_ds = subset_dataset(test_ds, args.test_samples, seed=args.seed + 1)
 
     common = {
         "batch_size": args.batch_size,
@@ -675,8 +688,8 @@ def build_tiny_imagenet_loaders(args: argparse.Namespace) -> tuple[DataLoader, D
 
     train_ds = HuggingFaceImageDataset(train_hf, transform=train_transform)
     val_ds = HuggingFaceImageDataset(val_hf, transform=val_transform)
-    train_ds = subset_dataset(train_ds, args.train_samples)
-    val_ds = subset_dataset(val_ds, args.test_samples)
+    train_ds = subset_dataset(train_ds, args.train_samples, seed=args.seed)
+    val_ds = subset_dataset(val_ds, args.test_samples, seed=args.seed + 1)
 
     common = {
         "batch_size": args.batch_size,
@@ -823,8 +836,8 @@ def build_imagenet_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLo
     if args.num_classes <= 0:
         args.num_classes = len(class_to_idx)
 
-    train_ds = subset_dataset(train_ds, args.train_samples)
-    val_ds = subset_dataset(val_ds, args.test_samples)
+    train_ds = subset_dataset(train_ds, args.train_samples, seed=args.seed)
+    val_ds = subset_dataset(val_ds, args.test_samples, seed=args.seed + 1)
 
     common = {
         "batch_size": args.batch_size,
@@ -1017,7 +1030,7 @@ def lr_multiplier(
     cosine_index = max(0, epoch_index - warmup_epochs)
     denominator = max(1, cosine_epochs - 1)
     progress = min(1.0, cosine_index / denominator)
-    cosine = 0.5 * (1.0 + math.cos(2.0 * math.pi * cycles * progress))
+    cosine = 0.5 * (1.0 + math.cos(math.pi * cycles * progress))
     return min_lr_ratio + (1.0 - min_lr_ratio) * cosine
 
 
@@ -1032,7 +1045,7 @@ def cosine_only_multiplier(
         return 1.0
     denominator = max(1, total_epochs - 1)
     progress = min(1.0, epoch_index / denominator)
-    cosine = 0.5 * (1.0 + math.cos(2.0 * math.pi * cycles * progress))
+    cosine = 0.5 * (1.0 + math.cos(math.pi * cycles * progress))
     return min_lr_ratio + (1.0 - min_lr_ratio) * cosine
 
 

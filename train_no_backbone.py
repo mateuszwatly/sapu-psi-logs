@@ -189,9 +189,19 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("--warmup-epochs", type=int, default=5)
     parser.add_argument("--cosine-epochs", type=int, default=35)
-    parser.add_argument("--cosine-cycles", type=float, default=1.0)
+    parser.add_argument(
+        "--cosine-cycles",
+        type=float,
+        default=1.0,
+        help="Number of cosine annealing descents; 1.0 decays once from base LR to min LR.",
+    )
     parser.add_argument("--prune-epochs", type=int, default=30)
-    parser.add_argument("--prune-cycles", type=float, default=1.0)
+    parser.add_argument(
+        "--prune-cycles",
+        type=float,
+        default=1.0,
+        help="Number of pruning-phase cosine annealing descents.",
+    )
     parser.add_argument("--min-lr-ratio", type=float, default=0.05)
     parser.add_argument("--prune-lr-scale", type=float, default=0.2)
     parser.add_argument("--l2-prune-start-lambda", type=float, default=1e-7)
@@ -689,7 +699,7 @@ def lr_multiplier(
     cosine_index = max(0, epoch_index - warmup_epochs)
     denominator = max(1, cosine_epochs - 1)
     progress = min(1.0, cosine_index / denominator)
-    cosine = 0.5 * (1.0 + math.cos(2.0 * math.pi * cycles * progress))
+    cosine = 0.5 * (1.0 + math.cos(math.pi * cycles * progress))
     return min_lr_ratio + (1.0 - min_lr_ratio) * cosine
 
 
@@ -704,7 +714,7 @@ def cosine_only_multiplier(
         return 1.0
     denominator = max(1, total_epochs - 1)
     progress = min(1.0, epoch_index / denominator)
-    cosine = 0.5 * (1.0 + math.cos(2.0 * math.pi * cycles * progress))
+    cosine = 0.5 * (1.0 + math.cos(math.pi * cycles * progress))
     return min_lr_ratio + (1.0 - min_lr_ratio) * cosine
 
 
