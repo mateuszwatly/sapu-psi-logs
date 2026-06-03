@@ -336,7 +336,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--grad-clip", type=float, default=1.0)
-    parser.add_argument("--num-workers", type=int, default=2)
+    parser.add_argument(
+        "--num-workers",
+        type=int,
+        default=0,
+        help=(
+            "DataLoader worker processes. Default 0 keeps dataset decoding in "
+            "the main process and avoids hidden worker-subprocess crashes."
+        ),
+    )
     parser.add_argument(
         "--log-batches",
         type=int,
@@ -345,6 +353,42 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--train-samples", type=int, default=0)
     parser.add_argument("--test-samples", type=int, default=0)
+    parser.add_argument(
+        "--validation-source",
+        choices=["dataset", "train_split"],
+        default="dataset",
+        help=(
+            "Use the dataset validation/test split for per-epoch validation, "
+            "or hold out part of the training split and reserve the dataset "
+            "validation/test split for final testing."
+        ),
+    )
+    parser.add_argument(
+        "--train-val-fraction",
+        type=float,
+        default=0.1,
+        help=(
+            "Fraction of the training split to hold out when "
+            "--validation-source=train_split."
+        ),
+    )
+    parser.add_argument(
+        "--train-val-samples",
+        type=int,
+        default=0,
+        help=(
+            "Fixed training-split validation size; overrides "
+            "--train-val-fraction when positive."
+        ),
+    )
+    parser.add_argument(
+        "--eval-test-after-training",
+        action="store_true",
+        help=(
+            "Evaluate the reserved dataset validation/test split once after "
+            "training completes."
+        ),
+    )
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--no-download", action="store_true")
     parser.add_argument("--checkpoint-out", default="checkpoints/tpsapu_mnist.pt")
@@ -419,6 +463,7 @@ def merge_resume_args(
         "log_batches",
         "no_download",
         "num_workers",
+        "eval_test_after_training",
         "resume",
         "train_samples",
         "test_samples",
@@ -518,6 +563,42 @@ def subset_dataset(dataset, sample_count: int, *, seed: int):
     generator = torch.Generator().manual_seed(seed)
     indices = torch.randperm(len(dataset), generator=generator)[:count].tolist()
     return Subset(dataset, indices)
+
+
+def train_validation_subsets(
+    train_dataset: Dataset,
+    validation_dataset: Dataset,
+    *,
+    validation_fraction: float,
+    validation_samples: int,
+    seed: int,
+) -> tuple[Subset, Subset]:
+    if len(train_dataset) != len(validation_dataset):
+        raise ValueError(
+            "Train and validation-view datasets must have matching lengths."
+        )
+    length = len(train_dataset)
+    if length < 2:
+        raise ValueError(
+            "At least two training samples are required for a train/validation split."
+        )
+
+    if validation_samples > 0:
+        validation_count = validation_samples
+    else:
+        if not 0.0 < validation_fraction < 1.0:
+            raise ValueError("--train-val-fraction must be between 0 and 1.")
+        validation_count = int(round(length * validation_fraction))
+
+    validation_count = min(max(1, validation_count), length - 1)
+    generator = torch.Generator().manual_seed(seed)
+    indices = torch.randperm(length, generator=generator).tolist()
+    validation_indices = indices[:validation_count]
+    train_indices = indices[validation_count:]
+    return Subset(train_dataset, train_indices), Subset(
+        validation_dataset,
+        validation_indices,
+    )
 
 
 def build_mnist_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoader]:
@@ -646,7 +727,9 @@ def load_hf_split(
     return load_dataset(dataset_name, **kwargs)
 
 
-def build_tiny_imagenet_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoader]:
+def build_tiny_imagenet_loaders(
+    args: argparse.Namespace,
+) -> tuple[DataLoader, DataLoader, DataLoader | None]:
     dataset_name = "slegroux/tiny-imagenet-200-clean"
     train_transform = transforms.Compose(
         [
@@ -686,10 +769,35 @@ def build_tiny_imagenet_loaders(args: argparse.Namespace) -> tuple[DataLoader, D
     if args.num_classes <= 0:
         args.num_classes = 200
 
-    train_ds = HuggingFaceImageDataset(train_hf, transform=train_transform)
-    val_ds = HuggingFaceImageDataset(val_hf, transform=val_transform)
-    train_ds = subset_dataset(train_ds, args.train_samples, seed=args.seed)
-    val_ds = subset_dataset(val_ds, args.test_samples, seed=args.seed + 1)
+    train_base_ds = HuggingFaceImageDataset(train_hf, transform=train_transform)
+    train_validation_base_ds = HuggingFaceImageDataset(
+        train_hf,
+        transform=val_transform,
+    )
+    dataset_validation_ds = HuggingFaceImageDataset(val_hf, transform=val_transform)
+    test_ds = None
+
+    if args.validation_source == "train_split":
+        train_ds, val_ds = train_validation_subsets(
+            train_base_ds,
+            train_validation_base_ds,
+            validation_fraction=args.train_val_fraction,
+            validation_samples=args.train_val_samples,
+            seed=args.seed + 17,
+        )
+        train_ds = subset_dataset(train_ds, args.train_samples, seed=args.seed)
+        test_ds = subset_dataset(
+            dataset_validation_ds,
+            args.test_samples,
+            seed=args.seed + 1,
+        )
+    else:
+        train_ds = subset_dataset(train_base_ds, args.train_samples, seed=args.seed)
+        val_ds = subset_dataset(
+            dataset_validation_ds,
+            args.test_samples,
+            seed=args.seed + 1,
+        )
 
     common = {
         "batch_size": args.batch_size,
@@ -699,6 +807,7 @@ def build_tiny_imagenet_loaders(args: argparse.Namespace) -> tuple[DataLoader, D
     return (
         DataLoader(train_ds, shuffle=True, **common),
         DataLoader(val_ds, shuffle=False, **common),
+        None if test_ds is None else DataLoader(test_ds, shuffle=False, **common),
     )
 
 
@@ -850,15 +959,20 @@ def build_imagenet_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLo
     )
 
 
-def build_classification_loaders(args: argparse.Namespace) -> tuple[DataLoader, DataLoader]:
+def build_classification_loaders(
+    args: argparse.Namespace,
+) -> tuple[DataLoader, DataLoader, DataLoader | None]:
     if args.dataset == "mnist":
-        return build_mnist_loaders(args)
+        train_loader, val_loader = build_mnist_loaders(args)
+        return train_loader, val_loader, None
     if args.dataset == "cifar10":
-        return build_cifar10_loaders(args)
+        train_loader, val_loader = build_cifar10_loaders(args)
+        return train_loader, val_loader, None
     if args.dataset == "tiny_imagenet":
         return build_tiny_imagenet_loaders(args)
     if args.dataset == "imagenet":
-        return build_imagenet_loaders(args)
+        train_loader, val_loader = build_imagenet_loaders(args)
+        return train_loader, val_loader, None
     raise ValueError(f"Unsupported dataset: {args.dataset}")
 
 
@@ -1299,6 +1413,54 @@ def print_log_paths(args: argparse.Namespace) -> None:
     print(f"Run args: {log_dir / 'args.json'}")
 
 
+def maybe_run_final_test(
+    *,
+    args: argparse.Namespace,
+    model: EncoderBackboneDecoder,
+    test_loader: DataLoader | None,
+    criterion: nn.Module,
+    device: torch.device,
+) -> None:
+    if test_loader is None:
+        return
+    if not args.eval_test_after_training:
+        print(
+            "Reserved test split was not evaluated. "
+            "Pass --eval-test-after-training when you are ready for one final test."
+        )
+        return
+
+    if args.checkpoint_out:
+        best_path = Path(best_checkpoint_path(args.checkpoint_out))
+        if best_path.is_file():
+            checkpoint = load_training_checkpoint(str(best_path))
+            load_result = model.load_state_dict(
+                checkpoint["model_state"],
+                strict=False,
+            )
+            if load_result.missing_keys:
+                print(
+                    "Best checkpoint missing keys initialized from current model: "
+                    f"{load_result.missing_keys}"
+                )
+            if load_result.unexpected_keys:
+                print(
+                    "Best checkpoint ignored unexpected keys: "
+                    f"{load_result.unexpected_keys}"
+                )
+            model.to(device)
+            print(f"Loaded best checkpoint for final test: {best_path}")
+
+    test_loss, test_acc = run_epoch(
+        model,
+        test_loader,
+        criterion,
+        device,
+        phase="test",
+    )
+    print(f"final test | loss {test_loss:.4f} acc {test_acc:.2%}")
+
+
 def count_parameters(module: nn.Module, *, trainable_only: bool) -> int:
     return sum(
         parameter.numel()
@@ -1336,13 +1498,19 @@ def main() -> None:
         raise ValueError("--neuron-prune-min-keep must be positive.")
     if args.log_batches < 0:
         raise ValueError("--log-batches must be non-negative.")
+    if args.train_val_samples < 0:
+        raise ValueError("--train-val-samples must be non-negative.")
     resume_checkpoint = load_training_checkpoint(args.resume) if args.resume else None
     args = merge_resume_args(args, resume_checkpoint)
+    if args.validation_source == "train_split" and args.dataset != "tiny_imagenet":
+        raise ValueError(
+            "--validation-source=train_split is currently supported for Tiny ImageNet only."
+        )
     set_seed(args.seed)
     logger = TrainingLogger(args, append=bool(args.resume))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    train_loader, val_loader = build_classification_loaders(args)
+    train_loader, val_loader, test_loader = build_classification_loaders(args)
     model = build_model(args).to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.AdamW(
@@ -1383,6 +1551,13 @@ def main() -> None:
         f"dataset={args.dataset}, encoder={args.encoder}, backbone=tpsapu, "
         f"decoder={args.decoder}, pooling={args.pooling}"
     )
+    if test_loader is None:
+        print(f"Validation source: {args.validation_source}")
+    else:
+        print(
+            "Validation source: train_split; "
+            "dataset validation/test split reserved for final test"
+        )
     print(
         "Schedule: "
         f"warmup={args.warmup_epochs}, cosine={args.cosine_epochs}, "
@@ -1504,6 +1679,13 @@ def main() -> None:
         )
 
     if args.prune_epochs <= 0:
+        maybe_run_final_test(
+            args=args,
+            model=model,
+            test_loader=test_loader,
+            criterion=criterion,
+            device=device,
+        )
         print_checkpoints(args.checkpoint_out, best_epoch, best_val_acc)
         print_log_paths(args)
         return
@@ -1694,6 +1876,13 @@ def main() -> None:
             neuron_pruner=neuron_pruner,
         )
 
+    maybe_run_final_test(
+        args=args,
+        model=model,
+        test_loader=test_loader,
+        criterion=criterion,
+        device=device,
+    )
     print_checkpoints(args.checkpoint_out, best_epoch, best_val_acc)
     print_log_paths(args)
 

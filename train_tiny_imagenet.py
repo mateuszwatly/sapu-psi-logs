@@ -37,6 +37,10 @@ DEFAULT_ARGS = [
     "256",
     "--batch-size",
     "64",
+    "--num-workers",
+    "0",
+    "--validation-source",
+    "train_split",
     "--checkpoint-out",
     "checkpoints/tpsapu_tiny_imagenet.pt",
 ]
