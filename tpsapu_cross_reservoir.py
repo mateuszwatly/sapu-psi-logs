@@ -13,7 +13,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from tpsapu import TPSAPUBackbone
+from tpsapu import PerTauRecurrentTPSAPUBackbone, TPSAPUBackbone
 
 
 class LowRankCrossReservoir(nn.Module):
@@ -96,7 +96,20 @@ class CompressedCrossReservoirTPSAPUBackbone(TPSAPUBackbone):
         return recurrent + self.cross_gain * self.cross_reservoir(spikes)
 
 
+class PerTauCompressedCrossReservoirTPSAPUBackbone(
+    CompressedCrossReservoirTPSAPUBackbone,
+    PerTauRecurrentTPSAPUBackbone,
+):
+    """
+    TPSAPU variant with per-tau recurrent matrices and cross-reservoir wiring.
+
+    Each tau reservoir owns its recurrent matrix. The compressed cross path then
+    adds off-diagonal communication between reservoirs at every recurrent step.
+    """
+
+
 __all__ = [
     "CompressedCrossReservoirTPSAPUBackbone",
     "LowRankCrossReservoir",
+    "PerTauCompressedCrossReservoirTPSAPUBackbone",
 ]

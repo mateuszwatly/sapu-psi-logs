@@ -52,7 +52,10 @@ from encoders import (
     TinyCNN3Encoder,
 )
 from tpsapu import PerTauRecurrentTPSAPUBackbone, TPSAPUBackbone
-from tpsapu_cross_reservoir import CompressedCrossReservoirTPSAPUBackbone
+from tpsapu_cross_reservoir import (
+    CompressedCrossReservoirTPSAPUBackbone,
+    PerTauCompressedCrossReservoirTPSAPUBackbone,
+)
 
 
 class EncoderBackboneDecoder(nn.Module):
@@ -251,13 +254,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--data-dir", default="data")
     parser.add_argument(
         "--backbone",
-        choices=["tpsapu", "tpsapu_per_tau", "tpsapu_cross_reservoir"],
+        choices=[
+            "tpsapu",
+            "tpsapu_per_tau",
+            "tpsapu_cross_reservoir",
+            "tpsapu_per_tau_cross_reservoir",
+        ],
         default="tpsapu",
         help=(
             "tpsapu shares recurrent topology across tau reservoirs; "
             "tpsapu_per_tau gives each tau its own recurrent matrix while "
             "keeping the input projection shared; tpsapu_cross_reservoir adds "
-            "compressed communication between tau reservoirs."
+            "compressed communication between tau reservoirs; "
+            "tpsapu_per_tau_cross_reservoir combines per-tau recurrent "
+            "matrices with compressed communication."
         ),
     )
     parser.add_argument(
@@ -304,13 +314,13 @@ def parse_args() -> argparse.Namespace:
         "--cross-rank",
         type=int,
         default=16,
-        help="Low-rank channel count for --backbone=tpsapu_cross_reservoir.",
+        help="Low-rank channel count for cross-reservoir backbone variants.",
     )
     parser.add_argument(
         "--cross-gain",
         type=float,
         default=0.1,
-        help="Scale for cross-reservoir current; used by tpsapu_cross_reservoir.",
+        help="Scale for cross-reservoir current; used by cross-reservoir variants.",
     )
     parser.add_argument("--patch-size", type=int, default=7)
     parser.add_argument("--encoder-hidden-dim", type=int, default=0)
@@ -1174,6 +1184,7 @@ def build_model(args: argparse.Namespace) -> EncoderBackboneDecoder:
         "tpsapu": TPSAPUBackbone,
         "tpsapu_per_tau": PerTauRecurrentTPSAPUBackbone,
         "tpsapu_cross_reservoir": CompressedCrossReservoirTPSAPUBackbone,
+        "tpsapu_per_tau_cross_reservoir": PerTauCompressedCrossReservoirTPSAPUBackbone,
     }[backbone_name]
     backbone_kwargs = {
         "input_dim": args.embed_dim,
@@ -1182,7 +1193,7 @@ def build_model(args: argparse.Namespace) -> EncoderBackboneDecoder:
         "recurrent_drop_p": args.recurrent_drop,
         "input_hidden_dim": args.input_hidden_dim or None,
     }
-    if backbone_name == "tpsapu_cross_reservoir":
+    if "cross_reservoir" in backbone_name:
         backbone_kwargs.update(
             cross_rank=getattr(args, "cross_rank", 16),
             cross_gain=getattr(args, "cross_gain", 0.1),
