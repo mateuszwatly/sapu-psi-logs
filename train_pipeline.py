@@ -389,6 +389,16 @@ def parse_args() -> argparse.Namespace:
             "training completes."
         ),
     )
+    parser.add_argument(
+        "--continuous",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help=(
+            "Keep training indefinitely. Warmup/cosine runs until the pruning "
+            "stage is reached; pruning then repeats LR/L2 cycles while keeping "
+            "the pruning mask. Without pruning, cosine cycles repeat forever."
+        ),
+    )
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument(
         "--no-download",
@@ -475,6 +485,7 @@ def merge_resume_args(
         "no_download",
         "num_workers",
         "eval_test_after_training",
+        "continuous",
         "resume",
         "train_samples",
         "test_samples",
@@ -1515,6 +1526,55 @@ def print_parameter_summary(model: EncoderBackboneDecoder) -> None:
         )
 
 
+def epoch_indices(start: int, stop: int, *, continuous: bool):
+    index = start
+    if continuous:
+        while True:
+            yield index
+            index += 1
+        return
+    yield from range(start, stop)
+
+
+def train_schedule_epoch(
+    epoch_index: int,
+    args: argparse.Namespace,
+    *,
+    repeat_cosine: bool,
+) -> int:
+    if epoch_index < args.warmup_epochs:
+        return epoch_index
+    if repeat_cosine and args.cosine_epochs > 0:
+        return args.warmup_epochs + (
+            (epoch_index - args.warmup_epochs) % args.cosine_epochs
+        )
+    return epoch_index
+
+
+def prune_schedule_epoch(epoch_index: int, args: argparse.Namespace) -> int:
+    if args.continuous and args.prune_epochs > 0:
+        return epoch_index % args.prune_epochs
+    return epoch_index
+
+
+def prune_target_sparsity(
+    epoch_index: int,
+    schedule_epoch: int,
+    args: argparse.Namespace,
+    *,
+    prune_ramp_epochs: int,
+) -> float:
+    if args.continuous and epoch_index >= args.prune_epochs:
+        return args.target_sparsity
+    return target_sparsity_for_epoch(
+        schedule_epoch,
+        start_sparsity=args.prune_start_sparsity,
+        target_sparsity=args.target_sparsity,
+        ramp_epochs=prune_ramp_epochs,
+        total_epochs=args.prune_epochs,
+    )
+
+
 def main() -> None:
     args = parse_args()
     if args.neuron_prune_min_keep <= 0:
@@ -1590,7 +1650,8 @@ def main() -> None:
         f"l2_prune_growth_epochs={args.l2_prune_growth_epochs}, "
         f"target_sparsity={args.target_sparsity:.1%}, "
         f"prune_ramp_epochs={prune_ramp_epochs}, "
-        f"prune_stabilize_epochs={args.prune_epochs - prune_ramp_epochs}"
+        f"prune_stabilize_epochs={args.prune_epochs - prune_ramp_epochs}, "
+        f"continuous={args.continuous}"
     )
     if args.neuron_prune:
         print(
@@ -1601,10 +1662,20 @@ def main() -> None:
             f"min_keep={args.neuron_prune_min_keep}"
         )
 
-    for epoch_index in range(completed_train_epochs, train_epochs):
-        phase = "warmup" if epoch_index < args.warmup_epochs else "cosine"
-        multiplier = lr_multiplier(
+    repeat_train_cosine = args.continuous and args.prune_epochs <= 0
+    for epoch_index in epoch_indices(
+        completed_train_epochs,
+        train_epochs,
+        continuous=repeat_train_cosine,
+    ):
+        schedule_epoch = train_schedule_epoch(
             epoch_index,
+            args,
+            repeat_cosine=repeat_train_cosine,
+        )
+        phase = "warmup" if schedule_epoch < args.warmup_epochs else "cosine"
+        multiplier = lr_multiplier(
+            schedule_epoch,
             warmup_epochs=args.warmup_epochs,
             cosine_epochs=args.cosine_epochs,
             cycles=args.cosine_cycles,
@@ -1621,7 +1692,7 @@ def main() -> None:
             optimizer=optimizer,
             grad_clip=args.grad_clip,
             phase=phase,
-            epoch=epoch_index + 1,
+            epoch=schedule_epoch + 1,
             total_epochs=train_epochs,
             lr=lr,
             log_batches=args.log_batches,
@@ -1632,7 +1703,7 @@ def main() -> None:
             criterion,
             device,
             phase=phase,
-            epoch=epoch_index + 1,
+            epoch=schedule_epoch + 1,
             total_epochs=train_epochs,
             lr=lr,
             log_batches=args.log_batches,
@@ -1657,7 +1728,7 @@ def main() -> None:
                 )
         print_epoch(
             phase=phase,
-            epoch=epoch_index + 1,
+            epoch=schedule_epoch + 1,
             total_epochs=train_epochs,
             lr=lr,
             train_loss=train_loss,
@@ -1669,7 +1740,7 @@ def main() -> None:
             {
                 "global_epoch": epoch_index + 1,
                 "phase": phase,
-                "phase_epoch": epoch_index + 1,
+                "phase_epoch": schedule_epoch + 1,
                 "phase_total_epochs": train_epochs,
                 "completed_train_epochs": epoch_index + 1,
                 "completed_prune_epochs": 0,
@@ -1771,23 +1842,27 @@ def main() -> None:
             neuron_pruner.apply()
     prune_base_lr = args.lr * args.prune_lr_scale
 
-    for epoch_index in range(completed_prune_epochs, args.prune_epochs):
+    for epoch_index in epoch_indices(
+        completed_prune_epochs,
+        args.prune_epochs,
+        continuous=args.continuous,
+    ):
+        schedule_epoch = prune_schedule_epoch(epoch_index, args)
         if neuron_pruner is not None:
             neuron_pruner.reset_activity()
         l2_lambda = l2_prune_lambda_for_epoch(
-            epoch_index,
+            schedule_epoch,
             start_lambda=args.l2_prune_start_lambda,
             growth_epochs=args.l2_prune_growth_epochs,
         )
-        current_target_sparsity = target_sparsity_for_epoch(
+        current_target_sparsity = prune_target_sparsity(
             epoch_index,
-            start_sparsity=args.prune_start_sparsity,
-            target_sparsity=args.target_sparsity,
-            ramp_epochs=prune_ramp_epochs,
-            total_epochs=args.prune_epochs,
+            schedule_epoch,
+            args,
+            prune_ramp_epochs=prune_ramp_epochs,
         )
         multiplier = cosine_only_multiplier(
-            epoch_index,
+            schedule_epoch,
             total_epochs=args.prune_epochs,
             cycles=args.prune_cycles,
             min_lr_ratio=args.min_lr_ratio,
@@ -1806,7 +1881,7 @@ def main() -> None:
             pruner=pruner,
             neuron_pruner=neuron_pruner,
             phase="l2-prune",
-            epoch=epoch_index + 1,
+            epoch=schedule_epoch + 1,
             total_epochs=args.prune_epochs,
             lr=lr,
             log_batches=args.log_batches,
@@ -1820,7 +1895,7 @@ def main() -> None:
             criterion,
             device,
             phase="l2-prune",
-            epoch=epoch_index + 1,
+            epoch=schedule_epoch + 1,
             total_epochs=args.prune_epochs,
             lr=lr,
             log_batches=args.log_batches,
@@ -1850,7 +1925,7 @@ def main() -> None:
         )
         print_epoch(
             phase="l2-prune",
-            epoch=epoch_index + 1,
+            epoch=schedule_epoch + 1,
             total_epochs=args.prune_epochs,
             lr=lr,
             train_loss=train_loss,
@@ -1866,7 +1941,7 @@ def main() -> None:
             {
                 "global_epoch": train_epochs + epoch_index + 1,
                 "phase": "l2-prune",
-                "phase_epoch": epoch_index + 1,
+                "phase_epoch": schedule_epoch + 1,
                 "phase_total_epochs": args.prune_epochs,
                 "completed_train_epochs": train_epochs,
                 "completed_prune_epochs": epoch_index + 1,
