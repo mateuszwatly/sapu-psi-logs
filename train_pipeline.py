@@ -51,7 +51,8 @@ from encoders import (
     TinyCNN2Encoder,
     TinyCNN3Encoder,
 )
-from tpsapu import TPSAPUBackbone
+from tpsapu import PerTauRecurrentTPSAPUBackbone, TPSAPUBackbone
+from tpsapu_cross_reservoir import CompressedCrossReservoirTPSAPUBackbone
 
 
 class EncoderBackboneDecoder(nn.Module):
@@ -249,6 +250,17 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--data-dir", default="data")
     parser.add_argument(
+        "--backbone",
+        choices=["tpsapu", "tpsapu_per_tau", "tpsapu_cross_reservoir"],
+        default="tpsapu",
+        help=(
+            "tpsapu shares recurrent topology across tau reservoirs; "
+            "tpsapu_per_tau gives each tau its own recurrent matrix while "
+            "keeping the input projection shared; tpsapu_cross_reservoir adds "
+            "compressed communication between tau reservoirs."
+        ),
+    )
+    parser.add_argument(
         "--encoder",
         choices=[
             "linear_patch",
@@ -288,6 +300,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--reservoir-dim", type=int, default=64)
     parser.add_argument("--taus", default="1.1,8.0,64.0")
     parser.add_argument("--input-hidden-dim", type=int, default=0)
+    parser.add_argument(
+        "--cross-rank",
+        type=int,
+        default=16,
+        help="Low-rank channel count for --backbone=tpsapu_cross_reservoir.",
+    )
+    parser.add_argument(
+        "--cross-gain",
+        type=float,
+        default=0.1,
+        help="Scale for cross-reservoir current; used by tpsapu_cross_reservoir.",
+    )
     parser.add_argument("--patch-size", type=int, default=7)
     parser.add_argument("--encoder-hidden-dim", type=int, default=0)
     parser.add_argument("--cnn-channels", type=int, default=64)
@@ -1145,13 +1169,25 @@ def build_decoder(args: argparse.Namespace, input_dim: int) -> nn.Module:
 def build_model(args: argparse.Namespace) -> EncoderBackboneDecoder:
     taus = parse_taus(args.taus)
     encoder = build_encoder(args)
-    backbone = TPSAPUBackbone(
-        input_dim=args.embed_dim,
-        reservoir_dim=args.reservoir_dim,
-        taus=taus,
-        recurrent_drop_p=args.recurrent_drop,
-        input_hidden_dim=args.input_hidden_dim or None,
-    )
+    backbone_name = getattr(args, "backbone", "tpsapu")
+    backbone_cls = {
+        "tpsapu": TPSAPUBackbone,
+        "tpsapu_per_tau": PerTauRecurrentTPSAPUBackbone,
+        "tpsapu_cross_reservoir": CompressedCrossReservoirTPSAPUBackbone,
+    }[backbone_name]
+    backbone_kwargs = {
+        "input_dim": args.embed_dim,
+        "reservoir_dim": args.reservoir_dim,
+        "taus": taus,
+        "recurrent_drop_p": args.recurrent_drop,
+        "input_hidden_dim": args.input_hidden_dim or None,
+    }
+    if backbone_name == "tpsapu_cross_reservoir":
+        backbone_kwargs.update(
+            cross_rank=getattr(args, "cross_rank", 16),
+            cross_gain=getattr(args, "cross_gain", 0.1),
+        )
+    backbone = backbone_cls(**backbone_kwargs)
     decoder = build_decoder(args, backbone.out_features)
     return EncoderBackboneDecoder(
         encoder=encoder,
@@ -1631,7 +1667,7 @@ def main() -> None:
     print(f"Device: {device}")
     print(
         "Pipeline: "
-        f"dataset={args.dataset}, encoder={args.encoder}, backbone=tpsapu, "
+        f"dataset={args.dataset}, encoder={args.encoder}, backbone={args.backbone}, "
         f"decoder={args.decoder}, pooling={args.pooling}"
     )
     if test_loader is None:
@@ -1662,317 +1698,351 @@ def main() -> None:
             f"min_keep={args.neuron_prune_min_keep}"
         )
 
-    repeat_train_cosine = args.continuous and args.prune_epochs <= 0
-    for epoch_index in epoch_indices(
-        completed_train_epochs,
-        train_epochs,
-        continuous=repeat_train_cosine,
+    resume_pruner_checkpoint = resume_checkpoint
+    if (
+        args.continuous
+        and args.prune_epochs > 0
+        and completed_prune_epochs >= args.prune_epochs
     ):
-        schedule_epoch = train_schedule_epoch(
-            epoch_index,
-            args,
-            repeat_cosine=repeat_train_cosine,
+        print(
+            "Resume checkpoint already completed its pruning cycle; "
+            "starting the next warmup/cosine training cycle."
         )
-        phase = "warmup" if schedule_epoch < args.warmup_epochs else "cosine"
-        multiplier = lr_multiplier(
-            schedule_epoch,
-            warmup_epochs=args.warmup_epochs,
-            cosine_epochs=args.cosine_epochs,
-            cycles=args.cosine_cycles,
-            min_lr_ratio=args.min_lr_ratio,
-        )
-        lr = args.lr * multiplier
-        set_optimizer_lr(optimizer, lr)
+        completed_train_epochs = 0
+        completed_prune_epochs = 0
+        resume_pruner_checkpoint = None
 
-        train_loss, train_acc = run_epoch(
-            model,
-            train_loader,
-            criterion,
-            device,
-            optimizer=optimizer,
-            grad_clip=args.grad_clip,
-            phase=phase,
-            epoch=schedule_epoch + 1,
-            total_epochs=train_epochs,
-            lr=lr,
-            log_batches=args.log_batches,
-        )
-        val_loss, val_acc = run_epoch(
-            model,
-            val_loader,
-            criterion,
-            device,
-            phase=phase,
-            epoch=schedule_epoch + 1,
-            total_epochs=train_epochs,
-            lr=lr,
-            log_batches=args.log_batches,
-        )
-        if val_acc > best_val_acc:
-            best_val_acc = val_acc
-            best_epoch = epoch_index + 1
-            if args.checkpoint_out:
-                save_checkpoint(
-                    best_checkpoint_path(args.checkpoint_out),
-                    model=model,
-                    optimizer=optimizer,
-                    args=args,
-                    completed_train_epochs=epoch_index + 1,
-                    completed_prune_epochs=0,
-                    phase=phase,
-                    val_loss=val_loss,
-                    val_acc=val_acc,
-                    best_val_acc=best_val_acc,
-                    best_epoch=best_epoch,
-                    pruner=None,
-                )
-        print_epoch(
-            phase=phase,
-            epoch=schedule_epoch + 1,
-            total_epochs=train_epochs,
-            lr=lr,
-            train_loss=train_loss,
-            train_acc=train_acc,
-            val_loss=val_loss,
-            val_acc=val_acc,
-        )
-        logger.log_metric(
-            {
-                "global_epoch": epoch_index + 1,
-                "phase": phase,
-                "phase_epoch": schedule_epoch + 1,
-                "phase_total_epochs": train_epochs,
-                "completed_train_epochs": epoch_index + 1,
-                "completed_prune_epochs": 0,
-                "lr": lr,
-                "train_loss": train_loss,
-                "train_acc": train_acc,
-                "val_loss": val_loss,
-                "val_acc": val_acc,
-                "best_val_acc": best_val_acc,
-                "best_epoch": best_epoch,
-                "sparsity": None,
-                "target_sparsity": None,
-                "neuron_sparsity": None,
-                "l2_lambda": None,
-            }
-        )
-        save_checkpoint(
-            args.checkpoint_out,
-            model=model,
-            optimizer=optimizer,
-            args=args,
-            completed_train_epochs=epoch_index + 1,
-            completed_prune_epochs=0,
-            phase=phase,
-            val_loss=val_loss,
-            val_acc=val_acc,
-            best_val_acc=best_val_acc,
-            best_epoch=best_epoch,
-            pruner=None,
-        )
+    while True:
+        repeat_train_cosine = args.continuous and args.prune_epochs <= 0
+        for epoch_index in epoch_indices(
+            completed_train_epochs,
+            train_epochs,
+            continuous=repeat_train_cosine,
+        ):
+            schedule_epoch = train_schedule_epoch(
+                epoch_index,
+                args,
+                repeat_cosine=repeat_train_cosine,
+            )
+            phase = "warmup" if schedule_epoch < args.warmup_epochs else "cosine"
+            multiplier = lr_multiplier(
+                schedule_epoch,
+                warmup_epochs=args.warmup_epochs,
+                cosine_epochs=args.cosine_epochs,
+                cycles=args.cosine_cycles,
+                min_lr_ratio=args.min_lr_ratio,
+            )
+            lr = args.lr * multiplier
+            set_optimizer_lr(optimizer, lr)
 
-    if args.prune_epochs <= 0:
-        maybe_run_final_test(
-            args=args,
-            model=model,
-            test_loader=test_loader,
-            criterion=criterion,
-            device=device,
-        )
-        print_checkpoints(args.checkpoint_out, best_epoch, best_val_acc)
-        print_log_paths(args)
-        return
+            train_loss, train_acc = run_epoch(
+                model,
+                train_loader,
+                criterion,
+                device,
+                optimizer=optimizer,
+                grad_clip=args.grad_clip,
+                phase=phase,
+                epoch=schedule_epoch + 1,
+                total_epochs=train_epochs,
+                lr=lr,
+                log_batches=args.log_batches,
+            )
+            val_loss, val_acc = run_epoch(
+                model,
+                val_loader,
+                criterion,
+                device,
+                phase=phase,
+                epoch=schedule_epoch + 1,
+                total_epochs=train_epochs,
+                lr=lr,
+                log_batches=args.log_batches,
+            )
+            if val_acc > best_val_acc:
+                best_val_acc = val_acc
+                best_epoch = epoch_index + 1
+                if args.checkpoint_out:
+                    save_checkpoint(
+                        best_checkpoint_path(args.checkpoint_out),
+                        model=model,
+                        optimizer=optimizer,
+                        args=args,
+                        completed_train_epochs=epoch_index + 1,
+                        completed_prune_epochs=0,
+                        phase=phase,
+                        val_loss=val_loss,
+                        val_acc=val_acc,
+                        best_val_acc=best_val_acc,
+                        best_epoch=best_epoch,
+                        pruner=None,
+                    )
+            print_epoch(
+                phase=phase,
+                epoch=schedule_epoch + 1,
+                total_epochs=train_epochs,
+                lr=lr,
+                train_loss=train_loss,
+                train_acc=train_acc,
+                val_loss=val_loss,
+                val_acc=val_acc,
+            )
+            logger.log_metric(
+                {
+                    "global_epoch": epoch_index + 1,
+                    "phase": phase,
+                    "phase_epoch": schedule_epoch + 1,
+                    "phase_total_epochs": train_epochs,
+                    "completed_train_epochs": epoch_index + 1,
+                    "completed_prune_epochs": 0,
+                    "lr": lr,
+                    "train_loss": train_loss,
+                    "train_acc": train_acc,
+                    "val_loss": val_loss,
+                    "val_acc": val_acc,
+                    "best_val_acc": best_val_acc,
+                    "best_epoch": best_epoch,
+                    "sparsity": None,
+                    "target_sparsity": None,
+                    "neuron_sparsity": None,
+                    "l2_lambda": None,
+                }
+            )
+            save_checkpoint(
+                args.checkpoint_out,
+                model=model,
+                optimizer=optimizer,
+                args=args,
+                completed_train_epochs=epoch_index + 1,
+                completed_prune_epochs=0,
+                phase=phase,
+                val_loss=val_loss,
+                val_acc=val_acc,
+                best_val_acc=best_val_acc,
+                best_epoch=best_epoch,
+                pruner=None,
+            )
 
-    if not args.keep_dropout_during_prune:
-        model.backbone.set_recurrent_dropout(0.0)
+        if args.prune_epochs <= 0:
+            maybe_run_final_test(
+                args=args,
+                model=model,
+                test_loader=test_loader,
+                criterion=criterion,
+                device=device,
+            )
+            print_checkpoints(args.checkpoint_out, best_epoch, best_val_acc)
+            print_log_paths(args)
+            return
 
-    pruner = RecurrentMagnitudePruner(
-        model.backbone.shared_recurrent.weight,
-        threshold=args.prune_threshold,
-        target_sparsity=args.target_sparsity,
-    )
-    if resume_checkpoint is not None and resume_checkpoint.get("pruner") is not None:
-        saved_pruner = resume_checkpoint["pruner"]
-        pruner.threshold = float(saved_pruner.get("threshold", pruner.threshold))
-        pruner.target_sparsity = float(
-            saved_pruner.get("target_sparsity", pruner.target_sparsity)
-        )
-        pruner.mask = saved_pruner["mask"].to(
-            device=model.backbone.shared_recurrent.weight.device,
-            dtype=torch.bool,
-        )
-        pruner.apply()
-    if args.neuron_prune:
-        neuron_pruner = NeuronActivityPruner(
-            model.backbone,
-            spike_threshold=args.neuron_spike_threshold,
-            membrane_std_threshold=args.neuron_membrane_std_threshold,
-            target_sparsity=args.neuron_prune_target_sparsity,
-            min_keep=args.neuron_prune_min_keep,
+        completed_train_epochs = train_epochs
+        if not args.keep_dropout_during_prune:
+            model.backbone.set_recurrent_dropout(0.0)
+
+        pruner = RecurrentMagnitudePruner(
+            model.backbone.shared_recurrent.weight,
+            threshold=args.prune_threshold,
+            target_sparsity=args.target_sparsity,
         )
         if (
-            resume_checkpoint is not None
-            and resume_checkpoint.get("neuron_pruner") is not None
+            resume_pruner_checkpoint is not None
+            and resume_pruner_checkpoint.get("pruner") is not None
         ):
-            saved_neuron_pruner = resume_checkpoint["neuron_pruner"]
-            neuron_pruner.spike_threshold = float(
-                saved_neuron_pruner.get(
-                    "spike_threshold", neuron_pruner.spike_threshold
-                )
+            saved_pruner = resume_pruner_checkpoint["pruner"]
+            pruner.threshold = float(saved_pruner.get("threshold", pruner.threshold))
+            pruner.target_sparsity = float(
+                saved_pruner.get("target_sparsity", pruner.target_sparsity)
             )
-            neuron_pruner.membrane_std_threshold = float(
-                saved_neuron_pruner.get(
-                    "membrane_std_threshold",
-                    neuron_pruner.membrane_std_threshold,
-                )
-            )
-            neuron_pruner.target_sparsity = float(
-                saved_neuron_pruner.get(
-                    "target_sparsity", neuron_pruner.target_sparsity
-                )
-            )
-            neuron_pruner.min_keep = int(
-                saved_neuron_pruner.get("min_keep", neuron_pruner.min_keep)
-            )
-            neuron_pruner.mask = saved_neuron_pruner["mask"].to(
-                device=model.backbone.neuron_mask.device,
+            pruner.mask = saved_pruner["mask"].to(
+                device=model.backbone.shared_recurrent.weight.device,
                 dtype=torch.bool,
             )
-            neuron_pruner.apply()
-    prune_base_lr = args.lr * args.prune_lr_scale
-
-    for epoch_index in epoch_indices(
-        completed_prune_epochs,
-        args.prune_epochs,
-        continuous=args.continuous,
-    ):
-        schedule_epoch = prune_schedule_epoch(epoch_index, args)
-        if neuron_pruner is not None:
-            neuron_pruner.reset_activity()
-        l2_lambda = l2_prune_lambda_for_epoch(
-            schedule_epoch,
-            start_lambda=args.l2_prune_start_lambda,
-            growth_epochs=args.l2_prune_growth_epochs,
-        )
-        current_target_sparsity = prune_target_sparsity(
-            epoch_index,
-            schedule_epoch,
-            args,
-            prune_ramp_epochs=prune_ramp_epochs,
-        )
-        multiplier = cosine_only_multiplier(
-            schedule_epoch,
-            total_epochs=args.prune_epochs,
-            cycles=args.prune_cycles,
-            min_lr_ratio=args.min_lr_ratio,
-        )
-        lr = prune_base_lr * multiplier
-        set_optimizer_lr(optimizer, lr)
-
-        train_loss, train_acc = run_epoch(
-            model,
-            train_loader,
-            criterion,
-            device,
-            optimizer=optimizer,
-            grad_clip=args.grad_clip,
-            l2_prune_lambda=l2_lambda,
-            pruner=pruner,
-            neuron_pruner=neuron_pruner,
-            phase="l2-prune",
-            epoch=schedule_epoch + 1,
-            total_epochs=args.prune_epochs,
-            lr=lr,
-            log_batches=args.log_batches,
-        )
-        pruner.update(current_target_sparsity)
-        if neuron_pruner is not None:
-            neuron_pruner.update()
-        val_loss, val_acc = run_epoch(
-            model,
-            val_loader,
-            criterion,
-            device,
-            phase="l2-prune",
-            epoch=schedule_epoch + 1,
-            total_epochs=args.prune_epochs,
-            lr=lr,
-            log_batches=args.log_batches,
-        )
-        if val_acc > best_val_acc:
-            best_val_acc = val_acc
-            best_epoch = train_epochs + epoch_index + 1
-            if args.checkpoint_out:
-                save_checkpoint(
-                    best_checkpoint_path(args.checkpoint_out),
-                    model=model,
-                    optimizer=optimizer,
-                    args=args,
-                    completed_train_epochs=train_epochs,
-                    completed_prune_epochs=epoch_index + 1,
-                    phase="l2-prune",
-                    val_loss=val_loss,
-                    val_acc=val_acc,
-                    best_val_acc=best_val_acc,
-                    best_epoch=best_epoch,
-                    pruner=pruner,
-                    neuron_pruner=neuron_pruner,
+            pruner.apply()
+        neuron_pruner = None
+        if args.neuron_prune:
+            neuron_pruner = NeuronActivityPruner(
+                model.backbone,
+                spike_threshold=args.neuron_spike_threshold,
+                membrane_std_threshold=args.neuron_membrane_std_threshold,
+                target_sparsity=args.neuron_prune_target_sparsity,
+                min_keep=args.neuron_prune_min_keep,
+            )
+            if (
+                resume_pruner_checkpoint is not None
+                and resume_pruner_checkpoint.get("neuron_pruner") is not None
+            ):
+                saved_neuron_pruner = resume_pruner_checkpoint["neuron_pruner"]
+                neuron_pruner.spike_threshold = float(
+                    saved_neuron_pruner.get(
+                        "spike_threshold", neuron_pruner.spike_threshold
+                    )
                 )
-        sparsity = pruner.sparsity()
-        neuron_sparsity = (
-            None if neuron_pruner is None else neuron_pruner.sparsity()
+                neuron_pruner.membrane_std_threshold = float(
+                    saved_neuron_pruner.get(
+                        "membrane_std_threshold",
+                        neuron_pruner.membrane_std_threshold,
+                    )
+                )
+                neuron_pruner.target_sparsity = float(
+                    saved_neuron_pruner.get(
+                        "target_sparsity", neuron_pruner.target_sparsity
+                    )
+                )
+                neuron_pruner.min_keep = int(
+                    saved_neuron_pruner.get("min_keep", neuron_pruner.min_keep)
+                )
+                neuron_pruner.mask = saved_neuron_pruner["mask"].to(
+                    device=model.backbone.neuron_mask.device,
+                    dtype=torch.bool,
+                )
+                neuron_pruner.apply()
+        prune_base_lr = args.lr * args.prune_lr_scale
+
+        for epoch_index in epoch_indices(
+            completed_prune_epochs,
+            args.prune_epochs,
+            continuous=False,
+        ):
+            schedule_epoch = prune_schedule_epoch(epoch_index, args)
+            if neuron_pruner is not None:
+                neuron_pruner.reset_activity()
+            l2_lambda = l2_prune_lambda_for_epoch(
+                schedule_epoch,
+                start_lambda=args.l2_prune_start_lambda,
+                growth_epochs=args.l2_prune_growth_epochs,
+            )
+            current_target_sparsity = prune_target_sparsity(
+                epoch_index,
+                schedule_epoch,
+                args,
+                prune_ramp_epochs=prune_ramp_epochs,
+            )
+            multiplier = cosine_only_multiplier(
+                schedule_epoch,
+                total_epochs=args.prune_epochs,
+                cycles=args.prune_cycles,
+                min_lr_ratio=args.min_lr_ratio,
+            )
+            lr = prune_base_lr * multiplier
+            set_optimizer_lr(optimizer, lr)
+
+            train_loss, train_acc = run_epoch(
+                model,
+                train_loader,
+                criterion,
+                device,
+                optimizer=optimizer,
+                grad_clip=args.grad_clip,
+                l2_prune_lambda=l2_lambda,
+                pruner=pruner,
+                neuron_pruner=neuron_pruner,
+                phase="l2-prune",
+                epoch=schedule_epoch + 1,
+                total_epochs=args.prune_epochs,
+                lr=lr,
+                log_batches=args.log_batches,
+            )
+            pruner.update(current_target_sparsity)
+            if neuron_pruner is not None:
+                neuron_pruner.update()
+            val_loss, val_acc = run_epoch(
+                model,
+                val_loader,
+                criterion,
+                device,
+                phase="l2-prune",
+                epoch=schedule_epoch + 1,
+                total_epochs=args.prune_epochs,
+                lr=lr,
+                log_batches=args.log_batches,
+            )
+            if val_acc > best_val_acc:
+                best_val_acc = val_acc
+                best_epoch = train_epochs + epoch_index + 1
+                if args.checkpoint_out:
+                    save_checkpoint(
+                        best_checkpoint_path(args.checkpoint_out),
+                        model=model,
+                        optimizer=optimizer,
+                        args=args,
+                        completed_train_epochs=train_epochs,
+                        completed_prune_epochs=epoch_index + 1,
+                        phase="l2-prune",
+                        val_loss=val_loss,
+                        val_acc=val_acc,
+                        best_val_acc=best_val_acc,
+                        best_epoch=best_epoch,
+                        pruner=pruner,
+                        neuron_pruner=neuron_pruner,
+                    )
+            sparsity = pruner.sparsity()
+            neuron_sparsity = (
+                None if neuron_pruner is None else neuron_pruner.sparsity()
+            )
+            print_epoch(
+                phase="l2-prune",
+                epoch=schedule_epoch + 1,
+                total_epochs=args.prune_epochs,
+                lr=lr,
+                train_loss=train_loss,
+                train_acc=train_acc,
+                val_loss=val_loss,
+                val_acc=val_acc,
+                sparsity=sparsity,
+                target_sparsity=current_target_sparsity,
+                neuron_sparsity=neuron_sparsity,
+                l2_lambda=l2_lambda,
+            )
+            logger.log_metric(
+                {
+                    "global_epoch": train_epochs + epoch_index + 1,
+                    "phase": "l2-prune",
+                    "phase_epoch": schedule_epoch + 1,
+                    "phase_total_epochs": args.prune_epochs,
+                    "completed_train_epochs": train_epochs,
+                    "completed_prune_epochs": epoch_index + 1,
+                    "lr": lr,
+                    "train_loss": train_loss,
+                    "train_acc": train_acc,
+                    "val_loss": val_loss,
+                    "val_acc": val_acc,
+                    "best_val_acc": best_val_acc,
+                    "best_epoch": best_epoch,
+                    "sparsity": sparsity,
+                    "target_sparsity": current_target_sparsity,
+                    "neuron_sparsity": neuron_sparsity,
+                    "l2_lambda": l2_lambda,
+                }
+            )
+            save_checkpoint(
+                args.checkpoint_out,
+                model=model,
+                optimizer=optimizer,
+                args=args,
+                completed_train_epochs=train_epochs,
+                completed_prune_epochs=epoch_index + 1,
+                phase="l2-prune",
+                val_loss=val_loss,
+                val_acc=val_acc,
+                best_val_acc=best_val_acc,
+                best_epoch=best_epoch,
+                pruner=pruner,
+                neuron_pruner=neuron_pruner,
+            )
+
+        completed_prune_epochs = args.prune_epochs
+        resume_pruner_checkpoint = None
+        if not args.continuous:
+            break
+
+        print(
+            "Completed pruning cycle; starting the next warmup/cosine "
+            "training cycle."
         )
-        print_epoch(
-            phase="l2-prune",
-            epoch=schedule_epoch + 1,
-            total_epochs=args.prune_epochs,
-            lr=lr,
-            train_loss=train_loss,
-            train_acc=train_acc,
-            val_loss=val_loss,
-            val_acc=val_acc,
-            sparsity=sparsity,
-            target_sparsity=current_target_sparsity,
-            neuron_sparsity=neuron_sparsity,
-            l2_lambda=l2_lambda,
-        )
-        logger.log_metric(
-            {
-                "global_epoch": train_epochs + epoch_index + 1,
-                "phase": "l2-prune",
-                "phase_epoch": schedule_epoch + 1,
-                "phase_total_epochs": args.prune_epochs,
-                "completed_train_epochs": train_epochs,
-                "completed_prune_epochs": epoch_index + 1,
-                "lr": lr,
-                "train_loss": train_loss,
-                "train_acc": train_acc,
-                "val_loss": val_loss,
-                "val_acc": val_acc,
-                "best_val_acc": best_val_acc,
-                "best_epoch": best_epoch,
-                "sparsity": sparsity,
-                "target_sparsity": current_target_sparsity,
-                "neuron_sparsity": neuron_sparsity,
-                "l2_lambda": l2_lambda,
-            }
-        )
-        save_checkpoint(
-            args.checkpoint_out,
-            model=model,
-            optimizer=optimizer,
-            args=args,
-            completed_train_epochs=train_epochs,
-            completed_prune_epochs=epoch_index + 1,
-            phase="l2-prune",
-            val_loss=val_loss,
-            val_acc=val_acc,
-            best_val_acc=best_val_acc,
-            best_epoch=best_epoch,
-            pruner=pruner,
-            neuron_pruner=neuron_pruner,
-        )
+        if not args.keep_dropout_during_prune:
+            model.backbone.set_recurrent_dropout(args.recurrent_drop)
+        completed_train_epochs = 0
+        completed_prune_epochs = 0
 
     maybe_run_final_test(
         args=args,

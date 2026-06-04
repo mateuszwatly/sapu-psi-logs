@@ -127,6 +127,22 @@ class SharedReservoir(nn.Module):
             self.reset_state()
 
 
+class PerTauRecurrent(nn.Module):
+    """Independent recurrent matrices for each tau reservoir."""
+
+    def __init__(self, tau_count: int, reservoir_dim: int) -> None:
+        super().__init__()
+        if tau_count <= 0:
+            raise ValueError("tau_count must be positive.")
+        if reservoir_dim <= 0:
+            raise ValueError("reservoir_dim must be positive.")
+        self.weight = nn.Parameter(torch.empty(tau_count, reservoir_dim, reservoir_dim))
+
+    def forward(self, spikes: torch.Tensor, weight: torch.Tensor | None = None) -> torch.Tensor:
+        recurrent_weight = self.weight if weight is None else weight
+        return torch.einsum("bti,toi->bto", spikes, recurrent_weight)
+
+
 class TPSAPUBackbone(nn.Module):
     """
     Generic encoder-ready TPSAPU feature extractor.
@@ -183,17 +199,15 @@ class TPSAPUBackbone(nn.Module):
         self.shared_input_proj = nn.Linear(reservoir_dim, reservoir_dim, bias=False)
         self.shared_recurrent = nn.Linear(reservoir_dim, reservoir_dim, bias=False)
         self.register_buffer("neuron_mask", torch.ones(reservoir_dim))
-        self.last_states: dict[str, torch.Tensor] | None = None
-        self.reservoirs = nn.ModuleList(
-            [
-                SharedReservoir(
-                    reservoir_dim,
-                    tau,
-                    detach_recurrent_state=detach_recurrent_state,
-                )
-                for tau in self.taus
-            ]
+        self.register_buffer(
+            "_tau_inv",
+            torch.tensor([1.0 / tau for tau in self.taus], dtype=torch.float32),
+            persistent=False,
         )
+        self.spike_surrogate = surrogate.ATan()
+        self.last_states: dict[str, torch.Tensor] | None = None
+        self._last_spikes: torch.Tensor | None = None
+        self._membrane: torch.Tensor | None = None
         self.output_norm = nn.LayerNorm(self.out_features) if output_norm else nn.Identity()
 
         self.reset_parameters()
@@ -222,8 +236,8 @@ class TPSAPUBackbone(nn.Module):
 
     def reset_state(self) -> None:
         self.last_states = None
-        for reservoir in self.reservoirs:
-            reservoir.reset_state()
+        self._last_spikes = None
+        self._membrane = None
 
     def freeze_shared_topology(self) -> None:
         """Freeze the shared input and recurrent topology weights."""
@@ -309,26 +323,25 @@ class TPSAPUBackbone(nn.Module):
         projected = self.nl_proj(x)
         recurrent_weight = self._masked_recurrent_weight()
         neuron_mask = self.neuron_mask.to(device=projected.device)
+        tau_inv = self._tau_inv.to(device=projected.device, dtype=projected.dtype).view(
+            1,
+            -1,
+            1,
+        )
+        feature_mask_by_tau = neuron_mask.to(dtype=projected.dtype).view(1, 1, -1)
         membrane_readouts = []
         spike_readouts = []
 
         for step in range(projected.size(1)):
             step_input = projected[:, step, :]
-            membranes = []
-            spikes = []
-            for reservoir in self.reservoirs:
-                spike = reservoir(
-                    step_input,
-                    self.shared_input_proj,
-                    recurrent_weight,
-                    neuron_mask,
-                )
-                spikes.append(spike)
-                membranes.append(
-                    reservoir.membrane() * neuron_mask.to(dtype=step_input.dtype)
-                )
-            membrane_readouts.append(torch.cat(membranes, dim=-1))
-            spike_readouts.append(torch.cat(spikes, dim=-1))
+            membrane, spikes = self._step_all_reservoirs(
+                step_input,
+                recurrent_weight,
+                tau_inv,
+                feature_mask_by_tau,
+            )
+            membrane_readouts.append(membrane.reshape(membrane.size(0), -1))
+            spike_readouts.append(spikes.reshape(spikes.size(0), -1))
 
         feature_mask = neuron_mask.repeat(len(self.taus)).view(1, 1, -1)
         membranes = self.output_norm(torch.stack(membrane_readouts, dim=1))
@@ -348,6 +361,76 @@ class TPSAPUBackbone(nn.Module):
         }
         self.last_states = {key: value.detach() for key, value in states.items()}
         return states
+
+    def _step_all_reservoirs(
+        self,
+        step_input: torch.Tensor,
+        recurrent_weight: torch.Tensor,
+        tau_inv: torch.Tensor,
+        neuron_mask: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        batch_size = step_input.size(0)
+        self._reset_state_if_needed(step_input)
+
+        if self._last_spikes is None:
+            recurrent = step_input.new_zeros(
+                batch_size,
+                len(self.taus),
+                self.reservoir_dim,
+            )
+        else:
+            recurrent = self._recurrent_projection(self._last_spikes, recurrent_weight)
+
+        input_current = self.shared_input_proj(step_input).unsqueeze(1)
+        current = (input_current + recurrent) * neuron_mask
+
+        if self._membrane is None:
+            membrane = step_input.new_zeros(
+                batch_size,
+                len(self.taus),
+                self.reservoir_dim,
+            )
+        else:
+            membrane = self._membrane
+
+        membrane = membrane + (current - membrane) * tau_inv
+        raw_spikes = self.spike_surrogate(membrane - 1.0)
+        membrane = membrane * (1.0 - raw_spikes.detach())
+        spikes = raw_spikes * neuron_mask
+
+        self._membrane = membrane
+        self._last_spikes = spikes.detach() if self.config.detach_recurrent_state else spikes
+        return membrane * neuron_mask, spikes
+
+    def _reset_state_if_needed(self, reference: torch.Tensor) -> None:
+        expected_shape = (reference.size(0), len(self.taus), self.reservoir_dim)
+        if self._last_spikes is not None and (
+            tuple(self._last_spikes.shape) != expected_shape
+            or self._last_spikes.device != reference.device
+            or self._last_spikes.dtype != reference.dtype
+        ):
+            self.reset_state()
+            return
+        if self._membrane is not None and (
+            tuple(self._membrane.shape) != expected_shape
+            or self._membrane.device != reference.device
+            or self._membrane.dtype != reference.dtype
+        ):
+            self.reset_state()
+
+    def _recurrent_projection(
+        self,
+        spikes: torch.Tensor,
+        recurrent_weight: torch.Tensor,
+    ) -> torch.Tensor:
+        if recurrent_weight.dim() == 2:
+            return F.linear(spikes, recurrent_weight)
+        if recurrent_weight.dim() == 3:
+            return torch.einsum("bti,toi->bto", spikes, recurrent_weight)
+        raise ValueError(
+            "recurrent_weight must be 2-D for shared topology or 3-D for "
+            "per-tau topology."
+        )
 
     def _pool(self, sequence: torch.Tensor, pooling: str) -> torch.Tensor:
         if pooling == "last":
@@ -381,6 +464,20 @@ class TPSAPUBackbone(nn.Module):
         return weight
 
 
+class PerTauRecurrentTPSAPUBackbone(TPSAPUBackbone):
+    """
+    TPSAPU variant with a separate recurrent matrix per tau reservoir.
+
+    The input projection remains shared across taus, but recurrent dynamics are
+    learned independently for each timescale.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.shared_recurrent = PerTauRecurrent(len(self.taus), self.reservoir_dim)
+        nn.init.uniform_(self.shared_recurrent.weight, -0.001, 0.001)
+
+
 def build_tpsapu_backbone(input_dim: int, **kwargs) -> TPSAPUBackbone:
     """Convenience factory for code that expects a backbone builder."""
 
@@ -390,6 +487,8 @@ def build_tpsapu_backbone(input_dim: int, **kwargs) -> TPSAPUBackbone:
 TPSAPU = TPSAPUBackbone
 
 __all__ = [
+    "PerTauRecurrent",
+    "PerTauRecurrentTPSAPUBackbone",
     "SharedReservoir",
     "TPSAPU",
     "TPSAPUBackbone",

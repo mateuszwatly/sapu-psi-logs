@@ -28,6 +28,7 @@ from train_pipeline import build_model, set_seed
 
 ARCHITECTURE_KEYS = {
     "dataset",
+    "backbone",
     "encoder",
     "decoder",
     "pooling",
@@ -35,6 +36,8 @@ ARCHITECTURE_KEYS = {
     "reservoir_dim",
     "taus",
     "input_hidden_dim",
+    "cross_rank",
+    "cross_gain",
     "patch_size",
     "encoder_hidden_dim",
     "cnn_channels",
@@ -106,6 +109,7 @@ def parse_args() -> argparse.Namespace:
 def default_architecture() -> dict[str, object]:
     return {
         "dataset": "mnist",
+        "backbone": "tpsapu",
         "encoder": "linear_patch",
         "decoder": "membrane_mlp",
         "pooling": "last",
@@ -113,6 +117,8 @@ def default_architecture() -> dict[str, object]:
         "reservoir_dim": 64,
         "taus": "1.1,8.0,64.0",
         "input_hidden_dim": 0,
+        "cross_rank": 16,
+        "cross_gain": 0.1,
         "patch_size": 7,
         "encoder_hidden_dim": 0,
         "cnn_channels": 64,
