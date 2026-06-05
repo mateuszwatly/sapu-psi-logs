@@ -5,6 +5,7 @@ from .residual_cnn import ResidualTinyCNNEncoder
 from .row import MNISTRowEncoder
 from .tiny_cnn2 import TinyCNN2Encoder
 from .tiny_cnn3 import TinyCNN3Encoder
+from .tiny_cnn5 import TinyCNN5Encoder
 
 __all__ = [
     "LIF2x2Encoder",
@@ -15,4 +16,5 @@ __all__ = [
     "ResidualTinyCNNEncoder",
     "TinyCNN2Encoder",
     "TinyCNN3Encoder",
+    "TinyCNN5Encoder",
 ]

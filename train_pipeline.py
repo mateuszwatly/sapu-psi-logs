@@ -50,6 +50,7 @@ from encoders import (
     ResidualTinyCNNEncoder,
     TinyCNN2Encoder,
     TinyCNN3Encoder,
+    TinyCNN5Encoder,
 )
 from tpsapu import PerTauRecurrentTPSAPUBackbone, TPSAPUBackbone
 from tpsapu_cross_reservoir import (
@@ -278,6 +279,7 @@ def parse_args() -> argparse.Namespace:
             "lif_2x2",
             "cnn2",
             "cnn3",
+            "cnn5",
             "res_cnn",
             "patch",
             "rows",
@@ -301,7 +303,12 @@ def parse_args() -> argparse.Namespace:
         ],
         default="membrane_mlp",
     )
-    parser.add_argument("--pooling", choices=["last", "mean"], default="last")
+    parser.add_argument(
+        "--pooling",
+        choices=["last", "mean", "none"],
+        default="last",
+        help="Use none to pass the full SAPU sequence to a sequence decoder.",
+    )
 
     parser.add_argument("--image-size", type=int, default=28)
     parser.add_argument("--in-channels", type=int, default=1)
@@ -1088,6 +1095,13 @@ def build_encoder(args: argparse.Namespace) -> nn.Module:
             hidden_channels=cfg.cnn_channels,
             dropout=cfg.encoder_dropout,
         ),
+        "cnn5": lambda cfg: TinyCNN5Encoder(
+            image_size=cfg.image_size,
+            in_channels=cfg.in_channels,
+            embed_dim=cfg.embed_dim,
+            hidden_channels=cfg.cnn_channels,
+            dropout=cfg.encoder_dropout,
+        ),
         "res_cnn": lambda cfg: ResidualTinyCNNEncoder(
             image_size=cfg.image_size,
             in_channels=cfg.in_channels,
@@ -1200,6 +1214,8 @@ def build_model(args: argparse.Namespace) -> EncoderBackboneDecoder:
         )
     backbone = backbone_cls(**backbone_kwargs)
     decoder = build_decoder(args, backbone.out_features)
+    if args.pooling == "none" and not decoder.needs_sequence:
+        raise ValueError("--pooling none requires a sequence decoder.")
     return EncoderBackboneDecoder(
         encoder=encoder,
         backbone=backbone,

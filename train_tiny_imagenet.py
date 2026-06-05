@@ -23,6 +23,8 @@ DEFAULT_ARGS = [
     "cnn3",
     "--decoder",
     "membrane_transformer",
+    "--pooling",
+    "none",
     "--image-size",
     "64",
     "--in-channels",
@@ -37,6 +39,12 @@ DEFAULT_ARGS = [
     "256",
     "--batch-size",
     "64",
+    "--cosine-epochs",
+    "80",
+    "--prune-epochs",
+    "20",
+    "--target-sparsity",
+    "0.5",
     "--num-workers",
     "0",
     "--no-download",
@@ -44,7 +52,7 @@ DEFAULT_ARGS = [
     "--validation-source",
     "train_split",
     "--checkpoint-out",
-    "checkpoints/tpsapu_tiny_imagenet.pt",
+    "checkpoints/tpsapu_tiny_imagenet/latest.pt",
 ]
 
 

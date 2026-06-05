@@ -13,7 +13,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 ENCODERS = [
     "linear_patch",
     "mlp_patch",
@@ -62,7 +61,9 @@ def parse_args() -> tuple[argparse.Namespace, list[str]]:
     parser.add_argument("--cycles", type=float, default=1.0)
     parser.add_argument("--python", default=sys.executable)
     parser.add_argument("--train-script", default="train_cifar10.py")
-    parser.add_argument("--resume-existing", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument(
+        "--resume-existing", action=argparse.BooleanOptionalAction, default=True
+    )
     parser.add_argument("--skip-existing", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--no-download", action="store_true")

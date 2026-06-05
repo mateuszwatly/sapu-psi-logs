@@ -13,3 +13,9 @@ env/
 ILSVRC
 *.zip
 data
+
+# Local datasets and generated training artifacts
+imagenet/
+checkpoints/
+runs/
+sweep_runs*/

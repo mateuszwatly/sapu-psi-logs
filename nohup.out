@@ -1,0 +1,415 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/lib/python3.14/multiprocessing/resource_tracker.py:475: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/mp-czpaux05'}
+  warnings.warn(
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/train (local cache only)
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/validation (local cache only)
+Device: cuda
+Pipeline: dataset=tiny_imagenet, model=resnet18, stem=tiny, weights=None, optimizer=adamw
+Parameters: 11,271,432
+Validation source: train_split; official validation split reserved
+Schedule: warmup=5, cosine=35, cosine_cycles=1.0, min_lr_ratio=0.05
+Traceback (most recent call last):
+  File "/home/mateusz/sapu-psi-logs/train_resnet18_tiny_imagenet.py", line 482, in <module>
+    main()
+    ~~~~^^
+  File "/home/mateusz/sapu-psi-logs/train_resnet18_tiny_imagenet.py", line 390, in main
+    train_loss, train_acc = run_epoch(
+                            ~~~~~~~~~^
+        model,
+        ^^^^^^
+    ...<9 lines>...
+        log_batches=args.log_batches,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/mateusz/sapu-psi-logs/train_resnet18_tiny_imagenet.py", line 175, in run_epoch
+    total_loss += loss.item() * batch_size
+                  ~~~~~~~~~^^
+KeyboardInterrupt
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/train (local cache only)
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/validation (local cache only)
+Device: cuda
+Pipeline: dataset=tiny_imagenet, model=resnet18, stem=tiny, weights=None, optimizer=adamw
+Parameters: 11,271,432
+Validation source: train_split; official validation split reserved
+Schedule: warmup=5, cosine=35, cosine_cycles=1.0, min_lr_ratio=0.05
+warmup 001/040 | lr 2.000e-04 | train loss 4.2636 acc 10.49% | val loss 3.8390 acc 15.61%
+/home/mateusz/sapu-psi-logs/train_resnet18_tiny_imagenet.py:240: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "timestamp": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+warmup 002/040 | lr 4.000e-04 | train loss 3.5624 acc 19.90% | val loss 3.6108 acc 20.85%
+warmup 003/040 | lr 6.000e-04 | train loss 3.1761 acc 26.46% | val loss 3.2144 acc 27.10%
+warmup 004/040 | lr 8.000e-04 | train loss 2.8879 acc 32.14% | val loss 2.9742 acc 30.77%
+warmup 005/040 | lr 1.000e-03 | train loss 2.6527 acc 36.69% | val loss 2.8127 acc 34.49%
+cosine 006/040 | lr 1.000e-03 | train loss 2.3701 acc 42.21% | val loss 2.5534 acc 39.24%
+cosine 007/040 | lr 9.980e-04 | train loss 2.1352 acc 47.34% | val loss 2.3905 acc 42.42%
+cosine 008/040 | lr 9.919e-04 | train loss 1.9439 acc 51.36% | val loss 2.3323 acc 44.87%
+cosine 009/040 | lr 9.819e-04 | train loss 1.7715 acc 54.93% | val loss 2.1306 acc 47.90%
+cosine 010/040 | lr 9.679e-04 | train loss 1.6057 acc 58.65% | val loss 2.1175 acc 49.24%
+cosine 011/040 | lr 9.502e-04 | train loss 1.4596 acc 61.75% | val loss 2.0624 acc 50.35%
+cosine 012/040 | lr 9.289e-04 | train loss 1.3150 acc 65.14% | val loss 2.0387 acc 51.45%
+cosine 013/040 | lr 9.041e-04 | train loss 1.1755 acc 68.29% | val loss 2.0611 acc 52.31%
+cosine 014/040 | lr 8.760e-04 | train loss 1.0385 acc 71.65% | val loss 2.0650 acc 53.21%
+cosine 015/040 | lr 8.450e-04 | train loss 0.9159 acc 74.67% | val loss 2.1122 acc 52.80%
+cosine 016/040 | lr 8.113e-04 | train loss 0.7909 acc 77.62% | val loss 2.1221 acc 53.33%
+cosine 017/040 | lr 7.751e-04 | train loss 0.6817 acc 80.60% | val loss 2.1880 acc 53.12%
+cosine 018/040 | lr 7.367e-04 | train loss 0.5804 acc 83.26% | val loss 2.2125 acc 54.15%
+cosine 019/040 | lr 6.966e-04 | train loss 0.4940 acc 85.56% | val loss 2.3245 acc 53.23%
+cosine 020/040 | lr 6.550e-04 | train loss 0.4142 acc 87.76% | val loss 2.3453 acc 53.82%
+cosine 021/040 | lr 6.123e-04 | train loss 0.3484 acc 89.73% | val loss 2.4298 acc 53.70%
+cosine 022/040 | lr 5.688e-04 | train loss 0.2892 acc 91.44% | val loss 2.4627 acc 53.88%
+cosine 023/040 | lr 5.250e-04 | train loss 0.2422 acc 92.82% | val loss 2.5557 acc 53.92%
+cosine 024/040 | lr 4.812e-04 | train loss 0.2008 acc 94.10% | val loss 2.6188 acc 53.79%
+cosine 025/040 | lr 4.377e-04 | train loss 0.1703 acc 95.04% | val loss 2.6546 acc 53.53%
+cosine 026/040 | lr 3.950e-04 | train loss 0.1417 acc 95.92% | val loss 2.6872 acc 54.49%
+cosine 027/040 | lr 3.534e-04 | train loss 0.1181 acc 96.65% | val loss 2.6977 acc 54.59%
+cosine 028/040 | lr 3.133e-04 | train loss 0.0977 acc 97.26% | val loss 2.7270 acc 54.63%
+cosine 029/040 | lr 2.749e-04 | train loss 0.0821 acc 97.80% | val loss 2.7460 acc 55.20%
+cosine 030/040 | lr 2.387e-04 | train loss 0.0695 acc 98.17% | val loss 2.7793 acc 54.87%
+cosine 031/040 | lr 2.050e-04 | train loss 0.0566 acc 98.60% | val loss 2.7905 acc 55.23%
+cosine 032/040 | lr 1.740e-04 | train loss 0.0506 acc 98.73% | val loss 2.8240 acc 55.50%
+cosine 033/040 | lr 1.459e-04 | train loss 0.0416 acc 99.00% | val loss 2.8030 acc 55.70%
+cosine 034/040 | lr 1.211e-04 | train loss 0.0352 acc 99.18% | val loss 2.8067 acc 55.82%
+cosine 035/040 | lr 9.980e-05 | train loss 0.0322 acc 99.30% | val loss 2.7785 acc 56.21%
+cosine 036/040 | lr 8.208e-05 | train loss 0.0265 acc 99.45% | val loss 2.7994 acc 56.46%
+cosine 037/040 | lr 6.813e-05 | train loss 0.0259 acc 99.44% | val loss 2.8068 acc 56.45%
+cosine 038/040 | lr 5.809e-05 | train loss 0.0242 acc 99.51% | val loss 2.8177 acc 56.38%
+cosine 039/040 | lr 5.203e-05 | train loss 0.0224 acc 99.53% | val loss 2.7913 acc 56.37%
+cosine 040/040 | lr 5.000e-05 | train loss 0.0211 acc 99.59% | val loss 2.8075 acc 56.24%
+Reserved official validation split was not evaluated. Pass --eval-test-after-training for one final test.
+Latest checkpoint: sweep_runs_tiny_imagenet/resnet18_scratch/latest.pt
+Best checkpoint: sweep_runs_tiny_imagenet/resnet18_scratch/best.pt (epoch 36, val acc 56.46%)
+Training log: sweep_runs_tiny_imagenet/resnet18_scratch/metrics.csv
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/lib/python3.14/multiprocessing/resource_tracker.py:475: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/mp-dmbmzfus'}
+  warnings.warn(
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/lib/python3.14/multiprocessing/resource_tracker.py:475: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/mp-0xma1ake'}
+  warnings.warn(
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Logging to: runs/tpsapu_per_tau_cross_reservoir_tiny_imagenet
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/train (local cache only)
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/validation (local cache only)
+Parameter summary:
+  trainable : 732,360
+  frozen    : 0
+  total     : 732,360
+  by module:
+    encoder  trainable      145,344 | total      145,344
+    backbone trainable       64,704 | total       64,704
+    decoder  trainable      522,312 | total      522,312
+Device: cuda
+Pipeline: dataset=tiny_imagenet, encoder=cnn3, backbone=tpsapu_per_tau_cross_reservoir, decoder=membrane_transformer, pooling=last
+Validation source: train_split; dataset validation/test split reserved for final test
+Schedule: warmup=5, cosine=35, cosine_cycles=1.0, prune=30, prune_cycles=1.0, l2_prune_start=1.0e-07, l2_prune_growth_epochs=4, target_sparsity=95.0%, prune_ramp_epochs=24, prune_stabilize_epochs=6, continuous=True
+warmup 001/040 | lr 2.000e-04 | train loss 4.8091 acc 4.67% | val loss 4.4926 acc 7.87%
+warmup 002/040 | lr 4.000e-04 | train loss 4.2517 acc 10.87% | val loss 3.9016 acc 16.18%
+warmup 003/040 | lr 6.000e-04 | train loss 3.8200 acc 16.37% | val loss 3.5891 acc 20.73%
+warmup 004/040 | lr 8.000e-04 | train loss 3.6086 acc 19.49% | val loss 3.4466 acc 22.92%
+warmup 005/040 | lr 1.000e-03 | train loss 3.5058 acc 21.12% | val loss 3.4378 acc 23.05%
+cosine 006/040 | lr 1.000e-03 | train loss 3.3809 acc 23.17% | val loss 3.2991 acc 25.08%
+cosine 007/040 | lr 9.980e-04 | train loss 3.3024 acc 24.48% | val loss 3.3054 acc 24.81%
+cosine 008/040 | lr 9.919e-04 | train loss 3.2617 acc 25.25% | val loss 3.3055 acc 25.42%
+cosine 009/040 | lr 9.819e-04 | train loss 3.2104 acc 26.17% | val loss 3.2038 acc 27.07%
+cosine 010/040 | lr 9.679e-04 | train loss 3.1705 acc 26.70% | val loss 3.1398 acc 28.25%
+cosine 011/040 | lr 9.502e-04 | train loss 3.1289 acc 27.49% | val loss 3.1335 acc 27.94%
+cosine 012/040 | lr 9.289e-04 | train loss 3.0893 acc 28.23% | val loss 3.1362 acc 28.04%
+cosine 013/040 | lr 9.041e-04 | train loss 3.0708 acc 28.63% | val loss 3.0860 acc 29.18%
+cosine 014/040 | lr 8.760e-04 | train loss 2.9955 acc 29.75% | val loss 3.0102 acc 31.00%
+cosine 015/040 | lr 8.450e-04 | train loss 2.9538 acc 30.55% | val loss 2.9938 acc 30.85%
+cosine 016/040 | lr 8.113e-04 | train loss 2.8965 acc 31.67% | val loss 2.9902 acc 31.26%
+cosine 017/040 | lr 7.751e-04 | train loss 2.8513 acc 32.55% | val loss 3.0119 acc 30.90%
+cosine 018/040 | lr 7.367e-04 | train loss 2.7974 acc 33.47% | val loss 2.9120 acc 32.45%
+cosine 019/040 | lr 6.966e-04 | train loss 2.7296 acc 34.77% | val loss 2.8720 acc 33.64%
+cosine 020/040 | lr 6.550e-04 | train loss 2.6733 acc 35.90% | val loss 2.8439 acc 34.22%
+cosine 021/040 | lr 6.123e-04 | train loss 2.6236 acc 36.63% | val loss 2.8433 acc 33.94%
+cosine 022/040 | lr 5.688e-04 | train loss 2.5623 acc 38.05% | val loss 2.7991 acc 35.59%
+cosine 023/040 | lr 5.250e-04 | train loss 2.5117 acc 38.95% | val loss 2.7627 acc 36.13%
+cosine 024/040 | lr 4.812e-04 | train loss 2.4621 acc 39.92% | val loss 2.7548 acc 36.40%
+cosine 025/040 | lr 4.377e-04 | train loss 2.4077 acc 40.99% | val loss 2.7297 acc 36.97%
+cosine 026/040 | lr 3.950e-04 | train loss 2.3502 acc 42.21% | val loss 2.7001 acc 37.54%
+cosine 027/040 | lr 3.534e-04 | train loss 2.3026 acc 42.98% | val loss 2.7073 acc 37.46%
+cosine 028/040 | lr 3.133e-04 | train loss 2.2492 acc 44.12% | val loss 2.6569 acc 38.56%
+cosine 029/040 | lr 2.749e-04 | train loss 2.2038 acc 45.00% | val loss 2.6673 acc 38.58%
+cosine 030/040 | lr 2.387e-04 | train loss 2.1525 acc 45.98% | val loss 2.6572 acc 38.96%
+cosine 031/040 | lr 2.050e-04 | train loss 2.1126 acc 46.88% | val loss 2.6259 acc 39.75%
+cosine 032/040 | lr 1.740e-04 | train loss 2.0767 acc 47.51% | val loss 2.6411 acc 39.65%
+cosine 033/040 | lr 1.459e-04 | train loss 2.0433 acc 48.34% | val loss 2.6195 acc 39.97%
+cosine 034/040 | lr 1.211e-04 | train loss 2.0123 acc 48.95% | val loss Traceback (most recent call last):
+  File "/home/mateusz/sapu-psi-logs/train_tiny_imagenet.py", line 14, in <module>
+    import train_pipeline
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 26, in <module>
+    import torch
+ModuleNotFoundError: No module named 'torch'
+usage: train_tiny_imagenet.py [-h]
+                              [--dataset {mnist,cifar10,imagenet,tiny_imagenet}]
+                              [--data-dir DATA_DIR]
+                              [--backbone {tpsapu,tpsapu_per_tau,tpsapu_cross_reservoir,tpsapu_per_tau_cross_reservoir}]
+                              [--encoder {linear_patch,mlp_patch,lif_2x2,cnn2,cnn3,res_cnn,patch,rows}]
+                              [--decoder {linear,membrane_mlp,spike_mlp,both_mlp,all_state_mlp,membrane_transformer,spike_transformer,both_transformer,all_state_transformer,lif_count,mlp}]
+                              [--pooling {last,mean}]
+                              [--image-size IMAGE_SIZE]
+                              [--in-channels IN_CHANNELS]
+                              [--num-classes NUM_CLASSES]
+                              [--embed-dim EMBED_DIM]
+                              [--reservoir-dim RESERVOIR_DIM] [--taus TAUS]
+                              [--input-hidden-dim INPUT_HIDDEN_DIM]
+                              [--cross-rank CROSS_RANK]
+                              [--cross-gain CROSS_GAIN]
+                              [--patch-size PATCH_SIZE]
+                              [--encoder-hidden-dim ENCODER_HIDDEN_DIM]
+                              [--cnn-channels CNN_CHANNELS]
+                              [--lif-white-threshold LIF_WHITE_THRESHOLD]
+                              [--encoder-dropout ENCODER_DROPOUT]
+                              [--decoder-hidden-dim DECODER_HIDDEN_DIM]
+                              [--decoder-dropout DECODER_DROPOUT]
+                              [--decoder-transformer-layers DECODER_TRANSFORMER_LAYERS]
+                              [--decoder-transformer-heads DECODER_TRANSFORMER_HEADS]
+                              [--decoder-transformer-ff-mult DECODER_TRANSFORMER_FF_MULT]
+                              [--decoder-max-steps DECODER_MAX_STEPS]
+                              [--recurrent-drop RECURRENT_DROP]
+                              [--warmup-epochs WARMUP_EPOCHS]
+                              [--cosine-epochs COSINE_EPOCHS]
+                              [--cosine-cycles COSINE_CYCLES]
+                              [--prune-epochs PRUNE_EPOCHS]
+                              [--prune-cycles PRUNE_CYCLES]
+                              [--min-lr-ratio MIN_LR_RATIO]
+                              [--prune-lr-scale PRUNE_LR_SCALE]
+                              [--l2-prune-start-lambda L2_PRUNE_START_LAMBDA]
+                              [--l2-prune-growth-epochs L2_PRUNE_GROWTH_EPOCHS]
+                              [--prune-threshold PRUNE_THRESHOLD]
+                              [--target-sparsity TARGET_SPARSITY]
+                              [--prune-start-sparsity PRUNE_START_SPARSITY]
+                              [--prune-ramp-epochs PRUNE_RAMP_EPOCHS]
+                              [--prune-stabilize-epochs PRUNE_STABILIZE_EPOCHS]
+                              [--keep-dropout-during-prune] [--neuron-prune]
+                              [--neuron-prune-target-sparsity NEURON_PRUNE_TARGET_SPARSITY]
+                              [--neuron-spike-threshold NEURON_SPIKE_THRESHOLD]
+                              [--neuron-membrane-std-threshold NEURON_MEMBRANE_STD_THRESHOLD]
+                              [--neuron-prune-min-keep NEURON_PRUNE_MIN_KEEP]
+                              [--batch-size BATCH_SIZE] [--lr LR]
+                              [--weight-decay WEIGHT_DECAY]
+                              [--grad-clip GRAD_CLIP]
+                              [--num-workers NUM_WORKERS]
+                              [--log-batches LOG_BATCHES]
+                              [--train-samples TRAIN_SAMPLES]
+                              [--test-samples TEST_SAMPLES]
+                              [--validation-source {dataset,train_split}]
+                              [--train-val-fraction TRAIN_VAL_FRACTION]
+                              [--train-val-samples TRAIN_VAL_SAMPLES]
+                              [--eval-test-after-training]
+                              [--continuous | --no-continuous] [--seed SEED]
+                              [--no-download] [--download]
+                              [--checkpoint-out CHECKPOINT_OUT]
+                              [--log-dir LOG_DIR] [--resume RESUME]
+
+Training pipeline for encoder -> TPSAPU backbone -> decoder experiments.
+Default schedule: 5 warmup epochs 35 cosine-annealing training epochs 20
+L2-pruning epochs on the TPSAPU shared recurrent topology Example: python
+train_pipeline.py --encoder linear_patch --decoder membrane_mlp
+
+options:
+  -h, --help            show this help message and exit
+  --dataset {mnist,cifar10,imagenet,tiny_imagenet}
+  --data-dir DATA_DIR
+  --backbone {tpsapu,tpsapu_per_tau,tpsapu_cross_reservoir,tpsapu_per_tau_cross_reservoir}
+                        tpsapu shares recurrent topology across tau
+                        reservoirs; tpsapu_per_tau gives each tau its own
+                        recurrent matrix while keeping the input projection
+                        shared; tpsapu_cross_reservoir adds compressed
+                        communication between tau reservoirs;
+                        tpsapu_per_tau_cross_reservoir combines per-tau
+                        recurrent matrices with compressed communication.
+  --encoder {linear_patch,mlp_patch,lif_2x2,cnn2,cnn3,res_cnn,patch,rows}
+  --decoder {linear,membrane_mlp,spike_mlp,both_mlp,all_state_mlp,membrane_transformer,spike_transformer,both_transformer,all_state_transformer,lif_count,mlp}
+  --pooling {last,mean}
+  --image-size IMAGE_SIZE
+  --in-channels IN_CHANNELS
+  --num-classes NUM_CLASSES
+  --embed-dim EMBED_DIM
+  --reservoir-dim RESERVOIR_DIM
+  --taus TAUS
+  --input-hidden-dim INPUT_HIDDEN_DIM
+  --cross-rank CROSS_RANK
+                        Low-rank channel count for cross-reservoir backbone
+                        variants.
+  --cross-gain CROSS_GAIN
+                        Scale for cross-reservoir current; used by cross-
+                        reservoir variants.
+  --patch-size PATCH_SIZE
+  --encoder-hidden-dim ENCODER_HIDDEN_DIM
+  --cnn-channels CNN_CHANNELS
+  --lif-white-threshold LIF_WHITE_THRESHOLD
+  --encoder-dropout ENCODER_DROPOUT
+  --decoder-hidden-dim DECODER_HIDDEN_DIM
+  --decoder-dropout DECODER_DROPOUT
+  --decoder-transformer-layers DECODER_TRANSFORMER_LAYERS
+  --decoder-transformer-heads DECODER_TRANSFORMER_HEADS
+  --decoder-transformer-ff-mult DECODER_TRANSFORMER_FF_MULT
+  --decoder-max-steps DECODER_MAX_STEPS
+  --recurrent-drop RECURRENT_DROP
+  --warmup-epochs WARMUP_EPOCHS
+  --cosine-epochs COSINE_EPOCHS
+  --cosine-cycles COSINE_CYCLES
+                        Number of cosine annealing descents; 1.0 decays once
+                        from base LR to min LR.
+  --prune-epochs PRUNE_EPOCHS
+  --prune-cycles PRUNE_CYCLES
+                        Number of pruning-phase cosine annealing descents.
+  --min-lr-ratio MIN_LR_RATIO
+  --prune-lr-scale PRUNE_LR_SCALE
+  --l2-prune-start-lambda L2_PRUNE_START_LAMBDA
+  --l2-prune-growth-epochs L2_PRUNE_GROWTH_EPOCHS
+  --prune-threshold PRUNE_THRESHOLD
+  --target-sparsity TARGET_SPARSITY
+  --prune-start-sparsity PRUNE_START_SPARSITY
+  --prune-ramp-epochs PRUNE_RAMP_EPOCHS
+  --prune-stabilize-epochs PRUNE_STABILIZE_EPOCHS
+  --keep-dropout-during-prune
+  --neuron-prune
+  --neuron-prune-target-sparsity NEURON_PRUNE_TARGET_SPARSITY
+  --neuron-spike-threshold NEURON_SPIKE_THRESHOLD
+  --neuron-membrane-std-threshold NEURON_MEMBRANE_STD_THRESHOLD
+  --neuron-prune-min-keep NEURON_PRUNE_MIN_KEEP
+  --batch-size BATCH_SIZE
+  --lr LR
+  --weight-decay WEIGHT_DECAY
+  --grad-clip GRAD_CLIP
+  --num-workers NUM_WORKERS
+                        DataLoader worker processes. Default 0 keeps dataset
+                        decoding in the main process and avoids hidden worker-
+                        subprocess crashes.
+  --log-batches LOG_BATCHES
+                        Print running loss/accuracy every N batches; disabled
+                        by default.
+  --train-samples TRAIN_SAMPLES
+  --test-samples TEST_SAMPLES
+  --validation-source {dataset,train_split}
+                        Use the dataset validation/test split for per-epoch
+                        validation, or hold out part of the training split and
+                        reserve the dataset validation/test split for final
+                        testing.
+  --train-val-fraction TRAIN_VAL_FRACTION
+                        Fraction of the training split to hold out when
+                        --validation-source=train_split.
+  --train-val-samples TRAIN_VAL_SAMPLES
+                        Fixed training-split validation size; overrides
+                        --train-val-fraction when positive.
+  --eval-test-after-training
+                        Evaluate the reserved dataset validation/test split
+                        once after training completes.
+  --continuous, --no-continuous
+                        Keep training indefinitely. Warmup/cosine runs until
+                        the pruning stage is reached; pruning then repeats
+                        LR/L2 cycles while keeping the pruning mask. Without
+                        pruning, cosine cycles repeat forever.
+  --seed SEED
+  --no-download         Use only already-cached datasets; fail fast instead of
+                        contacting remote hosts.
+  --download            Allow dataset downloads when an entry point defaults
+                        to --no-download.
+  --checkpoint-out CHECKPOINT_OUT
+  --log-dir LOG_DIR
+  --resume RESUME
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Logging to: runs/tpsapu_per_tau_cross_reservoir_tiny_imagenet
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/train (local cache only)
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/validation (local cache only)
+Resumed checkpoint: checkpoints/tpsapu_per_tau_cross_reservoir_tiny_imagenet.pt
+Parameter summary:
+  trainable : 732,360
+  frozen    : 0
+  total     : 732,360
+  by module:
+    encoder  trainable      145,344 | total      145,344
+    backbone trainable       64,704 | total       64,704
+    decoder  trainable      522,312 | total      522,312
+Device: cuda
+Pipeline: dataset=tiny_imagenet, encoder=cnn3, backbone=tpsapu_per_tau_cross_reservoir, decoder=membrane_transformer, pooling=last
+Validation source: train_split; dataset validation/test split reserved for final test
+Schedule: warmup=5, cosine=35, cosine_cycles=1.0, prune=30, prune_cycles=1.0, l2_prune_start=1.0e-07, l2_prune_growth_epochs=4, target_sparsity=95.0%, prune_ramp_epochs=24, prune_stabilize_epochs=6, continuous=True
+l2-prune 015/030 | lr 1.101e-04 | train loss 1.8101 acc 53.01% | val loss 2.6402 acc 40.72% | l2 lambda 1.0e-04 | recurrent sparsity 64.94% target 64.94%
+l2-prune 016/030 | lr 9.986e-05 | train loss 1.7956 acc 53.31% | val loss 2.6473 acc 40.58% | l2 lambda 1.0e-04 | recurrent sparsity 70.37% target 70.37%
+l2-prune 017/030 | lr 8.963e-05 | train loss 1.7776 acc 53.82% | val loss 2.6578 acc 40.57% | l2 lambda 1.0e-03 | recurrent sparsity 75.47% target 75.47%
+l2-prune 018/030 | lr 7.958e-05 | train loss 1.7682 acc 53.88% | val loss 2.6509 acc 40.75% | l2 lambda 1.0e-03 | recurrent sparsity 80.16% target 80.16%
+l2-prune 019/030 | lr 6.984e-05 | train loss 1.7541 acc 54.19% | val loss 2.6491 acc 41.35% | l2 lambda 1.0e-03 | recurrent sparsity 84.35% target 84.35%
+l2-prune 020/030 | lr 6.050e-05 | train loss 1.7404 acc 54.70% | val loss 2.6520 acc 41.01% | l2 lambda 1.0e-03 | recurrent sparsity 87.96% target 87.96%
+l2-prune 021/030 | lr 5.169e-05 | train loss 1.7268 acc 54.87% | val loss 2.6511 acc 41.07% | l2 lambda 1.0e-02 | recurrent sparsity 90.92% target 90.92%
+l2-prune 022/030 | lr 4.350e-05 | train loss 1.7173 acc 54.98% | val loss 2.6460 acc 41.29% | l2 lambda 1.0e-02 | recurrent sparsity 93.13% target 93.13%
+l2-prune 023/030 | lr 3.603e-05 | train loss 1.7061 acc 55.15% | val loss 2.6426 acc 41.43% | l2 lambda 1.0e-02 | recurrent sparsity 94.52% target 94.52%
+l2-prune 024/030 | lr 2.937e-05 | train loss 1.6964 acc 55.50% | val loss 2.6473 acc 41.37% | l2 lambda 1.0e-02 | recurrent sparsity 95.00% target 95.00%
+l2-prune 025/030 | lr 2.360e-05 | train loss 1.6932 acc 55.55% | val loss 2.6495 acc 41.73% | l2 lambda 1.0e-01 | recurrent sparsity 95.00% target 95.00%
+l2-prune 026/030 | lr 1.878e-05 | train loss 1.6898 acc 55.87% | val loss 2.6466 acc 41.36% | l2 lambda 1.0e-01 | recurrent sparsity 95.00% target 95.00%
+l2-prune 027/030 | lr 1.497e-05 | train loss 1.6844 acc 55.86% | val loss 2.6484 acc 41.59% | l2 lambda 1.0e-01 | recurrent sparsity 95.00% target 95.00%
+l2-prune 028/030 | lr 1.222e-05 | train loss 1.6829 acc 55.86% | val loss 2.6471 acc 41.47% | l2 lambda 1.0e-01 | recurrent sparsity 95.00% target 95.00%
+l2-prune 029/030 | lr 1.056e-05 | train loss 1.6693 acc 56.12% | val loss 2.6472 acc 41.57% | l2 lambda 1.0e+00 | recurrent sparsity 95.00% target 95.00%
+l2-prune 030/030 | lr 1.000e-05 | train loss 1.6730 acc 56.05% | val loss 2.6514 acc 41.41% | l2 lambda 1.0e+00 | recurrent sparsity 95.00% target 95.00%
+Completed pruning cycle; starting the next warmup/cosine training cycle.
+warmup 001/040 | lr 2.000e-04 | train loss 1.8166 acc 52.63% | val loss 2.6994 acc 40.13%
+warmup 002/040 | lr 4.000e-04 | train loss 1.9888 acc 48.89% | val loss 2.7597 acc 38.53%
+warmup 003/040 | lr 6.000e-04 | train loss 2.1705 acc 45.04% | val loss 2.7703 acc 37.62%
+warmup 004/040 | lr 8.000e-04 | train loss 2.3592 acc 41.34% | val loss 2.8348 acc 35.79%
+warmup 005/040 | lr 1.000e-03 | train loss 2.5475 acc 37.78% | val loss 2.9156 acc 34.08%
+cosine 006/040 | lr 1.000e-03 | train loss 2.5963 acc 36.66% | val loss 2.9204 acc 33.35%
+cosine 007/040 | lr 9.980e-04 | train loss 2.5972 acc 36.73% | val loss 2.9097 acc 33.26%
+cosine 008/040 | lr 9.919e-04 | train loss 2.5869 acc 36.98% | val loss 2.8606 acc 34.50%
+cosine 009/040 | lr 9.819e-04 | train loss 2.5744 acc 37.39% | val loss 2.8472 acc 34.93%
+cosine 010/040 | lr 9.679e-04 | train loss 2.5718 acc 37.46% | val loss 2.8966 acc 33.68%
+cosine 011/040 | lr 9.502e-04 | train loss 2.5538 acc 37.85% | val loss 2.8772 acc 33.91%
+cosine 012/040 | lr 9.289e-04 | train loss 2.5198 acc 38.42% | val loss 2.8236 acc 35.29%
+cosine 013/040 | lr 9.041e-04 | train loss 2.4869 acc 39.10% | val loss 2.8417 acc 35.59%
+cosine 014/040 | lr 8.760e-04 | train loss 2.4698 acc 39.57% | val loss 2.7927 acc 36.06%
+cosine 015/040 | lr 8.450e-04 | train loss 2.4424 acc 39.93% | val loss 2.7953 acc 35.78%
+cosine 016/040 | lr 8.113e-04 | train loss 2.3893 acc 41.01% | val loss 2.7719 acc 36.47%
+cosine 017/040 | lr 7.751e-04 | train loss 2.3459 acc 41.86% | val loss 2.7668 acc 37.17%
+cosine 018/040 | lr 7.367e-04 | train loss 2.2997 acc 42.70% | val loss 2.7429 acc 37.38%
+cosine 019/040 | lr 6.966e-04 | train loss 2.2685 acc 43.45% | val loss 2.7085 acc 38.03%
+cosine 020/040 | lr 6.550e-04 | train loss 2.2041 acc 44.65% | val loss 2.6940 acc 38.53%
+cosine 021/040 | lr 6.123e-04 | train loss 2.1575 acc 45.65% | val loss 2.7079 acc 38.56%
+cosine 022/040 | lr 5.688e-04 | train loss 2.1180 acc 46.38% | val loss 2.6884 acc 39.07%
+cosine 023/040 | lr 5.250e-04 | train loss 2.0644 acc 47.39% | val loss 2.6637 acc 39.46%
+cosine 024/040 | lr 4.812e-04 | train loss 2.0145 acc 48.59% | val loss 2.6747 acc 39.33%
+cosine 025/040 | lr 4.377e-04 | train loss 1.9703 acc 49.58% | val loss 2.6707 acc 39.32%
+cosine 026/040 | lr 3.950e-04 | train loss 1.9208 acc 50.46% | val loss 2.6520 acc 40.68%
+cosine 027/040 | lr 3.534e-04 | train loss 1.8734 acc 51.49% | val loss 2.6534 acc 40.02%
+cosine 028/040 | lr 3.133e-04 | train loss 1.8317 acc 52.36% | val loss 2.6601 acc 40.69%
+cosine 029/040 | lr 2.749e-04 | train loss 1.7989 acc 53.07% | val loss 2.6477 acc 40.80%
+cosine 030/040 | lr 2.387e-04 | train loss 1.7591 acc 53.78% | val loss 2.6479 acc 41.47%
+cosine 031/040 | lr 2.050e-04 | train loss 1.7231 acc 54.66% | val loss 2.6462 acc 40.99%
+cosine 032/040 | lr 1.740e-04 | train loss 1.6829 acc 55.66% | val loss 2.6400 acc 41.58%
+cosine 033/040 | lr 1.459e-04 | train loss 1.6581 acc 56.32% | val loss 2.6551 acc 41.61%
+cosine 034/040 | lr 1.211e-04 | train loss 1.6252 acc 57.04% | val loss 2.6552 acc 41.47%
+cosine 035/040 | lr 9.980e-05 | train loss 1.6065 acc 57.12% | val loss 2.6539 acc 41.93%
+cosine 036/040 | lr 8.208e-05 | train loss 1.5821 acc 57.98% | val loss 2.6561 acc 42.08%
+cosine 037/040 | lr 6.813e-05 | train loss 1.5702 acc 58.31% | val loss 2.6537 acc 42.24%
+cosine 038/040 | lr 5.809e-05 | train loss 1.5529 acc 58.66% | val loss 2.6616 acc 42.24%
+cosine 039/040 | lr 5.203e-05 | train loss 1.5459 acc 58.67% | val loss 2.6679 acc 42.20%
+cosine 040/040 | lr 5.000e-05 | train loss 1.5364 acc 58.73% | val loss 2.6654 acc 41.97%
+l2-prune 001/030 | lr 2.000e-04 | train loss 1.6348 acc 56.66% | val loss 2.6810 acc 41.33% | l2 lambda 1.0e-07 | recurrent sparsity 0.48% target 0.48%
+l2-prune 002/030 | lr 1.994e-04 | train loss 1.6356 acc 56.68% | val loss 2.6892 acc 41.26% | l2 lambda 1.0e-07 | recurrent sparsity 1.87% target 1.87%
+l2-prune 003/030 | lr 1.978e-04 | train loss 1.6209 acc 56.72% | val loss 2.7110 acc 40.64% | l2 lambda 1.0e-07 | recurrent sparsity 4.08% target 4.08%
+l2-prune 004/030 | lr 1.950e-04 | train loss 1.6186 acc 56.92% | val loss 2.6941 acc 41.17% | l2 lambda 1.0e-07 | recurrent sparsity 7.04% target 7.04%
+l2-prune 005/030 | lr 1.912e-04 | train loss 1.6142 acc 57.05% | val loss 2.6983 acc 41.10% | l2 lambda 1.0e-06 | recurrent sparsity 10.65% target 10.65%
+l2-prune 006/030 | lr 1.864e-04 | train loss 1.5958 acc 57.30% | val loss 2.7187 acc 41.03% | l2 lambda 1.0e-06 | recurrent sparsity 14.84% target 14.84%
+l2-prune 007/030 | lr 1.806e-04 | train loss 1.5933 acc 57.34% | val loss 2.7039 acc 40.97% | l2 lambda 1.0e-06 | recurrent sparsity 19.53% target 19.53%
+l2-prune 008/030 | lr 1.740e-04 | train loss 1.5870 acc 57.61% | val loss 2.7093 acc 41.37% | l2 lambda 1.0e-06 | recurrent sparsity 24.63% target 24.63%
+l2-prune 009/030 | lr 1.665e-04 | train loss 1.5607 acc 58.00% | val loss 2.7216 acc 40.99% | l2 lambda 1.0e-05 | recurrent sparsity 30.06% target 30.06%
+l2-prune 010/030 | lr 1.583e-04 | train loss 1.5625 acc 58.00% | val loss 2.7227 acc 41.36% | l2 lambda 1.0e-05 | recurrent sparsity 35.74% target 35.73%
+l2-prune 011/030 | lr 1.495e-04 | train loss 1.5401 acc 58.54% | val loss 2.7223 acc 41.31% | l2 lambda 1.0e-05 | recurrent sparsity 41.58% target 41.58%
+l2-prune 012/030 | lr 1.402e-04 | train loss 1.5285 acc 58.67% | val loss 2.7238 acc 41.40% | l2 lambda 1.0e-05 | recurrent sparsity 47.50% target 47.50%
+l2-prune 013/030 | lr 1.304e-04 | train loss 1.5156 acc 59.04% | val loss 2.7217 acc 41.35% | l2 lambda 1.0e-04 | recurrent sparsity 53.42% target 53.42%
+l2-prune 014/030 | lr 1.204e-04 | train loss 1.5031 acc 59.45% | val loss 2.7381 acc 41.18% | l2 lambda 1.0e-04 | recurrent sparsity 59.27% target 59.27%
+l2-prune 015/030 | lr 1.101e-04 | train loss 1.4886 acc 59.75% | val loss 2.7280 acc 41.25% | l2 lambda 1.0e-04 | recurrent sparsity 64.94% target 64.94%
+l2-prune 016/030 | lr 9.986e-05 | train loss 1.4795 acc 59.93% | val loss 2.7486 acc 41.75% | l2 lambda 1.0e-04 | recurrent sparsity 70.37% target 70.37%
+l2-prune 017/030 | lr 8.963e-05 | train loss 1.4602 acc 60.45% | val loss 2.7377 acc 41.54% | l2 lambda 1.0e-03 | recurrent sparsity 75.47% target 75.47%
+l2-prune 018/030 | lr 7.958e-05 | train loss 1.4558 acc 60.61% | val loss 2.7437 acc 41.55% | l2 lambda 1.0e-03 | recurrent sparsity 80.16% target 80.16%
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
