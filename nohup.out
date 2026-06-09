@@ -413,3 +413,345 @@ l2-prune 017/030 | lr 8.963e-05 | train loss 1.4602 acc 60.45% | val loss 2.7377
 l2-prune 018/030 | lr 7.958e-05 | train loss 1.4558 acc 60.61% | val loss 2.7437 acc 41.55% | l2 lambda 1.0e-03 | recurrent sparsity 80.16% target 80.16%
 Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
 WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/lib/python3.14/multiprocessing/resource_tracker.py:475: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/mp-tnou9djx'}
+  warnings.warn(
+usage: train_tiny_imagenet.py [-h]
+                              [--dataset {mnist,cifar10,imagenet,tiny_imagenet}]
+                              [--data-dir DATA_DIR]
+                              [--backbone {tpsapu,tpsapu_per_tau,tpsapu_cross_reservoir,tpsapu_per_tau_cross_reservoir}]
+                              [--encoder {linear_patch,mlp_patch,lif_2x2,cnn2,cnn3,cnn5,res_cnn,patch,rows}]
+                              [--decoder {linear,membrane_mlp,spike_mlp,both_mlp,all_state_mlp,membrane_transformer,spike_transformer,both_transformer,all_state_transformer,lif_count,mlp}]
+                              [--pooling {last,mean,none}]
+                              [--image-size IMAGE_SIZE]
+                              [--in-channels IN_CHANNELS]
+                              [--num-classes NUM_CLASSES]
+                              [--embed-dim EMBED_DIM]
+                              [--reservoir-dim RESERVOIR_DIM] [--taus TAUS]
+                              [--input-hidden-dim INPUT_HIDDEN_DIM]
+                              [--cross-rank CROSS_RANK]
+                              [--cross-gain CROSS_GAIN]
+                              [--patch-size PATCH_SIZE]
+                              [--encoder-hidden-dim ENCODER_HIDDEN_DIM]
+                              [--cnn-channels CNN_CHANNELS]
+                              [--lif-white-threshold LIF_WHITE_THRESHOLD]
+                              [--encoder-dropout ENCODER_DROPOUT]
+                              [--decoder-hidden-dim DECODER_HIDDEN_DIM]
+                              [--decoder-dropout DECODER_DROPOUT]
+                              [--decoder-transformer-layers DECODER_TRANSFORMER_LAYERS]
+                              [--decoder-transformer-heads DECODER_TRANSFORMER_HEADS]
+                              [--decoder-transformer-ff-mult DECODER_TRANSFORMER_FF_MULT]
+                              [--decoder-max-steps DECODER_MAX_STEPS]
+                              [--recurrent-drop RECURRENT_DROP]
+                              [--warmup-epochs WARMUP_EPOCHS]
+                              [--cosine-epochs COSINE_EPOCHS]
+                              [--cosine-cycles COSINE_CYCLES]
+                              [--prune-epochs PRUNE_EPOCHS]
+                              [--prune-cycles PRUNE_CYCLES]
+                              [--min-lr-ratio MIN_LR_RATIO]
+                              [--prune-lr-scale PRUNE_LR_SCALE]
+                              [--l2-prune-start-lambda L2_PRUNE_START_LAMBDA]
+                              [--l2-prune-growth-epochs L2_PRUNE_GROWTH_EPOCHS]
+                              [--prune-threshold PRUNE_THRESHOLD]
+                              [--target-sparsity TARGET_SPARSITY]
+                              [--prune-start-sparsity PRUNE_START_SPARSITY]
+                              [--prune-ramp-epochs PRUNE_RAMP_EPOCHS]
+                              [--prune-stabilize-epochs PRUNE_STABILIZE_EPOCHS]
+                              [--keep-dropout-during-prune] [--neuron-prune]
+                              [--neuron-prune-target-sparsity NEURON_PRUNE_TARGET_SPARSITY]
+                              [--neuron-spike-threshold NEURON_SPIKE_THRESHOLD]
+                              [--neuron-membrane-std-threshold NEURON_MEMBRANE_STD_THRESHOLD]
+                              [--neuron-prune-min-keep NEURON_PRUNE_MIN_KEEP]
+                              [--batch-size BATCH_SIZE] [--lr LR]
+                              [--weight-decay WEIGHT_DECAY]
+                              [--grad-clip GRAD_CLIP]
+                              [--num-workers NUM_WORKERS]
+                              [--log-batches LOG_BATCHES]
+                              [--train-samples TRAIN_SAMPLES]
+                              [--test-samples TEST_SAMPLES]
+                              [--validation-source {dataset,train_split}]
+                              [--train-val-fraction TRAIN_VAL_FRACTION]
+                              [--train-val-samples TRAIN_VAL_SAMPLES]
+                              [--eval-test-after-training]
+                              [--continuous | --no-continuous] [--seed SEED]
+                              [--no-download] [--download]
+                              [--checkpoint-out CHECKPOINT_OUT]
+                              [--log-dir LOG_DIR] [--resume RESUME]
+train_tiny_imagenet.py: error: argument --encoder: invalid choice: 'residual_cnn' (choose from 'linear_patch', 'mlp_patch', 'lif_2x2', 'cnn2', 'cnn3', 'cnn5', 'res_cnn', 'patch', 'rows')
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Logging to: runs/cnn5_cross_x4_both_transformer
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/train (local cache only)
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/validation (local cache only)
+Parameter summary:
+  trainable : 1,617,544
+  frozen    : 0
+  total     : 1,617,544
+  by module:
+    encoder  trainable      288,768 | total      288,768
+    backbone trainable      340,544 | total      340,544
+    decoder  trainable      988,232 | total      988,232
+Device: cuda
+Pipeline: dataset=tiny_imagenet, encoder=res_cnn, backbone=tpsapu_cross_reservoir, decoder=both_transformer, pooling=none
+Validation source: train_split; dataset validation/test split reserved for final test
+Schedule: warmup=5, cosine=80, cosine_cycles=1.0, prune=0, prune_cycles=1.0, l2_prune_start=1.0e-07, l2_prune_growth_epochs=4, target_sparsity=0.0%, prune_ramp_epochs=1, prune_stabilize_epochs=-1, continuous=True
+Traceback (most recent call last):
+  File "/home/mateusz/sapu-psi-logs/train_tiny_imagenet.py", line 65, in <module>
+    main()
+    ~~~~^^
+  File "/home/mateusz/sapu-psi-logs/train_tiny_imagenet.py", line 61, in main
+    train_pipeline.main()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 1765, in main
+    train_loss, train_acc = run_epoch(
+                            ~~~~~~~~~^
+        model,
+        ^^^^^^
+    ...<9 lines>...
+        log_batches=args.log_batches,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 1347, in run_epoch
+    logits = model(images)
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 87, in forward
+    return self.decoder(features)
+           ~~~~~~~~~~~~^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/mateusz/sapu-psi-logs/decoders/transformer_state.py", line 69, in forward
+    raise ValueError(
+        f"Received {steps} steps, but max_steps={self.max_steps}."
+    )
+ValueError: Received 512 steps, but max_steps=256.
+usage: train_tiny_imagenet.py [-h]
+                              [--dataset {mnist,cifar10,imagenet,tiny_imagenet}]
+                              [--data-dir DATA_DIR]
+                              [--backbone {tpsapu,tpsapu_per_tau,tpsapu_cross_reservoir,tpsapu_per_tau_cross_reservoir}]
+                              [--encoder {linear_patch,mlp_patch,lif_2x2,cnn2,cnn3,cnn5,res_cnn,patch,rows}]
+                              [--decoder {linear,membrane_mlp,spike_mlp,both_mlp,all_state_mlp,membrane_transformer,spike_transformer,both_transformer,all_state_transformer,lif_count,mlp}]
+                              [--pooling {last,mean,none}]
+                              [--image-size IMAGE_SIZE]
+                              [--in-channels IN_CHANNELS]
+                              [--num-classes NUM_CLASSES]
+                              [--embed-dim EMBED_DIM]
+                              [--reservoir-dim RESERVOIR_DIM] [--taus TAUS]
+                              [--input-hidden-dim INPUT_HIDDEN_DIM]
+                              [--cross-rank CROSS_RANK]
+                              [--cross-gain CROSS_GAIN]
+                              [--patch-size PATCH_SIZE]
+                              [--encoder-hidden-dim ENCODER_HIDDEN_DIM]
+                              [--cnn-channels CNN_CHANNELS]
+                              [--lif-white-threshold LIF_WHITE_THRESHOLD]
+                              [--encoder-dropout ENCODER_DROPOUT]
+                              [--decoder-hidden-dim DECODER_HIDDEN_DIM]
+                              [--decoder-dropout DECODER_DROPOUT]
+                              [--decoder-transformer-layers DECODER_TRANSFORMER_LAYERS]
+                              [--decoder-transformer-heads DECODER_TRANSFORMER_HEADS]
+                              [--decoder-transformer-ff-mult DECODER_TRANSFORMER_FF_MULT]
+                              [--decoder-max-steps DECODER_MAX_STEPS]
+                              [--recurrent-drop RECURRENT_DROP]
+                              [--warmup-epochs WARMUP_EPOCHS]
+                              [--cosine-epochs COSINE_EPOCHS]
+                              [--cosine-cycles COSINE_CYCLES]
+                              [--prune-epochs PRUNE_EPOCHS]
+                              [--prune-cycles PRUNE_CYCLES]
+                              [--min-lr-ratio MIN_LR_RATIO]
+                              [--prune-lr-scale PRUNE_LR_SCALE]
+                              [--l2-prune-start-lambda L2_PRUNE_START_LAMBDA]
+                              [--l2-prune-growth-epochs L2_PRUNE_GROWTH_EPOCHS]
+                              [--prune-threshold PRUNE_THRESHOLD]
+                              [--target-sparsity TARGET_SPARSITY]
+                              [--prune-start-sparsity PRUNE_START_SPARSITY]
+                              [--prune-ramp-epochs PRUNE_RAMP_EPOCHS]
+                              [--prune-stabilize-epochs PRUNE_STABILIZE_EPOCHS]
+                              [--keep-dropout-during-prune] [--neuron-prune]
+                              [--neuron-prune-target-sparsity NEURON_PRUNE_TARGET_SPARSITY]
+                              [--neuron-spike-threshold NEURON_SPIKE_THRESHOLD]
+                              [--neuron-membrane-std-threshold NEURON_MEMBRANE_STD_THRESHOLD]
+                              [--neuron-prune-min-keep NEURON_PRUNE_MIN_KEEP]
+                              [--batch-size BATCH_SIZE] [--lr LR]
+                              [--weight-decay WEIGHT_DECAY]
+                              [--grad-clip GRAD_CLIP]
+                              [--num-workers NUM_WORKERS]
+                              [--log-batches LOG_BATCHES]
+                              [--train-samples TRAIN_SAMPLES]
+                              [--test-samples TEST_SAMPLES]
+                              [--validation-source {dataset,train_split}]
+                              [--train-val-fraction TRAIN_VAL_FRACTION]
+                              [--train-val-samples TRAIN_VAL_SAMPLES]
+                              [--eval-test-after-training]
+                              [--continuous | --no-continuous] [--seed SEED]
+                              [--no-download] [--download]
+                              [--checkpoint-out CHECKPOINT_OUT]
+                              [--log-dir LOG_DIR] [--resume RESUME]
+train_tiny_imagenet.py: error: unrecognized arguments: w
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Logging to: runs/cnn5_cross_x4_both_transformer
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/train (local cache only)
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/validation (local cache only)
+Parameter summary:
+  trainable : 1,617,544
+  frozen    : 0
+  total     : 1,617,544
+  by module:
+    encoder  trainable      288,768 | total      288,768
+    backbone trainable      340,544 | total      340,544
+    decoder  trainable      988,232 | total      988,232
+Device: cuda
+Pipeline: dataset=tiny_imagenet, encoder=res_cnn, backbone=tpsapu_cross_reservoir, decoder=both_transformer, pooling=none
+Validation source: train_split; dataset validation/test split reserved for final test
+Schedule: warmup=5, cosine=80, cosine_cycles=1.0, prune=0, prune_cycles=1.0, l2_prune_start=1.0e-07, l2_prune_growth_epochs=4, target_sparsity=0.0%, prune_ramp_epochs=1, prune_stabilize_epochs=-1, continuous=True
+Traceback (most recent call last):
+  File "/home/mateusz/sapu-psi-logs/train_tiny_imagenet.py", line 65, in <module>
+    main()
+    ~~~~^^
+  File "/home/mateusz/sapu-psi-logs/train_tiny_imagenet.py", line 61, in main
+    train_pipeline.main()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 1765, in main
+    train_loss, train_acc = run_epoch(
+                            ~~~~~~~~~^
+        model,
+        ^^^^^^
+    ...<9 lines>...
+        log_batches=args.log_batches,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 1347, in run_epoch
+    logits = model(images)
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 87, in forward
+    return self.decoder(features)
+           ~~~~~~~~~~~~^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/mateusz/sapu-psi-logs/decoders/transformer_state.py", line 69, in forward
+    raise ValueError(
+        f"Received {steps} steps, but max_steps={self.max_steps}."
+    )
+ValueError: Received 512 steps, but max_steps=256.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Logging to: runs/cnn5_cross_x4_both_transformer
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/train (local cache only)
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/validation (local cache only)
+Parameter summary:
+  trainable : 2,014,088
+  frozen    : 0
+  total     : 2,014,088
+  by module:
+    encoder  trainable      288,768 | total      288,768
+    backbone trainable      340,544 | total      340,544
+    decoder  trainable    1,384,776 | total    1,384,776
+Device: cuda
+Pipeline: dataset=tiny_imagenet, encoder=res_cnn, backbone=tpsapu_cross_reservoir, decoder=both_transformer, pooling=none
+Validation source: train_split; dataset validation/test split reserved for final test
+Schedule: warmup=5, cosine=80, cosine_cycles=1.0, prune=0, prune_cycles=1.0, l2_prune_start=1.0e-07, l2_prune_growth_epochs=4, target_sparsity=0.0%, prune_ramp_epochs=1, prune_stabilize_epochs=-1, continuous=True
+Traceback (most recent call last):
+  File "/home/mateusz/sapu-psi-logs/train_tiny_imagenet.py", line 65, in <module>
+    main()
+    ~~~~^^
+  File "/home/mateusz/sapu-psi-logs/train_tiny_imagenet.py", line 61, in main
+    train_pipeline.main()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 1765, in main
+    train_loss, train_acc = run_epoch(
+                            ~~~~~~~~~^
+        model,
+        ^^^^^^
+    ...<9 lines>...
+        log_batches=args.log_batches,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 1347, in run_epoch
+    logits = model(images)
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 87, in forward
+    return self.decoder(features)
+           ~~~~~~~~~~~~^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/mateusz/sapu-psi-logs/decoders/transformer_state.py", line 69, in forward
+    raise ValueError(
+        f"Received {steps} steps, but max_steps={self.max_steps}."
+    )
+ValueError: Received 512 steps, but max_steps=256.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Logging to: runs/cnn5_cross_x4_both_transformer
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/train (local cache only)
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/validation (local cache only)
+Parameter summary:
+  trainable : 1,617,544
+  frozen    : 0
+  total     : 1,617,544
+  by module:
+    encoder  trainable      288,768 | total      288,768
+    backbone trainable      340,544 | total      340,544
+    decoder  trainable      988,232 | total      988,232
+Device: cuda
+Pipeline: dataset=tiny_imagenet, encoder=res_cnn, backbone=tpsapu_cross_reservoir, decoder=both_transformer, pooling=none
+Validation source: train_split; dataset validation/test split reserved for final test
+Schedule: warmup=5, cosine=80, cosine_cycles=1.0, prune=0, prune_cycles=1.0, l2_prune_start=1.0e-07, l2_prune_growth_epochs=4, target_sparsity=0.0%, prune_ramp_epochs=1, prune_stabilize_epochs=-1, continuous=True
+Traceback (most recent call last):
+  File "/home/mateusz/sapu-psi-logs/train_tiny_imagenet.py", line 65, in <module>
+    main()
+    ~~~~^^
+  File "/home/mateusz/sapu-psi-logs/train_tiny_imagenet.py", line 61, in main
+    train_pipeline.main()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 1765, in main
+    train_loss, train_acc = run_epoch(
+                            ~~~~~~~~~^
+        model,
+        ^^^^^^
+    ...<9 lines>...
+        log_batches=args.log_batches,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 1347, in run_epoch
+    logits = model(images)
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 87, in forward
+    return self.decoder(features)
+           ~~~~~~~~~~~~^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/mateusz/sapu-psi-logs/decoders/transformer_state.py", line 69, in forward
+    raise ValueError(
+        f"Received {steps} steps, but max_steps={self.max_steps}."
+    )
+ValueError: Received 512 steps, but max_steps=256.
