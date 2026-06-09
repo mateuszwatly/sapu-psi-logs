@@ -1,0 +1,80 @@
+nohup: ignoring input
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Logging to: runs/res_cnn_cross_both_transformer
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/train (local cache only)
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/validation (local cache only)
+Parameter summary:
+  trainable : 1,650,312
+  frozen    : 0
+  total     : 1,650,312
+  by module:
+    encoder  trainable      288,768 | total      288,768
+    backbone trainable      340,544 | total      340,544
+    decoder  trainable    1,021,000 | total    1,021,000
+Device: cuda
+Pipeline: dataset=tiny_imagenet, encoder=res_cnn, backbone=tpsapu_cross_reservoir, decoder=both_transformer, pooling=none
+Validation source: train_split; dataset validation/test split reserved for final test
+Schedule: warmup=5, cosine=80, cosine_cycles=1.0, prune=0, prune_cycles=1.0, l2_prune_start=1.0e-07, l2_prune_growth_epochs=4, target_sparsity=0.0%, prune_ramp_epochs=1, prune_stabilize_epochs=-1, continuous=True
+warmup 001/085 | lr 6.000e-05 | train loss 4.8054 acc 4.99% | val loss 4.4518 acc 8.37%
+warmup 002/085 | lr 1.200e-04 | train loss 4.2432 acc 11.01% | val loss 3.9265 acc 15.49%
+warmup 003/085 | lr 1.800e-04 | train loss 3.8747 acc 15.74% | val loss 3.7222 acc 18.33%
+warmup 004/085 | lr 2.400e-04 | train loss 3.7316 acc 17.62% | val loss 3.5509 acc 20.65%
+warmup 005/085 | lr 3.000e-04 | train loss 3.6768 acc 18.51% | val loss 3.5764 acc 20.55%
+cosine 006/085 | lr 3.000e-04 | train loss 3.5915 acc 19.94% | val loss 3.5203 acc 21.76%
+cosine 007/085 | lr 2.999e-04 | train loss 3.5290 acc 20.78% | val loss 3.4603 acc 22.93%
+cosine 008/085 | lr 2.995e-04 | train loss 3.4584 acc 22.21% | val loss 3.3837 acc 23.69%
+cosine 009/085 | lr 2.990e-04 | train loss 3.4231 acc 22.70% | val loss 3.4352 acc 22.87%
+cosine 010/085 | lr 2.982e-04 | train loss 3.3870 acc 23.11% | val loss 3.4625 acc 22.86%
+cosine 011/085 | lr 2.972e-04 | train loss 3.3289 acc 23.97% | val loss 3.3302 acc 25.40%
+cosine 012/085 | lr 2.960e-04 | train loss 3.2814 acc 24.94% | val loss 3.3407 acc 25.18%
+cosine 013/085 | lr 2.945e-04 | train loss 3.2481 acc 25.58% | val loss 3.2759 acc 25.79%
+cosine 014/085 | lr 2.928e-04 | train loss 3.1964 acc 26.26% | val loss 3.2319 acc 26.89%
+cosine 015/085 | lr 2.910e-04 | train loss 3.1652 acc 26.94% | val loss 3.2950 acc 26.38%
+cosine 016/085 | lr 2.889e-04 | train loss 3.1205 acc 27.71% | val loss 3.2096 acc 27.12%
+cosine 017/085 | lr 2.866e-04 | train loss 3.1091 acc 27.76% | val loss 3.1608 acc 27.98%
+cosine 018/085 | lr 2.841e-04 | train loss 3.1004 acc 27.96% | val loss 3.1733 acc 28.12%
+cosine 019/085 | lr 2.814e-04 | train loss 3.0506 acc 28.87% | val loss 3.1618 acc 28.31%
+cosine 020/085 | lr 2.785e-04 | train loss 3.0167 acc 29.44% | val loss 3.1002 acc 29.14%
+cosine 021/085 | lr 2.754e-04 | train loss 3.0118 acc 29.58% | val loss 3.1427 acc 28.67%
+cosine 022/085 | lr 2.721e-04 | train loss 3.0032 acc 29.88% | val loss 3.0489 acc 30.14%
+cosine 023/085 | lr 2.687e-04 | train loss 2.9588 acc 30.74% | val loss 3.0615 acc 30.55%
+cosine 024/085 | lr 2.650e-04 | train loss 2.9260 acc 31.17% | val loss 3.0671 acc 30.07%
+cosine 025/085 | lr 2.612e-04 | train loss 2.9082 acc 31.42% | val loss 3.0268 acc 30.42%
+cosine 026/085 | lr 2.573e-04 | train loss 2.8859 acc 31.97% | val loss 3.0261 acc 30.57%
+cosine 027/085 | lr 2.531e-04 | train loss 2.8555 acc 32.39% | val loss 2.9874 acc 31.63%
+cosine 028/085 | lr 2.489e-04 | train loss 2.8310 acc 32.81% | val loss 2.9750 acc 31.96%
+cosine 029/085 | lr 2.444e-04 | train loss 2.8050 acc 33.33% | val loss 2.9475 acc 32.18%
+cosine 030/085 | lr 2.399e-04 | train loss 2.7694 acc 33.94% | val loss 2.9329 acc 32.97%
+cosine 031/085 | lr 2.352e-04 | train loss 2.7451 acc 34.36% | val loss 2.9258 acc 32.72%
+cosine 032/085 | lr 2.304e-04 | train loss 2.7283 acc 34.76% | val loss 2.9253 acc 32.82%
+cosine 033/085 | lr 2.255e-04 | train loss 2.6910 acc 35.51% | val loss 2.9127 acc 33.47%
+cosine 034/085 | lr 2.204e-04 | train loss 2.6846 acc 35.40% | val loss 2.8965 acc 33.73%
+cosine 035/085 | lr 2.153e-04 | train loss 2.6457 acc 36.21% | val loss 2.8820 acc 33.99%
+cosine 036/085 | lr 2.101e-04 | train loss 2.6182 acc 36.88% | val loss 2.8536 acc 34.84%
+cosine 037/085 | lr 2.048e-04 | train loss 2.5912 acc 37.40% | val loss 2.8630 acc 34.42%
+cosine 038/085 | lr 1.994e-04 | train loss 2.5605 acc 37.90% | val loss 2.8332 acc 35.62%
+cosine 039/085 | lr 1.939e-04 | train loss 2.5409 acc 38.21% | val loss 2.8707 acc 34.57%
+cosine 040/085 | lr 1.884e-04 | train loss 2.5170 acc 38.79% | val loss 2.8334 acc 35.55%
+cosine 041/085 | lr 1.829e-04 | train loss 2.4927 acc 39.24% | val loss 2.8066 acc 35.81%
+cosine 042/085 | lr 1.773e-04 | train loss 2.4575 acc 39.85% | val loss 2.7943 acc 36.62%
+cosine 043/085 | lr 1.716e-04 | train loss 2.4364 acc 40.32% | val loss 2.8230 acc 36.35%
+cosine 044/085 | lr 1.660e-04 | train loss 2.4180 acc 40.72% | val loss 2.8189 acc 35.67%
+cosine 045/085 | lr 1.603e-04 | train loss 2.4093 acc 40.91% | val loss 2.8160 acc 35.97%
+cosine 046/085 | lr 1.547e-04 | train loss 2.3814 acc 41.35% | val loss 2.8352 acc 36.09%
+cosine 047/085 | lr 1.490e-04 | train loss 2.3690 acc 41.55% | val loss 2.7901 acc 36.86%
+cosine 048/085 | lr 1.434e-04 | train loss 2.3385 acc 42.26% | val loss 2.7776 acc 36.94%
+cosine 049/085 | lr 1.377e-04 | train loss 2.3206 acc 42.57% | val loss 2.7685 acc 37.32%
+cosine 050/085 | lr 1.321e-04 | train loss 2.2855 acc 43.27% | val loss 2.7538 acc 37.68%
+cosine 051/085 | lr 1.266e-04 | train loss 2.2698 acc 43.69% | val loss 2.7435 acc 37.82%
+cosine 052/085 | lr 1.211e-04 | train loss 2.2497 acc 43.89% | val loss 2.7401 acc 38.08%
+cosine 053/085 | lr 1.156e-04 | train loss 2.2285 acc 44.37% | val loss 2.7328 acc 38.37%
+cosine 054/085 | lr 1.102e-04 | train loss 2.2111 acc 44.77% | val loss 2.7435 acc 38.08%
+cosine 055/085 | lr 1.049e-04 | train loss 2.1844 acc 45.27% | val loss 2.7273 acc 38.49%
+cosine 056/085 | lr 9.971e-05 | train loss 2.1651 acc 45.65% | val loss 2.7505 acc 38.46%
+cosine 057/085 | lr 9.458e-05 | train loss 2.1485 acc 45.88% | val loss 2.7477 acc 38.46%
+cosine 058/085 | lr 8.955e-05 | train loss 2.1346 acc 46.37% | val loss 2.7313 acc 38.94%
+cosine 059/085 | lr 8.462e-05 | train loss 2.1119 acc 46.73% | val loss 2.7183 acc 39.01%
+cosine 060/085 | lr 7.981e-05 | train loss 2.0962 acc 47.13% | val loss 2.7218 acc 38.73%
+cosine 061/085 | lr 7.512e-05 | train loss 2.0787 acc 47.44% | val loss 2.7183 acc 39.39%
+cosine 062/085 | lr 7.056e-05 | train loss 2.0595 acc 47.85% | val loss 2.7177 acc 39.08%

@@ -1,0 +1,52 @@
+Logging to: runs/cnn5_cross_x4_both_transformer
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/train (local cache only)
+Loading Hugging Face dataset split: slegroux/tiny-imagenet-200-clean/validation (local cache only)
+Parameter summary:
+  trainable : 1,617,544
+  frozen    : 0
+  total     : 1,617,544
+  by module:
+    encoder  trainable      288,768 | total      288,768
+    backbone trainable      340,544 | total      340,544
+    decoder  trainable      988,232 | total      988,232
+Device: cuda
+Pipeline: dataset=tiny_imagenet, encoder=res_cnn, backbone=tpsapu_cross_reservoir, decoder=both_transformer, pooling=none
+Validation source: train_split; dataset validation/test split reserved for final test
+Schedule: warmup=5, cosine=80, cosine_cycles=1.0, prune=0, prune_cycles=1.0, l2_prune_start=1.0e-07, l2_prune_growth_epochs=4, target_sparsity=0.0%, prune_ramp_epochs=1, prune_stabilize_epochs=-1, continuous=True
+Traceback (most recent call last):
+  File "/home/mateusz/sapu-psi-logs/train_tiny_imagenet.py", line 65, in <module>
+    main()
+    ~~~~^^
+  File "/home/mateusz/sapu-psi-logs/train_tiny_imagenet.py", line 61, in main
+    train_pipeline.main()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 1765, in main
+    train_loss, train_acc = run_epoch(
+                            ~~~~~~~~~^
+        model,
+        ^^^^^^
+    ...<9 lines>...
+        log_batches=args.log_batches,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 1347, in run_epoch
+    logits = model(images)
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/mateusz/sapu-psi-logs/train_pipeline.py", line 87, in forward
+    return self.decoder(features)
+           ~~~~~~~~~~~~^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mateusz/sapu-psi-logs/.venv/lib/python3.14/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/mateusz/sapu-psi-logs/decoders/transformer_state.py", line 69, in forward
+    raise ValueError(
+        f"Received {steps} steps, but max_steps={self.max_steps}."
+    )
+ValueError: Received 512 steps, but max_steps=256.
