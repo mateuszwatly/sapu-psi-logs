@@ -1,0 +1,119 @@
+{
+  "device": "cpu",
+  "splits": {
+    "validation": {
+      "num_samples": 4909,
+      "runtimes": {
+        "702K": {
+          "seconds": 43.81515539999964,
+          "images_per_second": 112.03885859092583,
+          "batch_size": 64
+        },
+        "2048-unit": {
+          "seconds": 389.6010293060008,
+          "images_per_second": 12.600069380577455,
+          "batch_size": 16
+        }
+      }
+    },
+    "test": {
+      "num_samples": 4923,
+      "runtimes": {
+        "702K": {
+          "seconds": 45.28096982200077,
+          "images_per_second": 108.7211696072828,
+          "batch_size": 64
+        },
+        "2048-unit": {
+          "seconds": 403.6542451410005,
+          "images_per_second": 12.196081322718026,
+          "batch_size": 16
+        }
+      }
+    }
+  },
+  "checkpoints": {
+    "702K": {
+      "path": "/home/mike/sapu-psi-logs/best_702k_cnn3_membrane_transformer.pt",
+      "parameters": 701640,
+      "epoch": 65,
+      "best_val_accuracy": 0.4145447137909961,
+      "architecture": {
+        "dataset": "tiny_imagenet",
+        "backbone": "tpsapu",
+        "encoder": "cnn3",
+        "decoder": "membrane_transformer",
+        "pooling": "last",
+        "image_size": 64,
+        "in_channels": 3,
+        "num_classes": 200,
+        "embed_dim": 128,
+        "reservoir_dim": 64,
+        "taus": "1.1,2.0,4.0,8.0,16.0,32.0,64.0,128.0",
+        "input_hidden_dim": 0,
+        "cross_rank": 16,
+        "cross_gain": 0.1,
+        "patch_size": 8,
+        "encoder_hidden_dim": 0,
+        "cnn_channels": 64,
+        "lif_white_threshold": 0.6,
+        "encoder_dropout": 0.05,
+        "decoder_hidden_dim": 128,
+        "decoder_dropout": 0.1,
+        "decoder_transformer_layers": 2,
+        "decoder_transformer_heads": 4,
+        "decoder_transformer_ff_mult": 4.0,
+        "decoder_max_steps": 256,
+        "recurrent_drop": 0.1
+      }
+    },
+    "2048-unit": {
+      "path": "/home/mike/sapu-psi-logs/best.pt",
+      "parameters": 1650568,
+      "epoch": 61,
+      "best_val_accuracy": 0.39386840497046244,
+      "architecture": {
+        "dataset": "tiny_imagenet",
+        "backbone": "tpsapu_cross_reservoir",
+        "encoder": "res_cnn",
+        "decoder": "both_transformer",
+        "pooling": "none",
+        "image_size": 64,
+        "in_channels": 3,
+        "num_classes": 200,
+        "embed_dim": 128,
+        "reservoir_dim": 256,
+        "taus": "1.1,2.0,4.0,8.0,16.0,32.0,64.0,128.0",
+        "input_hidden_dim": 0,
+        "cross_rank": 16,
+        "cross_gain": 0.1,
+        "patch_size": 8,
+        "encoder_hidden_dim": 0,
+        "cnn_channels": 64,
+        "lif_white_threshold": 0.6,
+        "encoder_dropout": 0.05,
+        "decoder_hidden_dim": 128,
+        "decoder_dropout": 0.1,
+        "decoder_transformer_layers": 2,
+        "decoder_transformer_heads": 4,
+        "decoder_transformer_ff_mult": 4.0,
+        "decoder_max_steps": 512,
+        "recurrent_drop": 0.1
+      }
+    }
+  },
+  "preprocessing": {
+    "resize": 73,
+    "center_crop": 64,
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  }
+}

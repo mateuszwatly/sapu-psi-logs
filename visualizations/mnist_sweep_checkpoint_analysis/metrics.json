@@ -1,0 +1,292 @@
+{
+  "grouped_pair_means": {
+    "spike_cka": {
+      "same_encoder": 0.6592328456491336,
+      "same_decoder": 0.4658932523869728,
+      "different_encoder_and_decoder": 0.4390886219252426
+    },
+    "membrane_cka": {
+      "same_encoder": 0.7667294060169516,
+      "same_decoder": 0.5732602321240082,
+      "different_encoder_and_decoder": 0.5413628850398843
+    },
+    "membrane_last_cka": {
+      "same_encoder": 0.6902232550600784,
+      "same_decoder": 0.584076094031614,
+      "different_encoder_and_decoder": 0.5259696952176979
+    },
+    "temporal_cka": {
+      "same_encoder": 0.4497343947759585,
+      "same_decoder": 0.2584887385522167,
+      "different_encoder_and_decoder": 0.245700095017001
+    },
+    "prediction_agreement": {
+      "same_encoder": 0.9416190476190477,
+      "same_decoder": 0.9335238095238098,
+      "different_encoder_and_decoder": 0.9303809523809523
+    },
+    "digit_geometry_correlation": {
+      "same_encoder": 0.7878792591388011,
+      "same_decoder": 0.5905459513660244,
+      "different_encoder_and_decoder": 0.5449853132520345
+    },
+    "recurrent_correlation": {
+      "same_encoder": 0.005800812024042242,
+      "same_decoder": 0.0010017696081006504,
+      "different_encoder_and_decoder": 0.0007105596954336323
+    },
+    "spectrum_cosine": {
+      "same_encoder": 0.9618462857745943,
+      "same_decoder": 0.9532395449895708,
+      "different_encoder_and_decoder": 0.9402651062087407
+    },
+    "centered_spectrum_cosine": {
+      "same_encoder": 0.9587876041730244,
+      "same_decoder": 0.9553173416190677,
+      "different_encoder_and_decoder": 0.9384393025012243
+    },
+    "shuffled_spectrum_cosine": {
+      "same_encoder": 0.994821492263249,
+      "same_decoder": 0.9973552756839328,
+      "different_encoder_and_decoder": 0.9941247228592162
+    },
+    "sorted_activity_correlation": {
+      "same_encoder": 0.9425894330345457,
+      "same_decoder": 0.9731348680302943,
+      "different_encoder_and_decoder": 0.9372415951847795
+    }
+  },
+  "alignment_summary": {
+    "match_correlation": 0.5827952846884727,
+    "match_random_mean": 0.30355786208477287,
+    "match_correlation_z": 14.233678201735437,
+    "weight_correlation_before": -0.0012312389055927743,
+    "weight_correlation_after": 0.037570658418211465,
+    "weight_correlation_after_z": 1.9073368611924546,
+    "edge_jaccard_before": 0.050790382907497295,
+    "edge_jaccard_after": 0.056615198602151334,
+    "edge_jaccard_random_mean": 0.05315343427554438,
+    "subspace_overlap_before": 0.11171797683669461,
+    "subspace_overlap_after": 0.1526797932262222
+  },
+  "variance_decomposition": {
+    "accuracy": {
+      "encoder": 0.4101831285766772,
+      "decoder": 0.24663036526809104,
+      "residual": 0.34318650615523166
+    },
+    "spike_rate": {
+      "encoder": 0.01025180532134583,
+      "decoder": 0.9492010091894356,
+      "residual": 0.04054718548921849
+    },
+    "spike_participation": {
+      "encoder": 0.044108216795190204,
+      "decoder": 0.9003759600065802,
+      "residual": 0.0555158231982296
+    },
+    "spike_selective_fraction": {
+      "encoder": 0.577724077236881,
+      "decoder": 0.19851274327929733,
+      "residual": 0.22376317948382166
+    },
+    "spike_centroid_accuracy": {
+      "encoder": 0.6364082587490728,
+      "decoder": 0.12457349340789013,
+      "residual": 0.23901824784303705
+    },
+    "membrane_centroid_accuracy": {
+      "encoder": 0.5962481864902749,
+      "decoder": 0.21110482700961455,
+      "residual": 0.19264698650011053
+    },
+    "stable_rank": {
+      "encoder": 0.4075416629547766,
+      "decoder": 0.2703726393583529,
+      "residual": 0.3220856976868705
+    },
+    "effective_rank": {
+      "encoder": 0.4110509856159752,
+      "decoder": 0.3810804224245122,
+      "residual": 0.20786859195951263
+    },
+    "spectral_radius": {
+      "encoder": 0.025662689812004758,
+      "decoder": 0.6427156217594812,
+      "residual": 0.3316216884285142
+    },
+    "non_normality": {
+      "encoder": 0.4907309436016125,
+      "decoder": 0.1587979276280581,
+      "residual": 0.35047112877032943
+    },
+    "reciprocity": {
+      "encoder": 0.08375824996422605,
+      "decoder": 0.6258552196056789,
+      "residual": 0.29038653043009505
+    },
+    "top_edge_reciprocity": {
+      "encoder": 0.1419858134666648,
+      "decoder": 0.19254228098974432,
+      "residual": 0.6654719055435908
+    }
+  },
+  "recurrent_function_spearman": {
+    "spike_cka": 0.08844928840559575,
+    "membrane_cka": 0.07071894169003741,
+    "temporal_cka": 0.06505271414339353,
+    "prediction_agreement": 0.03820072183872669
+  },
+  "observed_spectrum_cosine_mean": 0.9447956557334785,
+  "shuffled_spectrum_cosine_mean": 0.994682458565764,
+  "sample_permutation_cka_baselines": {
+    "spike_cka": {
+      "same_encoder": -0.00025271231298514436,
+      "same_decoder": -3.540973805409772e-05,
+      "different_encoder_and_decoder": 0.00011608429544863251
+    },
+    "membrane_cka": {
+      "same_encoder": -0.00039594396238753766,
+      "same_decoder": -2.6553706684762613e-05,
+      "different_encoder_and_decoder": 0.00013924198228860464
+    },
+    "membrane_last_cka": {
+      "same_encoder": 0.00022175222742056545,
+      "same_decoder": 7.714683408122559e-05,
+      "different_encoder_and_decoder": -9.696587644825877e-06
+    },
+    "temporal_cka": {
+      "same_encoder": 0.000129795401731734,
+      "same_decoder": 0.00012202674079634847,
+      "different_encoder_and_decoder": -0.00015135476829373386
+    }
+  },
+  "shuffled_weight_summary": {
+    "stable_rank": {
+      "observed_mean": 4.142127102329617,
+      "shuffle_mean": 14.408598569007149,
+      "mean_z": -15.528160962098013,
+      "significant_high_fraction": 0.0,
+      "significant_low_fraction": 1.0
+    },
+    "effective_rank": {
+      "observed_mean": 15.004143821693916,
+      "shuffle_mean": 36.816655467395435,
+      "mean_z": -47.762154417377914,
+      "significant_high_fraction": 0.0,
+      "significant_low_fraction": 1.0
+    },
+    "top1_energy": {
+      "observed_mean": 0.290267866282236,
+      "shuffle_mean": 0.07987762733584358,
+      "mean_z": 57.90343293600071,
+      "significant_high_fraction": 1.0,
+      "significant_low_fraction": 0.0
+    },
+    "spectral_radius": {
+      "observed_mean": 1.2329640108205022,
+      "shuffle_mean": 0.9942916408110233,
+      "mean_z": 5.718154998815377,
+      "significant_high_fraction": 0.7380952380952381,
+      "significant_low_fraction": 0.047619047619047616
+    },
+    "non_normality": {
+      "observed_mean": 0.45791876103196827,
+      "shuffle_mean": 0.1826754065425623,
+      "mean_z": 62.85137711702778,
+      "significant_high_fraction": 1.0,
+      "significant_low_fraction": 0.0
+    },
+    "reciprocity": {
+      "observed_mean": 0.03564175623667235,
+      "shuffle_mean": -0.0003551037522118248,
+      "mean_z": 1.709539357302771,
+      "significant_high_fraction": 0.30952380952380953,
+      "significant_low_fraction": 0.0
+    },
+    "row_norm_cv": {
+      "observed_mean": 0.19895086082674207,
+      "shuffle_mean": 0.13549376904254867,
+      "mean_z": 6.19622968416126,
+      "significant_high_fraction": 0.6428571428571429,
+      "significant_low_fraction": 0.023809523809523808
+    },
+    "top_edge_reciprocity": {
+      "observed_mean": 0.09771948481625901,
+      "shuffle_mean": 0.09892945763913508,
+      "mean_z": -0.06701369946422343,
+      "significant_high_fraction": 0.11904761904761904,
+      "significant_low_fraction": 0.09523809523809523
+    }
+  },
+  "model_accuracy_spearman": {
+    "spike_centroid_accuracy": {
+      "rho": 0.8579707111154667,
+      "p": 3.8852975246066564e-13
+    },
+    "membrane_centroid_accuracy": {
+      "rho": 0.7496560273135079,
+      "p": 1.1101921441715331e-08
+    },
+    "spike_selective_fraction": {
+      "rho": 0.5524920368386709,
+      "p": 0.0001483882100886331
+    },
+    "effective_rank": {
+      "rho": 0.4792545312933358,
+      "p": 0.00132210446311976
+    },
+    "non_normality": {
+      "rho": -0.40341591567313867,
+      "p": 0.008068991010128989
+    },
+    "spike_rate": {
+      "rho": -0.2684020458498296,
+      "p": 0.08567919970162265
+    }
+  },
+  "decoder_means": {
+    "linear": {
+      "accuracy": 0.968,
+      "spike_rate": 0.013268758809241091,
+      "effective_rank": 12.887145857408845,
+      "top1_energy": 0.2912681720086506,
+      "spectral_radius": 0.640092500618526
+    },
+    "membrane_mlp": {
+      "accuracy": 0.9765714285714286,
+      "spike_rate": 0.016044253848865212,
+      "effective_rank": 16.655456506663814,
+      "top1_energy": 0.31063656721796307,
+      "spectral_radius": 0.6646901624543327
+    },
+    "spike_mlp": {
+      "accuracy": 0.8785714285714287,
+      "spike_rate": 0.21486343738285152,
+      "effective_rank": 8.304692113351656,
+      "top1_energy": 0.3840782642364502,
+      "spectral_radius": 2.2140919991901944
+    },
+    "both_mlp": {
+      "accuracy": 0.9757142857142858,
+      "spike_rate": 0.016619717745888572,
+      "effective_rank": 15.996220235519562,
+      "top1_energy": 0.313276075891086,
+      "spectral_radius": 0.632322160261018
+    },
+    "all_state_mlp": {
+      "accuracy": 0.9785714285714284,
+      "spike_rate": 0.011429962774014537,
+      "effective_rank": 19.699576366045363,
+      "top1_energy": 0.24897117061274393,
+      "spectral_radius": 2.334960545812334
+    },
+    "lif_count": {
+      "accuracy": 0.9622857142857143,
+      "spike_rate": 0.013801608903415311,
+      "effective_rank": 16.481771851174244,
+      "top1_energy": 0.19337694772652217,
+      "spectral_radius": 0.9116266965866089
+    }
+  }
+}

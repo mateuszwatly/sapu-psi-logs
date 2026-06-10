@@ -1,0 +1,200 @@
+{
+  "activity_correlation": {
+    "same_encoder": {
+      "mean": 0.6837788765442647,
+      "median": 0.6987943709492749,
+      "count": 105
+    },
+    "same_decoder": {
+      "mean": 0.6650902704401516,
+      "median": 0.6829061161076391,
+      "count": 126
+    },
+    "different_encoder_and_decoder": {
+      "mean": 0.6532941333503396,
+      "median": 0.6697330103937964,
+      "count": 630
+    },
+    "extremes": {
+      "lowest": {
+        "value": 0.20789330686145563,
+        "models": [
+          "lif_2x2__spike_mlp",
+          "lif_2x2__lif_count"
+        ]
+      },
+      "highest": {
+        "value": 0.876234221218947,
+        "models": [
+          "linear_patch__spike_mlp",
+          "cnn3__spike_mlp"
+        ]
+      }
+    }
+  },
+  "digit_activity_correlation": {
+    "same_encoder": {
+      "mean": 0.535257448467434,
+      "median": 0.5267151151143602,
+      "count": 105
+    },
+    "same_decoder": {
+      "mean": 0.5031746567760569,
+      "median": 0.5039539845092358,
+      "count": 126
+    },
+    "different_encoder_and_decoder": {
+      "mean": 0.48901243245082204,
+      "median": 0.4953094861688106,
+      "count": 630
+    },
+    "extremes": {
+      "lowest": {
+        "value": 0.16953377932932898,
+        "models": [
+          "mlp_patch__all_state_mlp",
+          "lif_2x2__lif_count"
+        ]
+      },
+      "highest": {
+        "value": 0.7759518397352747,
+        "models": [
+          "lif_2x2__linear",
+          "lif_2x2__membrane_mlp"
+        ]
+      }
+    }
+  },
+  "sorted_activity_correlation": {
+    "same_encoder": {
+      "mean": 0.9425894187339595,
+      "median": 0.9885366423132413,
+      "count": 105
+    },
+    "same_decoder": {
+      "mean": 0.9731348935655029,
+      "median": 0.9882314259512186,
+      "count": 126
+    },
+    "different_encoder_and_decoder": {
+      "mean": 0.9372416091870018,
+      "median": 0.9826456238733027,
+      "count": 630
+    },
+    "extremes": {
+      "lowest": {
+        "value": 0.4838143441844654,
+        "models": [
+          "lif_2x2__lif_count",
+          "res_cnn__spike_mlp"
+        ]
+      },
+      "highest": {
+        "value": 0.9984506678334573,
+        "models": [
+          "linear_patch__linear",
+          "mlp_patch__linear"
+        ]
+      }
+    }
+  },
+  "recurrent_correlation": {
+    "same_encoder": {
+      "mean": 0.005800812441988715,
+      "median": 0.007164167705923319,
+      "count": 105
+    },
+    "same_decoder": {
+      "mean": 0.001001769008340373,
+      "median": 0.0004197151865810156,
+      "count": 126
+    },
+    "different_encoder_and_decoder": {
+      "mean": 0.0007105597767919775,
+      "median": 0.0008481242693960667,
+      "count": 630
+    },
+    "extremes": {
+      "lowest": {
+        "value": -0.0572533905506134,
+        "models": [
+          "cnn2__both_mlp",
+          "res_cnn__all_state_mlp"
+        ]
+      },
+      "highest": {
+        "value": 0.06823378056287766,
+        "models": [
+          "lif_2x2__membrane_mlp",
+          "cnn3__linear"
+        ]
+      }
+    }
+  },
+  "recurrent_spectrum_cosine": {
+    "same_encoder": {
+      "mean": 0.9618462874775842,
+      "median": 0.9825401902198792,
+      "count": 105
+    },
+    "same_decoder": {
+      "mean": 0.9532395402590433,
+      "median": 0.9917563498020172,
+      "count": 126
+    },
+    "different_encoder_and_decoder": {
+      "mean": 0.9402651053572458,
+      "median": 0.9787745475769043,
+      "count": 630
+    },
+    "extremes": {
+      "lowest": {
+        "value": 0.5654714703559875,
+        "models": [
+          "mlp_patch__all_state_mlp",
+          "lif_2x2__membrane_mlp"
+        ]
+      },
+      "highest": {
+        "value": 0.9993177652359009,
+        "models": [
+          "cnn2__linear",
+          "rows__membrane_mlp"
+        ]
+      }
+    }
+  },
+  "top_edge_jaccard": {
+    "same_encoder": {
+      "mean": 0.05596784336486938,
+      "median": 0.05359477124183006,
+      "count": 105
+    },
+    "same_decoder": {
+      "mean": 0.05082731112976755,
+      "median": 0.05084745762711865,
+      "count": 126
+    },
+    "different_encoder_and_decoder": {
+      "mean": 0.05259325627531837,
+      "median": 0.05221932114882506,
+      "count": 630
+    },
+    "extremes": {
+      "lowest": {
+        "value": 0.004987531172069825,
+        "models": [
+          "lif_2x2__membrane_mlp",
+          "rows__membrane_mlp"
+        ]
+      },
+      "highest": {
+        "value": 0.17151162790697674,
+        "models": [
+          "lif_2x2__linear",
+          "lif_2x2__membrane_mlp"
+        ]
+      }
+    }
+  }
+}
