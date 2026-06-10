@@ -1,0 +1,45 @@
+{
+  "seed": 99,
+  "n_images": 20,
+  "indices": [
+    522,
+    870,
+    1406,
+    1537,
+    1725,
+    2294,
+    2474,
+    2505,
+    2719,
+    2764,
+    2785,
+    2994,
+    3012,
+    3185,
+    3706,
+    4611,
+    4685,
+    4714,
+    4726,
+    4760
+  ],
+  "resnet18": {
+    "top1": 0.55,
+    "top5": 0.75,
+    "reported_top1": 0.5665,
+    "reported_top5": 0.792
+  },
+  "cnn3_702k": {
+    "top1": 0.4,
+    "top5": 0.65,
+    "reported_top1": 0.4164,
+    "reported_top5": 0.6763
+  },
+  "rescnn_2048": {
+    "top1": 0.45,
+    "top5": 0.75,
+    "reported_top1": 0.3923,
+    "reported_top5": 0.6539
+  },
+  "attention_note": "Attention maps show which TPSAPU reservoir-state timestep the transformer CLS token attends to. Each timestep corresponds to one CNN spatial patch (8x8 grid for cnn3, two 8x8 grids for res_cnn). The mapping image_patch \u2192 CNN_token \u2192 TPSAPU_state is valid but indirect. Attention rollout across 2 transformer layers is numerically near-trivial and is NOT used here; raw L1/L2 CLS attention is shown instead."
+}

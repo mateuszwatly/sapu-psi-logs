@@ -1,0 +1,13 @@
+{
+  "architecture": {
+    "encoder": "resnet18"
+  },
+  "checkpoint": "/home/mateusz/sapu-psi-logs/sweep_runs_tiny_imagenet/resnet18_scratch/best.pt",
+  "loss": 2.780491847374163,
+  "num_samples": 4909,
+  "split": "validation",
+  "topk": {
+    "1": 0.5665104909350173,
+    "5": 0.7920146669382766
+  }
+}

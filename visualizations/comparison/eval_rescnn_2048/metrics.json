@@ -1,0 +1,38 @@
+{
+  "architecture": {
+    "backbone": "tpsapu_cross_reservoir",
+    "cnn_channels": 64,
+    "cross_gain": 0.1,
+    "cross_rank": 16,
+    "dataset": "tiny_imagenet",
+    "decoder": "both_transformer",
+    "decoder_dropout": 0.1,
+    "decoder_hidden_dim": 128,
+    "decoder_max_steps": 512,
+    "decoder_transformer_ff_mult": 4.0,
+    "decoder_transformer_heads": 4,
+    "decoder_transformer_layers": 2,
+    "embed_dim": 128,
+    "encoder": "res_cnn",
+    "encoder_dropout": 0.05,
+    "encoder_hidden_dim": 0,
+    "image_size": 64,
+    "in_channels": 3,
+    "input_hidden_dim": 0,
+    "lif_white_threshold": 0.6,
+    "num_classes": 200,
+    "patch_size": 8,
+    "pooling": "none",
+    "recurrent_drop": 0.1,
+    "reservoir_dim": 256,
+    "taus": "1.1,2.0,4.0,8.0,16.0,32.0,64.0,128.0"
+  },
+  "checkpoint": "/home/mateusz/sapu-psi-logs/checkpoints/res_cnn_cross_both_transformer/best.pt",
+  "loss": 2.692269060076995,
+  "num_samples": 4909,
+  "split": "validation",
+  "topk": {
+    "1": 0.39234059889997963,
+    "5": 0.6539009981666327
+  }
+}

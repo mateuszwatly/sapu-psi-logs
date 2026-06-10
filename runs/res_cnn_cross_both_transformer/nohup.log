@@ -78,3 +78,6 @@ cosine 059/085 | lr 8.462e-05 | train loss 2.1119 acc 46.73% | val loss 2.7183 a
 cosine 060/085 | lr 7.981e-05 | train loss 2.0962 acc 47.13% | val loss 2.7218 acc 38.73%
 cosine 061/085 | lr 7.512e-05 | train loss 2.0787 acc 47.44% | val loss 2.7183 acc 39.39%
 cosine 062/085 | lr 7.056e-05 | train loss 2.0595 acc 47.85% | val loss 2.7177 acc 39.08%
+cosine 063/085 | lr 6.614e-05 | train loss 2.0439 acc 48.22% | val loss 2.7102 acc 39.36%
+/usr/lib/python3.14/multiprocessing/resource_tracker.py:475: UserWarning: resource_tracker: There appear to be 15 leaked semaphore objects to clean up at shutdown: {'/mp-d5bprx96', '/mp-4l1yzcfi', '/mp-ev3frdyu', '/mp-tsbg3zuj', '/mp-wk720rwc', '/mp-fgh4o7uf', '/mp-x3wojh6b', '/mp-uqvgeygi', '/mp-kwav1n5e', '/mp-mgf1t59i', '/mp-m2mekd5u', '/mp-qpff6p0z', '/mp-rwp3_5d4', '/mp-vq00x9mk', '/mp-c1hkuu16'}
+  warnings.warn(

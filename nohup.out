@@ -755,3 +755,5 @@ Traceback (most recent call last):
         f"Received {steps} steps, but max_steps={self.max_steps}."
     )
 ValueError: Received 512 steps, but max_steps=256.
+/usr/lib/python3.14/multiprocessing/resource_tracker.py:475: UserWarning: resource_tracker: There appear to be 15 leaked semaphore objects to clean up at shutdown: {'/mp-q_vu82f8', '/mp-1z2uej8_', '/mp-ge4j_inj', '/mp-fmyowi68', '/mp-7zkhg63k', '/mp-88x5unh_', '/mp-vzjxhf4b', '/mp-dz91169r', '/mp-ypyhjz6u', '/mp-ere2x6ik', '/mp-zptld82z', '/mp-2xs0wrap', '/mp-vpc3upz4', '/mp-v8so8n03', '/mp-d1i77ncx'}
+  warnings.warn(

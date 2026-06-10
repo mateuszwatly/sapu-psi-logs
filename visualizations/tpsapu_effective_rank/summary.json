@@ -1,0 +1,130 @@
+{
+  "CNN3+TPSAPU 702k": {
+    "wrec_effective_rank": NaN,
+    "wrec_stable_rank": 2.3267834186553955,
+    "wrec_null_eff_rank": 13.429772869334403,
+    "wrec_sparsity": 0.3125,
+    "activation_per_tau": {
+      "1.1": {
+        "effective_rank": 10.333667531788933,
+        "stable_rank": 3.962388515472412,
+        "top1_energy": 0.2523730397224426,
+        "mean_abs": 0.6272655725479126,
+        "sparsity": 0.00015625
+      },
+      "2": {
+        "effective_rank": 10.715361352649905,
+        "stable_rank": 4.030837059020996,
+        "top1_energy": 0.24808743596076965,
+        "mean_abs": 0.6216245293617249,
+        "sparsity": 9.375e-05
+      },
+      "4": {
+        "effective_rank": 11.07562789660716,
+        "stable_rank": 4.1631550788879395,
+        "top1_energy": 0.2402024269104004,
+        "mean_abs": 0.4647315740585327,
+        "sparsity": 6.25e-05
+      },
+      "8": {
+        "effective_rank": 11.333781516749832,
+        "stable_rank": 4.053238391876221,
+        "top1_energy": 0.24671629071235657,
+        "mean_abs": 0.47002971172332764,
+        "sparsity": 6.25e-05
+      },
+      "16": {
+        "effective_rank": 11.767023926488193,
+        "stable_rank": 4.320934295654297,
+        "top1_energy": 0.23143143951892853,
+        "mean_abs": 0.5097556710243225,
+        "sparsity": 9.375e-05
+      },
+      "32": {
+        "effective_rank": 11.834387553510744,
+        "stable_rank": 4.33317756652832,
+        "top1_energy": 0.23077751696109772,
+        "mean_abs": 0.4792628288269043,
+        "sparsity": 0.00021875
+      },
+      "64": {
+        "effective_rank": 12.043983089130505,
+        "stable_rank": 4.436444282531738,
+        "top1_energy": 0.225405752658844,
+        "mean_abs": 0.48109152913093567,
+        "sparsity": 6.25e-05
+      },
+      "128": {
+        "effective_rank": 11.787878663749337,
+        "stable_rank": 4.301822662353516,
+        "top1_energy": 0.23245961964130402,
+        "mean_abs": 0.4938896596431732,
+        "sparsity": 0.0
+      }
+    }
+  },
+  "ResCNN+TPSAPU 2048": {
+    "wrec_effective_rank": 17.36554610637365,
+    "wrec_stable_rank": 2.0222623348236084,
+    "wrec_null_eff_rank": 154.55245335466194,
+    "wrec_sparsity": 0.0,
+    "activation_per_tau": {
+      "1.1": {
+        "effective_rank": 9.078602031045952,
+        "stable_rank": 3.731588125228882,
+        "top1_energy": 0.2679824233055115,
+        "mean_abs": 0.6207912564277649,
+        "sparsity": 0.000140625
+      },
+      "2": {
+        "effective_rank": 9.529544455633157,
+        "stable_rank": 3.7640891075134277,
+        "top1_energy": 0.2656685411930084,
+        "mean_abs": 0.5960068106651306,
+        "sparsity": 7.8125e-05
+      },
+      "4": {
+        "effective_rank": 10.01379041366893,
+        "stable_rank": 3.879465103149414,
+        "top1_energy": 0.2577674984931946,
+        "mean_abs": 0.43078356981277466,
+        "sparsity": 0.0001875
+      },
+      "8": {
+        "effective_rank": 10.004054257227113,
+        "stable_rank": 3.8524177074432373,
+        "top1_energy": 0.2595772445201874,
+        "mean_abs": 0.4493841528892517,
+        "sparsity": 0.000109375
+      },
+      "16": {
+        "effective_rank": 10.235064206678048,
+        "stable_rank": 3.8335325717926025,
+        "top1_energy": 0.2608560025691986,
+        "mean_abs": 0.5248360633850098,
+        "sparsity": 9.375e-05
+      },
+      "32": {
+        "effective_rank": 10.92554109246581,
+        "stable_rank": 3.9163384437561035,
+        "top1_energy": 0.2553405463695526,
+        "mean_abs": 0.5095234513282776,
+        "sparsity": 0.0001328125
+      },
+      "64": {
+        "effective_rank": 11.078955597101944,
+        "stable_rank": 3.7891921997070312,
+        "top1_energy": 0.2639084756374359,
+        "mean_abs": 0.5018189549446106,
+        "sparsity": 0.0001328125
+      },
+      "128": {
+        "effective_rank": 10.594023808815571,
+        "stable_rank": 3.5573017597198486,
+        "top1_energy": 0.2811119258403778,
+        "mean_abs": 0.5162073969841003,
+        "sparsity": 0.000109375
+      }
+    }
+  }
+}

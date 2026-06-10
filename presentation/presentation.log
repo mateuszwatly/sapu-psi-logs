@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux) (preloaded format=pdflatex 2026.6.10)  10 JUN 2026 20:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux) (preloaded format=pdflatex 2026.6.10)  10 JUN 2026 20:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**/home/mateusz/sapu-psi-logs/presentation/presentation.tex
-(/home/mateusz/sapu-psi-logs/presentation/presentation.tex
+**presentation.tex
+(./presentation.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
 (/usr/share/texmf-dist/tex/latex/beamer/beamer.cls
@@ -1244,41 +1244,68 @@ channels.png  used on input line 582.
 
 ]
 <../visualizations/attention_analysis/cnn3_702k/mean_cls_attention.png, id=218,
- 860.013pt x 606.03557pt>
+ 570.933pt x 920.41006pt>
 File: ../visualizations/attention_analysis/cnn3_702k/mean_cls_attention.png Gra
 phic file (type png)
 <use ../visualizations/attention_analysis/cnn3_702k/mean_cls_attention.png>
 Package pdftex.def Info: ../visualizations/attention_analysis/cnn3_702k/mean_cl
-s_attention.png  used on input line 665.
-(pdftex.def)             Requested size: 228.26338pt x 160.84833pt.
-<../visualizations/attention_analysis/cnn3_702k/layer_comparison.png, id=219, 9
-03.375pt x 578.16pt>
+s_attention.png  used on input line 700.
+(pdftex.def)             Requested size: 122.42586pt x 197.36467pt.
+<../visualizations/attention_analysis/cnn3_702k/layer_comparison.png, id=219, 5
+42.025pt x 867.24pt>
 File: ../visualizations/attention_analysis/cnn3_702k/layer_comparison.png Graph
 ic file (type png)
 <use ../visualizations/attention_analysis/cnn3_702k/layer_comparison.png>
 Package pdftex.def Info: ../visualizations/attention_analysis/cnn3_702k/layer_c
-omparison.png  used on input line 665.
-(pdftex.def)             Requested size: 210.00537pt x 134.40317pt.
+omparison.png  used on input line 700.
+(pdftex.def)             Requested size: 123.35635pt x 197.3702pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 700--700
+[]\OT1/cmss/m/n/6 Some heads show
+ []
 
 
-Class beamer Warning: Frame text is shrunk by a factor of 17.34009 percent inst
-ead of 5 percent on input line 665.
+Underfull \hbox (badness 4441) in paragraph at lines 700--700
+\OT1/cmss/m/n/6 weak pref-er-ence for
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 700--700
+[]\OT1/cmss/m/n/6 Layer 2 mildly
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 700--700
+\OT1/cmss/m/n/6 re-weights at-ten-tion
+ []
+
+
+Underfull \hbox (badness 7796) in paragraph at lines 700--700
+[]\OT1/cmss/m/n/6 So the trans-former
+ []
+
+
+Underfull \hbox (badness 1199) in paragraph at lines 700--700
+\OT1/cmss/m/n/6 con-text, rather than
+ []
 
 [13
 
  <../visualizations/attention_analysis/cnn3_702k/mean_cls_attention.png> <../vi
 sualizations/attention_analysis/cnn3_702k/layer_comparison.png>]
-<../visualizations/validation_20/attention_anatomy.png, id=229, 1029.8475pt x 3
-563.51324pt>
-File: ../visualizations/validation_20/attention_anatomy.png Graphic file (type 
-png)
-<use ../visualizations/validation_20/attention_anatomy.png>
-Package pdftex.def Info: ../visualizations/validation_20/attention_anatomy.png 
- used on input line 675.
-(pdftex.def)             Requested size: 54.92108pt x 190.0398pt.
+<../visualizations/attention_analysis/cnn3_702k/positional_attention_profile.pn
+g, id=229, 433.62pt x 578.16pt>
+File: ../visualizations/attention_analysis/cnn3_702k/positional_attention_profi
+le.png Graphic file (type png)
+<use ../visualizations/attention_analysis/cnn3_702k/positional_attention_profil
+e.png>
+Package pdftex.def Info: ../visualizations/attention_analysis/cnn3_702k/positio
+nal_attention_profile.png  used on input line 750.
+(pdftex.def)             Requested size: 142.54587pt x 190.06116pt.
  [14
 
- <../visualizations/validation_20/attention_anatomy.png>]
+ <../visualizations/attention_analysis/cnn3_702k/positional_attention_profile.p
+ng>]
 <../visualizations/attention_analysis/rescnn_2048/positional_attention_profile.
 png, id=236, 867.24pt x 289.08pt>
 File: ../visualizations/attention_analysis/rescnn_2048/positional_attention_pro
@@ -1286,9 +1313,10 @@ file.png Graphic file (type png)
 <use ../visualizations/attention_analysis/rescnn_2048/positional_attention_prof
 ile.png>
 Package pdftex.def Info: ../visualizations/attention_analysis/rescnn_2048/posit
-ional_attention_profile.png  used on input line 707.
+ional_attention_profile.png  used on input line 782.
 (pdftex.def)             Requested size: 216.67201pt x 72.2213pt.
- [15
+
+[15
 
  <../visualizations/attention_analysis/rescnn_2048/positional_attention_profile
 .png>]
@@ -1298,7 +1326,7 @@ File: ../visualizations/comparison/02_model_summary.png Graphic file (type png)
 
 <use ../visualizations/comparison/02_model_summary.png>
 Package pdftex.def Info: ../visualizations/comparison/02_model_summary.png  use
-d on input line 749.
+d on input line 824.
 (pdftex.def)             Requested size: 236.03284pt x 84.37852pt.
  [16
 
@@ -1309,12 +1337,12 @@ File: ../visualizations/comparison/01_training_curves.png Graphic file (type pn
 g)
 <use ../visualizations/comparison/01_training_curves.png>
 Package pdftex.def Info: ../visualizations/comparison/01_training_curves.png  u
-sed on input line 777.
+sed on input line 852.
 (pdftex.def)             Requested size: 209.93536pt x 134.01628pt.
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <5.5> not available
-(Font)              size <5> substituted on input line 777.
+(Font)              size <5> substituted on input line 852.
 
 [17
 
@@ -1325,7 +1353,7 @@ File: ../visualizations/comparison/09_overfit_analysis.png Graphic file (type p
 ng)
 <use ../visualizations/comparison/09_overfit_analysis.png>
 Package pdftex.def Info: ../visualizations/comparison/09_overfit_analysis.png  
-used on input line 814.
+used on input line 889.
 (pdftex.def)             Requested size: 241.16399pt x 64.01544pt.
  [18
 
@@ -1336,7 +1364,7 @@ File: ../visualizations/comparison/03_sparsity_analysis.png Graphic file (type
 png)
 <use ../visualizations/comparison/03_sparsity_analysis.png>
 Package pdftex.def Info: ../visualizations/comparison/03_sparsity_analysis.png 
- used on input line 839.
+ used on input line 914.
 (pdftex.def)             Requested size: 398.6757pt x 141.5603pt.
  [19
 
@@ -1347,7 +1375,7 @@ File: ../visualizations/comparison/04_per_class_accuracy.png Graphic file (type
  png)
 <use ../visualizations/comparison/04_per_class_accuracy.png>
 Package pdftex.def Info: ../visualizations/comparison/04_per_class_accuracy.png
-  used on input line 867.
+  used on input line 942.
 (pdftex.def)             Requested size: 216.67201pt x 134.1408pt.
  [20
 
@@ -1358,7 +1386,7 @@ File: ../visualizations/resnet18/effective_rank_per_layer.png Graphic file (typ
 e png)
 <use ../visualizations/resnet18/effective_rank_per_layer.png>
 Package pdftex.def Info: ../visualizations/resnet18/effective_rank_per_layer.pn
-g  used on input line 903.
+g  used on input line 978.
 (pdftex.def)             Requested size: 216.67201pt x 114.8948pt.
  [21
 
@@ -1370,7 +1398,7 @@ on_effective_rank.png Graphic file (type png)
 <use /home/mateusz/sapu-psi-logs/visualizations/tpsapu_effective_rank/activatio
 n_effective_rank.png>
 Package pdftex.def Info: /home/mateusz/sapu-psi-logs/visualizations/tpsapu_effe
-ctive_rank/activation_effective_rank.png  used on input line 946.
+ctive_rank/activation_effective_rank.png  used on input line 1021.
 (pdftex.def)             Requested size: 219.31404pt x 58.48373pt.
 </home/mateusz/sapu-psi-logs/visualizations/tpsapu_effective_rank/comparison_wi
 th_resnet.png, id=335, 1148.57678pt x 357.22029pt>
@@ -1379,14 +1407,14 @@ on_with_resnet.png Graphic file (type png)
 <use /home/mateusz/sapu-psi-logs/visualizations/tpsapu_effective_rank/compariso
 n_with_resnet.png>
 Package pdftex.def Info: /home/mateusz/sapu-psi-logs/visualizations/tpsapu_effe
-ctive_rank/comparison_with_resnet.png  used on input line 946.
+ctive_rank/comparison_with_resnet.png  used on input line 1021.
 (pdftex.def)             Requested size: 235.03914pt x 73.09981pt.
  [22
 
  </home/mateusz/sapu-psi-logs/visualizations/tpsapu_effective_rank/activation_e
 ffective_rank.png> </home/mateusz/sapu-psi-logs/visualizations/tpsapu_effective
 _rank/comparison_with_resnet.png>]
-Underfull \hbox (badness 3029) in paragraph at lines 992--992
+Underfull \hbox (badness 3029) in paragraph at lines 1067--1067
 []\OT1/cmss/m/n/8 1. Quantization-aware train-ing (INT8/INT16) 2. Ex-port
  []
 
@@ -1401,16 +1429,16 @@ Underfull \hbox (badness 3029) in paragraph at lines 992--992
 ]
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/sc' in size <10.95> not available
-(Font)              Font shape `OT1/cmr/m/sc' tried instead on input line 1155.
+(Font)              Font shape `OT1/cmr/m/sc' tried instead on input line 1230.
 
 
 
-Overfull \hbox (1.96637pt too wide) in paragraph at lines 1155--1155
+Overfull \hbox (1.96637pt too wide) in paragraph at lines 1230--1230
 [][]  
  []
 
 
-Overfull \vbox (126.44061pt too high) detected at line 1155
+Overfull \vbox (126.44061pt too high) detected at line 1230
  []
 
 [27
@@ -1438,17 +1466,20 @@ LaTeX Font Warning: Size substitutions with differences
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `presentation.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
  40772 strings out of 469515
- 994079 string characters out of 5470807
- 1529163 words of memory out of 5000000
- 68646 multiletter control sequences out of 15000+600000
+ 994156 string characters out of 5470807
+ 1529114 words of memory out of 5000000
+ 68647 multiletter control sequences out of 15000+600000
  647934 words of font info for 114 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 128i,19n,123p,774b,2299s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 128i,19n,123p,733b,2299s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texmf-dist/font
 s/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texmf-dist/fonts/type1/publi
@@ -1476,7 +1507,7 @@ pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr
 st/fonts/type1/public/cm-super/sfss1000.pfb></usr/share/texmf-dist/fonts/type1/
 public/cm-super/sfss1095.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super
 /sfss1440.pfb>
-Output written on presentation.pdf (27 pages, 5401426 bytes).
+Output written on presentation.pdf (27 pages, 3908219 bytes).
 PDF statistics:
  649 PDF objects out of 1000 (max. 8388607)
  369 compressed objects within 4 object streams

@@ -583,11 +583,11 @@ INPUT ../visualizations/attention_analysis/cnn3_702k/layer_comparison.png
 INPUT ../visualizations/attention_analysis/cnn3_702k/layer_comparison.png
 INPUT ../visualizations/attention_analysis/cnn3_702k/layer_comparison.png
 INPUT ../visualizations/attention_analysis/cnn3_702k/layer_comparison.png
-INPUT ../visualizations/validation_20/attention_anatomy.png
-INPUT ../visualizations/validation_20/attention_anatomy.png
-INPUT ../visualizations/validation_20/attention_anatomy.png
-INPUT ../visualizations/validation_20/attention_anatomy.png
-INPUT ../visualizations/validation_20/attention_anatomy.png
+INPUT ../visualizations/attention_analysis/cnn3_702k/positional_attention_profile.png
+INPUT ../visualizations/attention_analysis/cnn3_702k/positional_attention_profile.png
+INPUT ../visualizations/attention_analysis/cnn3_702k/positional_attention_profile.png
+INPUT ../visualizations/attention_analysis/cnn3_702k/positional_attention_profile.png
+INPUT ../visualizations/attention_analysis/cnn3_702k/positional_attention_profile.png
 INPUT ../visualizations/attention_analysis/rescnn_2048/positional_attention_profile.png
 INPUT ../visualizations/attention_analysis/rescnn_2048/positional_attention_profile.png
 INPUT ../visualizations/attention_analysis/rescnn_2048/positional_attention_profile.png

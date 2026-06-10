@@ -1,8 +1,9 @@
 # Fdb version 4
-["pdflatex"] 1781115212.89086 "/home/mateusz/sapu-psi-logs/presentation/presentation.tex" "presentation.pdf" "presentation" 1781115219.20514 0
+["pdflatex"] 1781117640.42236 "/home/mateusz/sapu-psi-logs/presentation/presentation.tex" "presentation.pdf" "presentation" 1781117645.64963 0
   "../visualizations/architecture/tpsapu_per_tau_cross_reservoir_architecture.png" 1781115095.21413 109349 745d8309624c66b72785e8b553ee0663 ""
-  "../visualizations/attention_analysis/cnn3_702k/layer_comparison.png" 1781105696.44796 65575 30d1b7e93e2f28106f25a07eede0772d ""
-  "../visualizations/attention_analysis/cnn3_702k/mean_cls_attention.png" 1781105695.45194 162137 9e27e7bf33ad4343063080565f4a0101 ""
+  "../visualizations/attention_analysis/cnn3_702k/layer_comparison.png" 1781116798.64396 59813 f56718a19b7b2d23a75791629d6e1c00 ""
+  "../visualizations/attention_analysis/cnn3_702k/mean_cls_attention.png" 1781116797.69494 144432 e5bc2499c5221491abe9e5848eb2c3b2 ""
+  "../visualizations/attention_analysis/cnn3_702k/positional_attention_profile.png" 1781116838.02081 208362 94bcb2fa12ded785c4d82e9620c9a467 ""
   "../visualizations/attention_analysis/rescnn_2048/positional_attention_profile.png" 1781105800.61502 112345 431edc956374e203a414bda6b027e677 ""
   "../visualizations/cnn3_voltages/validation_0/cnn3_top_channels.png" 1780601959.3346 59978 6f5231b6f789cfaf17c31a3f6ed0ff64 ""
   "../visualizations/cnn3_voltages/validation_0/input_and_cnn3_tokens.png" 1780601959.3346 76016 0f83a5c3992e065fbef6e5b7225a265f ""
@@ -17,8 +18,7 @@
   "../visualizations/mnist_sweep_spiking_topology/all_models_neuron_firing_rates.png" 1781100317.61541 200047 e01803ab5b2d4624812b1febc343004b ""
   "../visualizations/res_cnn_cross_both_transformer_best/validation_0/tpsapu_tau_traces.png" 1781096896.48923 616858 4902aa7f219e7edfcfa646bd6c0b0e90 ""
   "../visualizations/resnet18/effective_rank_per_layer.png" 1781112566.84269 230724 16b4de935a814c70c500847f80b25b9f ""
-  "../visualizations/validation_20/attention_anatomy.png" 1781105884.2987 1198182 c0dcc62bf07559cf693cd2a3615796ef ""
-  "/home/mateusz/sapu-psi-logs/presentation/presentation.tex" 1781115212.8047 49113 618479cfa854451cb770c4ad7ceccef4 ""
+  "/home/mateusz/sapu-psi-logs/presentation/presentation.tex" 1781117640.34229 50630 26174e1fdc5e418eb263f50e12964123 ""
   "/home/mateusz/sapu-psi-logs/visualizations/tpsapu_effective_rank/activation_effective_rank.png" 1781109923.08313 152640 c530c6b0845f8afe0f33be5bc99b36e0 ""
   "/home/mateusz/sapu-psi-logs/visualizations/tpsapu_effective_rank/comparison_with_resnet.png" 1781109923.99515 150600 5792c18a659872ef84888dcac901820c ""
   "/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1775415801 2900 1537cc8184ad1792082cd229ecc269f4 ""
@@ -338,10 +338,10 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1775415801 43569 fd570f2fa160877d211e859f687312ba ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1781103290 5385779 47c0c393a77fd4a098bacfd57d66b88a ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1781103265 2328186 4adbb9c883a0f035d4d02c0e63d3a227 ""
-  "presentation.aux" 1781115219.08484 3957 203b49b9811638f7a4f83d160496e262 "pdflatex"
-  "presentation.nav" 1781115219.08584 2690 5474d22c5ffff884555771824040e220 "pdflatex"
-  "presentation.out" 1781115213.50672 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "presentation.tex" 1781115212.8047 49113 618479cfa854451cb770c4ad7ceccef4 ""
+  "presentation.aux" 1781117645.5314 3957 203b49b9811638f7a4f83d160496e262 "pdflatex"
+  "presentation.nav" 1781117645.5314 2690 5474d22c5ffff884555771824040e220 "pdflatex"
+  "presentation.out" 1781117645.03039 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "presentation.tex" 1781117640.34229 50630 26174e1fdc5e418eb263f50e12964123 ""
   (generated)
   "presentation.aux"
   "presentation.log"

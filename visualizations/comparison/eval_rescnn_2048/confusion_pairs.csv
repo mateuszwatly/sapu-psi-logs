@@ -1,0 +1,201 @@
+true_label,true_synset,true_name,pred_label,pred_synset,pred_name,count,true_class_rate
+196,n09256479,coral reef,14,n01917289,brain coral,8,0.32
+30,n02123045,"tabby, tabby cat",32,n02124075,Egyptian cat,6,0.24
+70,n02814533,"beach wagon, station wagon, wagon, estate car, beach waggon, station waggon, waggon",94,n03100240,convertible,6,0.24
+94,n03100240,convertible,153,n04285008,"sports car, sport car",6,0.24
+134,n03980874,poncho,85,n02963159,cardigan,6,0.24
+171,n04540053,volleyball,68,n02802426,basketball,6,0.24
+153,n04285008,"sports car, sport car",94,n03100240,convertible,5,0.20833333333333334
+3,n01644900,"tailed frog, bell toad, ribbed toad, tailed toad, Ascaphus trui",2,n01641577,"bullfrog, Rana catesbeiana",5,0.2
+32,n02124075,Egyptian cat,30,n02123045,"tabby, tabby cat",5,0.2
+104,n03400231,"frying pan, frypan, skillet",174,n04596742,wok,5,0.2
+162,n04417672,"thatch, thatched roof",66,n02793495,barn,5,0.2
+190,n07871810,"meat loaf, meatloaf",182,n07711569,mashed potato,5,0.2
+198,n09428293,"seashore, coast, seacoast, sea-coast",197,n09332890,"lakeside, lakeshore",5,0.2
+74,n02837789,"bikini, two-piece",158,n04371430,"swimming trunks, bathing trunks",4,0.17391304347826086
+117,n03706229,magnetic compass,155,n04328186,"stopwatch, stop watch",4,0.16666666666666666
+12,n01882714,"koala, koala bear, kangaroo bear, native bear, Phascolarctos cinereus",54,n02480495,"orangutan, orang, orangutang, Pongo pygmaeus",4,0.16
+27,n02099712,Labrador retriever,26,n02099601,golden retriever,4,0.16
+33,n02125311,"cougar, puma, catamount, mountain lion, painter, panther, Felis concolor",91,n03042490,cliff dwelling,4,0.16
+42,n02236044,"mantis, mantid",40,n02231487,"walking stick, walkingstick, stick insect",4,0.16
+48,n02395406,"hog, pig, grunter, squealer, Sus scrofa",50,n02410509,bison,4,0.16
+53,n02437312,"Arabian camel, dromedary, Camelus dromedarius",57,n02504458,"African elephant, Loxodonta africana",4,0.16
+61,n02699494,altar,126,n03854065,"organ, pipe organ",4,0.16
+62,n02730930,apron,134,n03980874,poncho,4,0.16
+94,n03100240,convertible,70,n02814533,"beach wagon, station wagon, wagon, estate car, beach waggon, station waggon, waggon",4,0.16
+98,n03201208,"dining table, board",97,n03179701,desk,4,0.16
+125,n03838899,"oboe, hautboy, hautbois",123,n03814639,neck brace,4,0.16
+172,n04560804,water jug,72,n02815834,beaker,4,0.16
+179,n07614500,"ice cream, icecream",182,n07711569,mashed potato,4,0.16
+181,n07695742,pretzel,177,n07579787,plate,4,0.16
+182,n07711569,mashed potato,192,n07875152,potpie,4,0.16
+187,n07749582,lemon,188,n07753592,banana,4,0.16
+195,n09246464,"cliff, drop, drop-off",194,n09193705,alp,4,0.16
+49,n02403003,ox,55,n02481823,"chimpanzee, chimp, Pan troglodytes",3,0.13636363636363635
+156,n04356056,"sunglasses, dark glasses, shades",123,n03814639,neck brace,3,0.13043478260869565
+166,n04487081,"trolleybus, trolley coach, trackless trolley",145,n04146614,school bus,3,0.13043478260869565
+24,n02085620,Chihuahua,47,n02364673,"guinea pig, Cavia cobaya",3,0.125
+54,n02480495,"orangutan, orang, orangutang, Pongo pygmaeus",55,n02481823,"chimpanzee, chimp, Pan troglodytes",3,0.125
+68,n02802426,basketball,171,n04540053,volleyball,3,0.125
+122,n03804744,nail,109,n03544143,hourglass,3,0.125
+5,n01742172,"boa constrictor, Constrictor constrictor",3,n01644900,"tailed frog, bell toad, ribbed toad, tailed toad, Ascaphus trui",3,0.12
+7,n01770393,scorpion,9,n01774750,tarantula,3,0.12
+8,n01774384,"black widow, Latrodectus mactans",37,n02190166,fly,3,0.12
+9,n01774750,tarantula,7,n01770393,scorpion,3,0.12
+20,n02002724,"black stork, Ciconia nigra",22,n02058221,"albatross, mollymawk",3,0.12
+27,n02099712,Labrador retriever,29,n02113799,standard poodle,3,0.12
+27,n02099712,Labrador retriever,179,n07614500,"ice cream, icecream",3,0.12
+29,n02113799,standard poodle,105,n03404251,fur coat,3,0.12
+33,n02125311,"cougar, puma, catamount, mountain lion, painter, panther, Felis concolor",34,n02129165,"lion, king of beasts, Panthera leo",3,0.12
+36,n02165456,"ladybug, ladybeetle, lady beetle, ladybird, ladybird beetle",43,n02268443,"dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk",3,0.12
+39,n02226429,"grasshopper, hopper",42,n02236044,"mantis, mantid",3,0.12
+40,n02231487,"walking stick, walkingstick, stick insect",39,n02226429,"grasshopper, hopper",3,0.12
+41,n02233338,"cockroach, roach",1,n01629819,"European fire salamander, Salamandra salamandra",3,0.12
+43,n02268443,"dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk",44,n02279972,"monarch, monarch butterfly, milkweed butterfly, Danaus plexippus",3,0.12
+50,n02410509,bison,35,n02132136,"brown bear, bruin, Ursus arctos",3,0.12
+51,n02415577,"bighorn, bighorn sheep, cimarron, Rocky Mountain bighorn, Rocky Mountain sheep, Ovis canadensis",12,n01882714,"koala, koala bear, kangaroo bear, native bear, Phascolarctos cinereus",3,0.12
+51,n02415577,"bighorn, bighorn sheep, cimarron, Rocky Mountain bighorn, Rocky Mountain sheep, Ovis canadensis",35,n02132136,"brown bear, bruin, Ursus arctos",3,0.12
+53,n02437312,"Arabian camel, dromedary, Camelus dromedarius",35,n02132136,"brown bear, bruin, Ursus arctos",3,0.12
+70,n02814533,"beach wagon, station wagon, wagon, estate car, beach waggon, station waggon, waggon",133,n03977966,"police van, police wagon, paddy wagon, patrol wagon, wagon, black Maria",3,0.12
+70,n02814533,"beach wagon, station wagon, wagon, estate car, beach waggon, station waggon, waggon",153,n04285008,"sports car, sport car",3,0.12
+71,n02814860,"beacon, lighthouse, beacon light, pharos",101,n03355925,"flagpole, flagstaff",3,0.12
+73,n02823428,beer bottle,62,n02730930,apron,3,0.12
+83,n02948072,"candle, taper, wax light",99,n03250847,drumstick,3,0.12
+86,n02977058,"cash machine, cash dispenser, automated teller machine, automatic teller machine, automated teller, automatic teller, ATM",167,n04501370,turnstile,3,0.12
+93,n03089624,"confectionery, confectionary, candy store",82,n02927161,"butcher shop, meat market",3,0.12
+95,n03126707,crane,132,n03976657,pole,3,0.12
+97,n03179701,desk,86,n02977058,"cash machine, cash dispenser, automated teller machine, automatic teller machine, automated teller, automatic teller, ATM",3,0.12
+112,n03617480,kimono,169,n04532106,vestment,3,0.12
+116,n03670208,"limousine, limo",133,n03977966,"police van, police wagon, paddy wagon, patrol wagon, wagon, black Maria",3,0.12
+121,n03796401,moving van,133,n03977966,"police van, police wagon, paddy wagon, patrol wagon, wagon, black Maria",3,0.12
+132,n03976657,pole,124,n03837869,obelisk,3,0.12
+135,n03983396,"pop bottle, soda bottle",73,n02823428,beer bottle,3,0.12
+141,n04074963,"remote control, remote",103,n03393912,freight car,3,0.12
+141,n04074963,"remote control, remote",151,n04265275,space heater,3,0.12
+146,n04149813,scoreboard,121,n03796401,moving van,3,0.12
+147,n04179913,sewing machine,97,n03179701,desk,3,0.12
+151,n04265275,space heater,126,n03854065,"organ, pipe organ",3,0.12
+157,n04366367,suspension bridge,173,n04562935,water tower,3,0.12
+157,n04366367,suspension bridge,195,n09246464,"cliff, drop, drop-off",3,0.12
+177,n07579787,plate,178,n07583066,guacamole,3,0.12
+182,n07711569,mashed potato,177,n07579787,plate,3,0.12
+183,n07715103,cauliflower,179,n07614500,"ice cream, icecream",3,0.12
+184,n07720875,bell pepper,186,n07747607,orange,3,0.12
+186,n07747607,orange,187,n07749582,lemon,3,0.12
+189,n07768694,pomegranate,18,n01983481,"American lobster, Northern lobster, Maine lobster, Homarus americanus",3,0.12
+191,n07873807,"pizza, pizza pie",192,n07875152,potpie,3,0.12
+119,n03763968,military uniform,63,n02769748,"backpack, back pack, knapsack, packsack, rucksack, haversack",2,0.09523809523809523
+119,n03763968,military uniform,77,n02883205,"bow tie, bow-tie, bowtie",2,0.09523809523809523
+119,n03763968,military uniform,112,n03617480,kimono,2,0.09523809523809523
+49,n02403003,ox,35,n02132136,"brown bear, bruin, Ursus arctos",2,0.09090909090909091
+49,n02403003,ox,50,n02410509,bison,2,0.09090909090909091
+55,n02481823,"chimpanzee, chimp, Pan troglodytes",54,n02480495,"orangutan, orang, orangutang, Pongo pygmaeus",2,0.09090909090909091
+77,n02883205,"bow tie, bow-tie, bowtie",123,n03814639,neck brace,2,0.09090909090909091
+96,n03160309,"dam, dike, dyke",66,n02793495,barn,2,0.09090909090909091
+96,n03160309,"dam, dike, dyke",195,n09246464,"cliff, drop, drop-off",2,0.09090909090909091
+100,n03255030,dumbbell,25,n02094433,Yorkshire terrier,2,0.09090909090909091
+100,n03255030,dumbbell,127,n03891332,parking meter,2,0.09090909090909091
+100,n03255030,dumbbell,171,n04540053,volleyball,2,0.09090909090909091
+173,n04562935,water tower,129,n03930313,"picket fence, paling",2,0.09090909090909091
+75,n02841315,"binoculars, field glasses, opera glasses",156,n04356056,"sunglasses, dark glasses, shades",2,0.08695652173913043
+75,n02841315,"binoculars, field glasses, opera glasses",168,n04507155,umbrella,2,0.08695652173913043
+128,n03902125,"pay-phone, pay-station",86,n02977058,"cash machine, cash dispenser, automated teller machine, automatic teller machine, automated teller, automatic teller, ATM",2,0.08695652173913043
+128,n03902125,"pay-phone, pay-station",169,n04532106,vestment,2,0.08695652173913043
+129,n03930313,"picket fence, paling",72,n02815834,beaker,2,0.08695652173913043
+136,n03992509,potter's wheel,181,n07695742,pretzel,2,0.08695652173913043
+138,n04023962,"punching bag, punch bag, punching ball, punchball",100,n03255030,dumbbell,2,0.08695652173913043
+138,n04023962,"punching bag, punch bag, punching ball, punchball",172,n04560804,water jug,2,0.08695652173913043
+152,n04275548,"spider web, spider's web",2,n01641577,"bullfrog, Rana catesbeiana",2,0.08695652173913043
+152,n04275548,"spider web, spider's web",4,n01698640,"American alligator, Alligator mississipiensis",2,0.08695652173913043
+156,n04356056,"sunglasses, dark glasses, shades",17,n01950731,"sea slug, nudibranch",2,0.08695652173913043
+156,n04356056,"sunglasses, dark glasses, shades",74,n02837789,"bikini, two-piece",2,0.08695652173913043
+161,n04399382,"teddy, teddy bear",31,n02123394,Persian cat,2,0.08695652173913043
+161,n04399382,"teddy, teddy bear",32,n02124075,Egyptian cat,2,0.08695652173913043
+4,n01698640,"American alligator, Alligator mississipiensis",11,n01855672,goose,2,0.08333333333333333
+4,n01698640,"American alligator, Alligator mississipiensis",69,n02808440,"bathtub, bathing tub, bath, tub",2,0.08333333333333333
+15,n01944390,snail,1,n01629819,"European fire salamander, Salamandra salamandra",2,0.08333333333333333
+15,n01944390,snail,2,n01641577,"bullfrog, Rana catesbeiana",2,0.08333333333333333
+24,n02085620,Chihuahua,28,n02106662,"German shepherd, German shepherd dog, German police dog, alsatian",2,0.08333333333333333
+24,n02085620,Chihuahua,48,n02395406,"hog, pig, grunter, squealer, Sus scrofa",2,0.08333333333333333
+37,n02190166,fly,38,n02206856,bee,2,0.08333333333333333
+60,n02669723,"academic gown, academic robe, judge's robe",105,n03404251,fur coat,2,0.08333333333333333
+64,n02788148,"bannister, banister, balustrade, balusters, handrail",67,n02795169,"barrel, cask",2,0.08333333333333333
+65,n02791270,barbershop,98,n03201208,"dining table, board",2,0.08333333333333333
+72,n02815834,beaker,80,n02909870,"bucket, pail",2,0.08333333333333333
+79,n02906734,broom,10,n01784675,centipede,2,0.08333333333333333
+80,n02909870,"bucket, pail",72,n02815834,beaker,2,0.08333333333333333
+84,n02950826,cannon,30,n02123045,"tabby, tabby cat",2,0.08333333333333333
+84,n02950826,cannon,75,n02841315,"binoculars, field glasses, opera glasses",2,0.08333333333333333
+87,n02988304,CD player,63,n02769748,"backpack, back pack, knapsack, packsack, rucksack, haversack",2,0.08333333333333333
+87,n02988304,CD player,71,n02814860,"beacon, lighthouse, beacon light, pharos",2,0.08333333333333333
+87,n02988304,CD player,147,n04179913,sewing machine,2,0.08333333333333333
+88,n02999410,chain,10,n01784675,centipede,2,0.08333333333333333
+99,n03250847,drumstick,179,n07614500,"ice cream, icecream",2,0.08333333333333333
+101,n03355925,"flagpole, flagstaff",132,n03976657,pole,2,0.08333333333333333
+106,n03424325,"gasmask, respirator, gas helmet",63,n02769748,"backpack, back pack, knapsack, packsack, rucksack, haversack",2,0.08333333333333333
+106,n03424325,"gasmask, respirator, gas helmet",119,n03763968,military uniform,2,0.08333333333333333
+109,n03544143,hourglass,63,n02769748,"backpack, back pack, knapsack, packsack, rucksack, haversack",2,0.08333333333333333
+109,n03544143,hourglass,144,n04133789,sandal,2,0.08333333333333333
+117,n03706229,magnetic compass,75,n02841315,"binoculars, field glasses, opera glasses",2,0.08333333333333333
+122,n03804744,nail,6,n01768244,trilobite,2,0.08333333333333333
+122,n03804744,nail,144,n04133789,sandal,2,0.08333333333333333
+139,n04067472,reel,59,n02666196,abacus,2,0.08333333333333333
+150,n04259630,sombrero,90,n03026506,Christmas stocking,2,0.08333333333333333
+150,n04259630,sombrero,106,n03424325,"gasmask, respirator, gas helmet",2,0.08333333333333333
+153,n04285008,"sports car, sport car",145,n04146614,school bus,2,0.08333333333333333
+167,n04501370,turnstile,65,n02791270,barbershop,2,0.08333333333333333
+168,n04507155,umbrella,90,n03026506,Christmas stocking,2,0.08333333333333333
+168,n04507155,umbrella,148,n04251144,snorkel,2,0.08333333333333333
+168,n04507155,umbrella,154,n04311004,steel arch bridge,2,0.08333333333333333
+197,n09332890,"lakeside, lakeshore",23,n02074367,"dugong, Dugong dugon",2,0.08333333333333333
+197,n09332890,"lakeside, lakeshore",96,n03160309,"dam, dike, dyke",2,0.08333333333333333
+197,n09332890,"lakeside, lakeshore",165,n04486054,triumphal arch,2,0.08333333333333333
+197,n09332890,"lakeside, lakeshore",198,n09428293,"seashore, coast, seacoast, sea-coast",2,0.08333333333333333
+2,n01641577,"bullfrog, Rana catesbeiana",39,n02226429,"grasshopper, hopper",2,0.08
+3,n01644900,"tailed frog, bell toad, ribbed toad, tailed toad, Ascaphus trui",4,n01698640,"American alligator, Alligator mississipiensis",2,0.08
+3,n01644900,"tailed frog, bell toad, ribbed toad, tailed toad, Ascaphus trui",15,n01944390,snail,2,0.08
+5,n01742172,"boa constrictor, Constrictor constrictor",4,n01698640,"American alligator, Alligator mississipiensis",2,0.08
+7,n01770393,scorpion,8,n01774384,"black widow, Latrodectus mactans",2,0.08
+9,n01774750,tarantula,33,n02125311,"cougar, puma, catamount, mountain lion, painter, panther, Felis concolor",2,0.08
+10,n01784675,centipede,7,n01770393,scorpion,2,0.08
+10,n01784675,centipede,16,n01945685,slug,2,0.08
+10,n01784675,centipede,39,n02226429,"grasshopper, hopper",2,0.08
+13,n01910747,jellyfish,23,n02074367,"dugong, Dugong dugon",2,0.08
+13,n01910747,jellyfish,187,n07749582,lemon,2,0.08
+14,n01917289,brain coral,196,n09256479,coral reef,2,0.08
+16,n01945685,slug,2,n01641577,"bullfrog, Rana catesbeiana",2,0.08
+17,n01950731,"sea slug, nudibranch",46,n02321529,"sea cucumber, holothurian",2,0.08
+18,n01983481,"American lobster, Northern lobster, Maine lobster, Homarus americanus",90,n03026506,Christmas stocking,2,0.08
+18,n01983481,"American lobster, Northern lobster, Maine lobster, Homarus americanus",190,n07871810,"meat loaf, meatloaf",2,0.08
+19,n01984695,"spiny lobster, langouste, rock lobster, crawfish, crayfish, sea crawfish",2,n01641577,"bullfrog, Rana catesbeiana",2,0.08
+19,n01984695,"spiny lobster, langouste, rock lobster, crawfish, crayfish, sea crawfish",46,n02321529,"sea cucumber, holothurian",2,0.08
+20,n02002724,"black stork, Ciconia nigra",4,n01698640,"American alligator, Alligator mississipiensis",2,0.08
+22,n02058221,"albatross, mollymawk",20,n02002724,"black stork, Ciconia nigra",2,0.08
+22,n02058221,"albatross, mollymawk",21,n02056570,"king penguin, Aptenodytes patagonica",2,0.08
+25,n02094433,Yorkshire terrier,26,n02099601,golden retriever,2,0.08
+25,n02094433,Yorkshire terrier,30,n02123045,"tabby, tabby cat",2,0.08
+26,n02099601,golden retriever,25,n02094433,Yorkshire terrier,2,0.08
+26,n02099601,golden retriever,74,n02837789,"bikini, two-piece",2,0.08
+27,n02099712,Labrador retriever,24,n02085620,Chihuahua,2,0.08
+28,n02106662,"German shepherd, German shepherd dog, German police dog, alsatian",20,n02002724,"black stork, Ciconia nigra",2,0.08
+28,n02106662,"German shepherd, German shepherd dog, German police dog, alsatian",47,n02364673,"guinea pig, Cavia cobaya",2,0.08
+28,n02106662,"German shepherd, German shepherd dog, German police dog, alsatian",57,n02504458,"African elephant, Loxodonta africana",2,0.08
+29,n02113799,standard poodle,26,n02099601,golden retriever,2,0.08
+29,n02113799,standard poodle,27,n02099712,Labrador retriever,2,0.08
+30,n02123045,"tabby, tabby cat",35,n02132136,"brown bear, bruin, Ursus arctos",2,0.08
+30,n02123045,"tabby, tabby cat",51,n02415577,"bighorn, bighorn sheep, cimarron, Rocky Mountain bighorn, Rocky Mountain sheep, Ovis canadensis",2,0.08
+31,n02123394,Persian cat,47,n02364673,"guinea pig, Cavia cobaya",2,0.08
+32,n02124075,Egyptian cat,33,n02125311,"cougar, puma, catamount, mountain lion, painter, panther, Felis concolor",2,0.08
+38,n02206856,bee,45,n02281406,"sulphur butterfly, sulfur butterfly",2,0.08
+39,n02226429,"grasshopper, hopper",2,n01641577,"bullfrog, Rana catesbeiana",2,0.08
+40,n02231487,"walking stick, walkingstick, stick insect",31,n02123394,Persian cat,2,0.08
+40,n02231487,"walking stick, walkingstick, stick insect",42,n02236044,"mantis, mantid",2,0.08
+42,n02236044,"mantis, mantid",68,n02802426,basketball,2,0.08
+43,n02268443,"dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk",36,n02165456,"ladybug, ladybeetle, lady beetle, ladybird, ladybird beetle",2,0.08
+43,n02268443,"dragonfly, darning needle, devil's darning needle, sewing needle, snake feeder, snake doctor, mosquito hawk, skeeter hawk",42,n02236044,"mantis, mantid",2,0.08
+46,n02321529,"sea cucumber, holothurian",4,n01698640,"American alligator, Alligator mississipiensis",2,0.08
+46,n02321529,"sea cucumber, holothurian",14,n01917289,brain coral,2,0.08
+46,n02321529,"sea cucumber, holothurian",17,n01950731,"sea slug, nudibranch",2,0.08
+46,n02321529,"sea cucumber, holothurian",196,n09256479,coral reef,2,0.08
+47,n02364673,"guinea pig, Cavia cobaya",6,n01768244,trilobite,2,0.08
+47,n02364673,"guinea pig, Cavia cobaya",21,n02056570,"king penguin, Aptenodytes patagonica",2,0.08

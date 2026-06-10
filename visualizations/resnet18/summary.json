@@ -1,0 +1,135 @@
+{
+  "model": "resnet18",
+  "checkpoint": "sweep_runs_tiny_imagenet/resnet18_scratch/best.pt",
+  "num_samples": 500,
+  "spectra": {
+    "stem": {
+      "dimension": 500,
+      "spectral_norm": 2104.905029296875,
+      "stable_rank": 10.680466651916504,
+      "effective_rank": 198.2931089883277,
+      "spectral_entropy": 0.8511793826271783,
+      "top1_energy": 0.09362886846065521,
+      "top5_energy": 0.2625015676021576,
+      "top16_energy": 0.3575402796268463
+    },
+    "layer1": {
+      "dimension": 500,
+      "spectral_norm": 2207.8974609375,
+      "stable_rank": 40.37417984008789,
+      "effective_rank": 415.09472858304224,
+      "spectral_entropy": 0.9700542110385717,
+      "top1_energy": 0.024768304079771042,
+      "top5_energy": 0.07120456546545029,
+      "top16_energy": 0.11880547553300858
+    },
+    "layer2": {
+      "dimension": 500,
+      "spectral_norm": 1483.27587890625,
+      "stable_rank": 31.851818084716797,
+      "effective_rank": 410.02951818478516,
+      "spectral_entropy": 0.9680786072748314,
+      "top1_energy": 0.031395383179187775,
+      "top5_energy": 0.07655124366283417,
+      "top16_energy": 0.12985509634017944
+    },
+    "layer3": {
+      "dimension": 500,
+      "spectral_norm": 613.0460815429688,
+      "stable_rank": 48.23332214355469,
+      "effective_rank": 402.1312340313424,
+      "spectral_entropy": 0.964948777652075,
+      "top1_energy": 0.02073255553841591,
+      "top5_energy": 0.0651819109916687,
+      "top16_energy": 0.13203215599060059
+    },
+    "layer4": {
+      "dimension": 500,
+      "spectral_norm": 797.1300659179688,
+      "stable_rank": 37.580421447753906,
+      "effective_rank": 316.8509375167552,
+      "spectral_entropy": 0.9265960690414797,
+      "top1_energy": 0.026609601452946663,
+      "top5_energy": 0.1000283807516098,
+      "top16_energy": 0.21300585567951202
+    },
+    "avgpool": {
+      "dimension": 500,
+      "spectral_norm": 71.55634307861328,
+      "stable_rank": 19.15496253967285,
+      "effective_rank": 112.07178191532202,
+      "spectral_entropy": 0.7593623767130836,
+      "top1_energy": 0.05220579355955124,
+      "top5_energy": 0.21239063143730164,
+      "top16_energy": 0.43853411078453064
+    }
+  },
+  "activation_statistics": {
+    "stem": {
+      "mean_abs": 0.46680423617362976,
+      "std": 0.6603609919548035,
+      "sparsity": 0.4175611572265625,
+      "max_abs": 17.74585723876953,
+      "shape": [
+        64,
+        64,
+        64
+      ]
+    },
+    "layer1": {
+      "mean_abs": 1.042837142944336,
+      "std": 1.267773151397705,
+      "sparsity": 0.3075606994628906,
+      "max_abs": 22.25603485107422,
+      "shape": [
+        64,
+        64,
+        64
+      ]
+    },
+    "layer2": {
+      "mean_abs": 0.6905574798583984,
+      "std": 1.0670832395553589,
+      "sparsity": 0.4520054931640625,
+      "max_abs": 20.566133499145508,
+      "shape": [
+        128,
+        32,
+        32
+      ]
+    },
+    "layer3": {
+      "mean_abs": 0.4035964608192444,
+      "std": 0.7775395512580872,
+      "sparsity": 0.5947938537597657,
+      "max_abs": 16.554292678833008,
+      "shape": [
+        256,
+        16,
+        16
+      ]
+    },
+    "layer4": {
+      "mean_abs": 0.6787762641906738,
+      "std": 1.2657302618026733,
+      "sparsity": 0.5760656127929688,
+      "max_abs": 28.939023971557617,
+      "shape": [
+        512,
+        8,
+        8
+      ]
+    },
+    "avgpool": {
+      "mean_abs": 0.6787762641906738,
+      "std": 0.6432247757911682,
+      "sparsity": 0.01527734375,
+      "max_abs": 6.7568039894104,
+      "shape": [
+        512,
+        1,
+        1
+      ]
+    }
+  }
+}

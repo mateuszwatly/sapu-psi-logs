@@ -636,42 +636,117 @@
 \end{frame}
 
 % ── SLIDE 12: CLS Attention Maps ─────────────────────────────────────────────
-\begin{frame}[shrink=5]{CNN3-702k: Where the Transformer Looks (Aggregate, 500 Samples)}
-\begin{columns}[T]
-\begin{column}{0.50\textwidth}
+\begin{frame}[t]{CNN3-702k: Where the Transformer Looks (Aggregate, 500 Samples)}
+\vspace{-0.7em}
+
+\begin{columns}[T,totalwidth=\textwidth]
+
+% ── Column 1: main aggregate attention image ─────────────────────────────
+\begin{column}{0.47\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{../visualizations/attention_analysis/cnn3_702k/mean_cls_attention.png}
-  {\scriptsize\color{subtletext}
-    Mean CLS attention over 500 val samples: all samples (top) and correct predictions only (bottom).\\
-    Columns: mean over all heads, std, then per-head H0–H3.}
+  \includegraphics[
+    width=\linewidth,
+    height=0.81\textheight,
+    keepaspectratio
+  ]{../visualizations/attention_analysis/cnn3_702k/mean_cls_attention.png}
 \end{column}
-\begin{column}{0.46\textwidth}
+
+\hspace{-0.7em}
+
+% ── Column 2: layer comparison image ─────────────────────────────────────
+\begin{column}{0.36\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{../visualizations/attention_analysis/cnn3_702k/layer_comparison.png}
-  {\scriptsize\color{subtletext}
-    Layer 1 (row 1), Layer 2 (row 2), difference L2$-$L1 (row 3).\\
-    Red = L2 increases attention; Blue = L2 decreases.}
+  \includegraphics[
+    width=\linewidth,
+    height=0.81\textheight,
+    keepaspectratio
+  ]{../visualizations/attention_analysis/cnn3_702k/layer_comparison.png}
 \end{column}
+
+\hspace{0.25em}
+
+% ── Column 3: small interpretation text ──────────────────────────────────
+\begin{column}{0.17\textwidth}
+  \vspace{0.1em}
+  \begin{tcolorbox}[mybox]
+    \tiny
+    \textbf{Key finding}
+
+    \vspace{0.35em}
+    CLS attention is broad and close to uniform.
+
+    \vspace{0.45em}
+    No single spatial patch dominates the decoder decision.
+
+    \vspace{0.45em}
+    Some heads show weak preference for \hl{corners and borders}.
+
+    \vspace{0.45em}
+    Layer 2 mildly re-weights attention compared with Layer 1.
+
+    \vspace{0.45em}
+    So the transformer mostly aggregates the full TPSAPU reservoir context, rather than selecting one patch.
+  \end{tcolorbox}
+\end{column}
+
 \end{columns}
-\vspace{0.2em}
-\begin{tcolorbox}[mybox]
-  \scriptsize
-  \textbf{Key finding:} attention is broadly spread (near-uniform), but
-  Heads 0 and 3 develop mild preference for \hl{image corners and borders} —
-  regions where the CNN produces the most distinctive token norms.
-  L2 shifts weight slightly toward image centres relative to L1.
-  \textbf{No single patch dominates} — the transformer aggregates the full reservoir context.
-\end{tcolorbox}
+
+\vspace{-0.25em}
+{\tiny\color{subtletext}
+Left: mean CLS attention, std, and per-head attention.
+Middle: Layer 1, Layer 2, and L2$-$L1 difference.
+}
+
 \end{frame}
 
 % ── SLIDE 13: Per-Image Attention Overlay ────────────────────────────────────
-\begin{frame}{CNN3-702k: Attention Overlaid on Individual Validation Images}
-\centering
-\includegraphics[height=0.78\textheight,width=\linewidth,keepaspectratio]{../visualizations/validation_20/attention_anatomy.png}
-\vspace{0.15em}
-{\tiny\color{subtletext}
-  Cols: image $\mid$ CNN3 L1 $\mid$ CNN3 L2 $\mid$ L2$-$L1 diff $\mid$ ResCNN layer2 $\mid$ ResCNN layer3 (un-normalized — note sparse attention).
-  Heat = CLS attention to TPSAPU states at that CNN spatial patch.}
+\begin{frame}[shrink=7]{CNN3-702k: Attention Profile Over Token Order}
+\begin{columns}[T,onlytextwidth]
+
+\begin{column}{0.66\textwidth}
+  \centering
+  \includegraphics[
+    width=\linewidth,
+    height=0.78\textheight,
+    keepaspectratio
+  ]{../visualizations/attention_analysis/cnn3_702k/positional_attention_profile.png}
+
+  \vspace{0.1em}
+  {\tiny\color{subtletext}
+    CNN3 produces a $16\times16$ grid, so token positions $1,\dots,256$
+    correspond to spatial CNN patches in fixed scan order.
+  }
+\end{column}
+
+\begin{column}{0.31\textwidth}
+  \begin{tcolorbox}[mybox]
+    \scriptsize
+    \textbf{Continuation of the aggregate view}
+
+    \vspace{0.35em}
+    The previous slide showed \emph{where} attention lands on the 2D grid.
+    This plot shows the same attention as a 1D token-position profile.
+
+    \vspace{0.55em}
+    \textbf{Layer 1:}
+    flatter curve, meaning attention is spread broadly across many tokens.
+
+    \vspace{0.45em}
+    \textbf{Layer 2:}
+    sharper peaks, meaning the second transformer layer becomes more selective.
+
+    \vspace{0.45em}
+    The correct-only profile is very similar to the all-sample profile, so this
+    is a stable behavior rather than an outlier effect.
+
+    \vspace{0.55em}
+    \textbf{Takeaway:}
+    CNN3-702k uses broad context, but Layer 2 slightly amplifies selected token
+    regions instead of focusing on one dominant patch.
+  \end{tcolorbox}
+\end{column}
+
+\end{columns}
 \end{frame}
 
 % ── SLIDE 14: The Fun Fail ────────────────────────────────────────────────────

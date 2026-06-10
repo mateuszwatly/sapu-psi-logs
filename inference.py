@@ -25,7 +25,6 @@ from torchvision import datasets, transforms
 
 from train_pipeline import build_model, set_seed
 
-
 ARCHITECTURE_KEYS = {
     "dataset",
     "backbone",
@@ -90,7 +89,9 @@ def parse_args() -> argparse.Namespace:
         ],
         default="checkpoint",
     )
-    parser.add_argument("--pooling", choices=["checkpoint", "last", "mean"], default="checkpoint")
+    parser.add_argument(
+        "--pooling", choices=["checkpoint", "last", "mean"], default="checkpoint"
+    )
     parser.add_argument("--embed-dim", type=int, default=0)
     parser.add_argument("--reservoir-dim", type=int, default=0)
     parser.add_argument("--taus", default="")
@@ -209,9 +210,27 @@ def denormalize_mnist(image: torch.Tensor) -> np.ndarray:
     return np.clip(image * 0.3081 + 0.1307, 0.0, 1.0)
 
 
-def reveal_masks(encoder_name: str, steps: int, patch_size: int) -> list[np.ndarray]:
+def reveal_masks(
+    encoder_name: str,
+    steps: int,
+    patch_size: int,
+    image_size: int = 28,
+) -> list[np.ndarray]:
+    """Build per-step reveal masks for the given encoder and image size.
+
+    Grid sizes are derived from image_size so the function is correct for
+    both MNIST (28x28) and Tiny ImageNet (64x64).
+
+    CNN3 / cnn2 / res_cnn:
+      Two stride-2 convs → grid = image_size // 4  (28→7, 64→16)
+      cell_size = 4  (always, because stride-2 twice = factor 4)
+
+    lif_2x2:
+      One stride-2 pass of 2x2 patches → grid = image_size // 2  (28→14, 64→32)
+      cell_size = 2
+    """
     masks = []
-    current = np.zeros((28, 28), dtype=np.float32)
+    current = np.zeros((image_size, image_size), dtype=np.float32)
 
     if encoder_name == "patch":
         encoder_name = "linear_patch"
@@ -224,12 +243,18 @@ def reveal_masks(encoder_name: str, steps: int, patch_size: int) -> list[np.ndar
         return masks
 
     if encoder_name == "lif_2x2":
-        return reveal_grid_masks(steps, grid_size=14, cell_size=2)
+        grid_size = image_size // 2  # 28→14, 64→32
+        return reveal_grid_masks(
+            steps, grid_size=grid_size, cell_size=2, image_size=image_size
+        )
 
-    if encoder_name in {"cnn2", "cnn3", "res_cnn"}:
-        return reveal_grid_masks(steps, grid_size=7, cell_size=4)
+    if encoder_name in {"cnn2", "cnn3", "cnn5", "res_cnn"}:
+        grid_size = image_size // 4  # 28→7, 64→16
+        return reveal_grid_masks(
+            steps, grid_size=grid_size, cell_size=4, image_size=image_size
+        )
 
-    patches_per_side = 28 // patch_size
+    patches_per_side = image_size // patch_size
     for step in range(steps):
         row = step // patches_per_side
         col = step % patches_per_side
@@ -241,9 +266,15 @@ def reveal_masks(encoder_name: str, steps: int, patch_size: int) -> list[np.ndar
     return masks
 
 
-def reveal_grid_masks(steps: int, *, grid_size: int, cell_size: int) -> list[np.ndarray]:
+def reveal_grid_masks(
+    steps: int,
+    *,
+    grid_size: int,
+    cell_size: int,
+    image_size: int = 28,
+) -> list[np.ndarray]:
     masks = []
-    current = np.zeros((28, 28), dtype=np.float32)
+    current = np.zeros((image_size, image_size), dtype=np.float32)
     for step in range(steps):
         cell = step % (grid_size * grid_size)
         row = cell // grid_size
@@ -286,7 +317,9 @@ def run_temporal_inference(
             dim=-1,
         )
     else:
-        raise ValueError(f"Unsupported decoder input_state: {model.decoder.input_state}")
+        raise ValueError(
+            f"Unsupported decoder input_state: {model.decoder.input_state}"
+        )
 
     if model.decoder.needs_sequence:
         logits_by_step = torch.stack(
@@ -330,7 +363,9 @@ def save_timeline_png(
     steps = len(masks)
     cols = min(8, steps)
     rows = int(np.ceil(steps / cols))
-    fig, axes = plt.subplots(rows, cols, figsize=(cols * 2.1, rows * 2.4), squeeze=False)
+    fig, axes = plt.subplots(
+        rows, cols, figsize=(cols * 2.1, rows * 2.4), squeeze=False
+    )
 
     for step, axis in enumerate(axes.flat):
         axis.axis("off")
@@ -380,7 +415,9 @@ def save_activity_png(
     tau_values = [part.strip() for part in taus.split(",") if part.strip()]
     steps = np.arange(1, membranes.size(0) + 1)
     n_reservoirs = len(tau_values)
-    membrane_activity = membranes.reshape(membranes.size(0), n_reservoirs, reservoir_dim)
+    membrane_activity = membranes.reshape(
+        membranes.size(0), n_reservoirs, reservoir_dim
+    )
     spike_activity = spikes.reshape(spikes.size(0), n_reservoirs, reservoir_dim)
     membrane_activity = membrane_activity.abs().mean(dim=-1).numpy()
     spike_activity = spike_activity.mean(dim=-1).numpy()
@@ -431,7 +468,9 @@ def save_timeline_gif(
         )
         return frame, title
 
-    anim = animation.FuncAnimation(fig, update, frames=len(masks), interval=450, blit=False)
+    anim = animation.FuncAnimation(
+        fig, update, frames=len(masks), interval=450, blit=False
+    )
     anim.save(path, writer=animation.PillowWriter(fps=2))
     plt.close(fig)
 
@@ -464,6 +503,7 @@ def main() -> None:
         architecture_args.encoder,
         steps=len(predictions),
         patch_size=architecture_args.patch_size,
+        image_size=getattr(architecture_args, "image_size", 28),
     )
 
     output_dir = Path(args.output_dir)
