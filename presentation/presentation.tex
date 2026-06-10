@@ -304,7 +304,7 @@
 \end{column}
 \begin{column}{0.44\textwidth}
   \vspace{0.5em}
-  \begin{tikzpicture}[scale=0.78,every node/.style={font=\small}]
+  \begin{tikzpicture}[scale=0.7,every node/.style={font=\small}]
     \node[draw=accent0,fill=midbg,rounded corners=3pt,
           minimum width=2.2cm,minimum height=0.8cm,text=lighttext]
       (enc) at (0,0) {\textbf{Encoder}};
@@ -394,8 +394,7 @@
   \end{itemize}
   \vspace{0.2em}
   \begin{block}{Sanity check passed}
-    \scriptsize TPSAPU matches or approaches standard CNN baselines on MNIST
-    with far fewer parameters and binary activations.
+    \scriptsize TPSAPU is able to learn on MNIST correctly, despite no augmentation. Most models converged around epoch 13.
   \end{block}
 \end{column}
 \end{columns}
@@ -502,17 +501,16 @@
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
   \begin{block}{What drives performance}
-    \begin{enumerate}\small
+    \begin{enumerate}\footnotesize
       \item \textbf{Encoder quality} — CNNs beat patch, patch beats rows
       \item \textbf{Combined readout} — both/all-state beats single modality
       \item \textbf{Timescale diversity} — 3 taus better than 1
-      \item \textbf{Recurrent dropout} — prevents shortcut paths
     \end{enumerate}
   \end{block}
   \vspace{0.3em}
   \begin{alertblock}{What doesn't help}
-    \begin{itemize}\small
-      \item Spike-only decoders — too noisy for classification
+    \begin{itemize}\footnotesize
+      \item Spike-only decoders — too noisy for classification, but shows that we can train neurons to spike no matter the tau.
       \item lif\_2x2 encoder — strong biological motivation, poor results
       \item Larger reservoirs on MNIST ($d_\text{res}=64$ is sufficient)
     \end{itemize}
@@ -520,20 +518,19 @@
 \end{column}
 \begin{column}{0.48\textwidth}
   \begin{alertblock}{Missing experiments}
-    \begin{itemize}\small
-      \item Transformer decoders on MNIST — folder empty! Would likely push $>$99.5\%
-      \item No pruning applied ($\texttt{prune\_epochs}=0$) — does 95\% sparsity hold on MNIST?
-      \item No tau ablation — how much do you lose with $N_\tau=1$?
-      \item No backbone-free baseline
-      \item No comparison to SNNTorch
+    \begin{itemize}\footnotesize
+      \item Transformer decoders on MNIST — experimented with one encoder and converged to \>99.5\% almost instantly, but I didn't do a full study.
+      \item No pruning applied ($\texttt{prune\_epochs}=0$) — can we achieve \>95\% sparsity on MNIST with every combination?
+      \item No documented tau ablation — how much do you lose with $N_\tau=1$?
+      \item Backbone baseline not documented, but most smaller pairs stayed at \~15\%, cnn based converged to around 95\%.
     \end{itemize}
   \end{alertblock}
   \vspace{0.3em}
   \begin{tcolorbox}[mybox]
     \scriptsize
-    \textbf{Verdict:} TPSAPU achieves competitive MNIST accuracy ($99.4\%$) at $\sim200$k params with sparse binary processing.
-    The core architecture is \hl{validated}.
-    Scaling behaviour on harder tasks is the open question.
+    \textbf{Verdict:} TPSAPU achieves MNIST accuracy ($99.4\%$) at $\sim200$k params with sparse binary processing.
+    The core architecture works.
+    Scaling behaviour on harder tasks is the next question.
   \end{tcolorbox}
 \end{column}
 \end{columns}
@@ -824,31 +821,44 @@ Middle: Layer 1, Layer 2, and L2$-$L1 difference.
 \end{frame}
 
 % ── SLIDE 16: Training Dynamics ──────────────────────────────────────────────
-\begin{frame}[shrink=14]{Training Dynamics: All Three Models}
+\begin{frame}[t,shrink=8]{Training Dynamics: All Three Models}
+\vspace{-0.6em}
+
 \centering
 \includegraphics[
-  width=0.68\linewidth,
-  height=0.55\textheight,
+  width=0.86\linewidth,
+  height=0.75\textheight,
   keepaspectratio
 ]{../visualizations/comparison/01_training_curves.png}
-\vspace{0.15em}
-\begin{columns}[T]
+
+\vspace{-0.35em}
+
+\begin{columns}[T,onlytextwidth]
 \begin{column}{0.32\textwidth}
   \begin{tcolorbox}[mybox,colframe=accent0!60]
-    \fontsize{5.5}{6.2}\selectfont \orange{ResNet-18}: fast convergence, strong overfit (train 99\% vs val 57\%)
+    \tiny
+    \orange{ResNet-18}: fast convergence, strong overfit
+    {\scriptsize train 99\% vs val 57\%}
   \end{tcolorbox}
 \end{column}
+
 \begin{column}{0.32\textwidth}
   \begin{tcolorbox}[mybox,colframe=accent1!60]
-    \fontsize{5.5}{6.2}\selectfont \blue{CNN3-702k}: l2-prune phase visible as mild dip then recovery; far less overfit
+    \tiny
+    \blue{CNN3-702k}: l2-prune dip then recovery;
+    less overfit
   \end{tcolorbox}
 \end{column}
+
 \begin{column}{0.32\textwidth}
   \begin{tcolorbox}[mybox,colframe=accent2!60]
-    \fontsize{5.5}{6.2}\selectfont \green{ResCNN-2048}: 63/85 epochs; small batch (8) slows convergence
+    \tiny
+    \green{ResCNN-2048}: 63/85 epochs;
+    small batch slows convergence
   \end{tcolorbox}
 \end{column}
 \end{columns}
+
 \end{frame}
 
 % ── SLIDE 17: Efficiency ─────────────────────────────────────────────────────
@@ -986,7 +996,7 @@ Middle: Layer 1, Layer 2, and L2$-$L1 difference.
   width=0.96\linewidth,
   height=0.24\textheight,
   keepaspectratio
-]{/home/mateusz/sapu-psi-logs/visualizations/tpsapu_effective_rank/activation_effective_rank.png}
+]{../visualizations/tpsapu_effective_rank/activation_effective_rank.png}
 
 \vspace{0.1em}
 
@@ -994,7 +1004,7 @@ Middle: Layer 1, Layer 2, and L2$-$L1 difference.
   width=0.96\linewidth,
   height=0.30\textheight,
   keepaspectratio
-]{/home/mateusz/sapu-psi-logs/visualizations/tpsapu_effective_rank/comparison_with_resnet.png}
+]{../visualizations/tpsapu_effective_rank/comparison_with_resnet.png}
 
 \vspace{0.15em}
 
@@ -1055,13 +1065,6 @@ so the reservoir acts like a strong regularizing bottleneck.
     \end{itemize}
   \end{exampleblock}
   \vspace{0.2em}
-  \begin{tcolorbox}[mybox,title=Short-term roadmap]
-    \scriptsize
-    1.~Quantization-aware training (INT8/INT16)\quad
-    2.~Export pruned $W_\text{rec}$ as CSR\\
-    3.~Implement LIF step in VHDL/HLS\quad
-    4.~Benchmark vs Arm Ethos / Synaptics Orca
-  \end{tcolorbox}
 \end{column}
 \end{columns}
 \end{frame}
@@ -1080,12 +1083,6 @@ so the reservoir acts like a strong regularizing bottleneck.
     \end{itemize}
   \end{block}
   \vspace{0.3em}
-  \begin{tcolorbox}[mybox,title=Proposed extension]
-    \scriptsize
-    Replace CNN encoder with a \textbf{DVS tokenizer}:
-    events $(x,y,t,p)$ $\to$ voxel grid $\to$ conv projection $\to$ token sequence.
-    The backbone processes the event stream token-by-token — exactly what it was designed for.
-  \end{tcolorbox}
 \end{column}
 \begin{column}{0.46\textwidth}
   \begin{alertblock}{Other temporal data streams}
@@ -1101,7 +1098,7 @@ so the reservoir acts like a strong regularizing bottleneck.
     \scriptsize
     Event streams have structure at many scales simultaneously:
     $\tau{=}1.1$ captures instantaneous edges,
-    $\tau{=}128$ accumulates motion context over $\sim$100ms.
+    $\tau{=}128$ accumulates motion context over many frames.
     A single-state RNN must trade off one for the other.
     \tpsapu{} holds \hl{both at once}.
   \end{exampleblock}
@@ -1227,6 +1224,15 @@ so the reservoir acts like a strong regularizing bottleneck.
   \end{tabular}}
 \end{column}
 \end{columns}
+\end{frame}
+
+\begin{frame}[plain]
+\centering
+\vfill
+
+{\Huge\bfseries THANK YOU!}
+
+\vfill
 \end{frame}
 
 \end{document}
